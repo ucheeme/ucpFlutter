@@ -121,7 +121,10 @@ class _SplashContentState extends State<SplashContent> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        const Spacer(),
+
+        SizedBox(
+
+        ),
         Image.asset(
           widget.image!,
           fit: BoxFit.contain,
