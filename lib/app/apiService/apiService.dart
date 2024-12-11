@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:dio/adapter.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:ucp/data/model/response/defaultResponse.dart';
@@ -18,6 +19,7 @@ class ApiService {
   static Dio dio = Dio();
 
   static void initiateDio(bool requireAccess, String baseUrl) {
+
     dio.options
       ..baseUrl = baseUrl
       ..validateStatus = (int? status) {
@@ -30,6 +32,13 @@ class ApiService {
           responseBody: true
       ),
     );
+     dio.httpClientAdapter = DefaultHttpClientAdapter()
+      ..onHttpClientCreate = (HttpClient client) {
+        client.badCertificateCallback =
+            (X509Certificate cert, String host, int port) => true; // Bypass SSL check
+        return client;
+      };
+
   }
 
   static Map<String, String> header(bool requireAccess) {
@@ -50,7 +59,8 @@ class ApiService {
   }
 
   static Future<Object> makeApiCall(request,url,
-      bool requireAccess,  {bool? isAdmin = false,
+      {bool? isAdmin = false,
+      bool requireAccess = true,
         HttpMethods method =  HttpMethods.post,
         required String baseUrl}) async {
     try {
