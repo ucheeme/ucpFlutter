@@ -17,7 +17,9 @@ import 'package:ucp/view/mainUi/onBoardingFlow/signUpFlow/signUpSecondPage.dart'
 
 import '../../../../utils/apputils.dart';
 import '../../../../utils/colorrs.dart';
+import '../../../../utils/designUtils/reusableFunctions.dart';
 import '../../../../utils/designUtils/reusableWidgets.dart';
+import '../../../../utils/sharedPreference.dart';
 
 class SignUpFirstPage extends StatefulWidget {
   const SignUpFirstPage({super.key});
@@ -30,25 +32,56 @@ class _SignUpFirstPageState extends State<SignUpFirstPage> {
   bool isVisible = false;
   late OnBoardingBloc bloc;
   List<CooperativeListResponse> cooperativeList = [];
-  bool isMember = false, isNotMember = false, isAcceptTermsAndConditions = false;
-
+  bool isMember = false,
+      isNotMember = false,
+      isAcceptTermsAndConditions = false;
+TextEditingController textEditingController = TextEditingController();
+TextEditingController membershipAmountController = TextEditingController();
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      bloc.add(GetAllCooperativesEvent());
+      if(allCooperatives.isEmpty){
+        bloc.add(GetAllCooperativesEvent());
+      }
     });
     super.initState();
   }
 
+
+
+  bool completed= false;
   @override
   Widget build(BuildContext context) {
     bloc = BlocProvider.of<OnBoardingBloc>(context);
     return BlocBuilder<OnBoardingBloc, OnBoardingState>(
       builder: (context, state) {
         if (state is AllCooperatives) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
             cooperativeList = state.response;
+            allCooperatives= cooperativeList;
+            CooperativeListResponse response =
+                await showCupertinoModalBottomSheet(
+                topRadius: Radius.circular(15.r),
+                backgroundColor:
+                AppColor.ucpWhite500,
+                context: context,
+                builder: (context) {
+                  return Container(
+                      height: 485.h,
+                      color: AppColor.ucpWhite500,
+                      child: CooperativeListDesign(
+                          cooperativeList:
+                          cooperativeList));
+                });
+            if (response != null) {
+              bloc.validation.selectedCooperative = response;
+              setState(() {
+                textEditingController.text =
+                    response.tenantName;
+              });
+            }
           });
+          bloc.initial();
         }
         if (state is OnBoardingError) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -65,9 +98,15 @@ class _SignUpFirstPageState extends State<SignUpFirstPage> {
             FocusScope.of(context).unfocus();
           },
           child: UCPLoadingScreen(
-            visible: false,
-            overlayColor: Colors.black,
-            transparency: 0.7,
+            visible: state is OnboardingIsLoading,
+            loaderWidget: LoadingAnimationWidget.discreteCircle(
+              color: AppColor.ucpBlue500,
+              size: 50.h,
+              secondRingColor: AppColor.ucpBlue100,
+            ),
+            //visible: true,
+            overlayColor: AppColor.ucpBlack400,
+            transparency: 0.2,
             child: Scaffold(
                 backgroundColor: AppColor.ucpWhite500,
                 body: Padding(
@@ -96,8 +135,7 @@ class _SignUpFirstPageState extends State<SignUpFirstPage> {
                           ),
                         ),
                         height16,
-                        Image.asset(
-                          "assets/images/logoWithoutText.png",
+                        Image.asset(UcpStrings.ucpLogo,
                           height: 35.h,
                         ),
                         height30,
@@ -140,15 +178,17 @@ class _SignUpFirstPageState extends State<SignUpFirstPage> {
                                   height: 19.h,
                                   width: 171.5.w,
                                   child: UCPRadioButton(
-                                    isSelected:isMember,
+                                    isSelected: isMember,
                                     isDmSans: false,
                                     radioText: UcpStrings.yIDoTxt,
                                     onTap: () {
-                                     setState(() {
-                                      isMember = true;
-                                       isNotMember = false;
-                                     });
-                                     bloc.validation.isMember = isMember;
+                                      setState(() {
+                                        isMember = true;
+                                        isNotMember = false;
+                                        bloc.validation.isMember = isMember;
+
+                                      });
+
                                     },
                                   )),
                               SizedBox(
@@ -160,8 +200,10 @@ class _SignUpFirstPageState extends State<SignUpFirstPage> {
                                     setState(() {
                                       isMember = false;
                                       isNotMember = true;
-                                   });
-                                    bloc.validation.isNotMember= isNotMember;
+                                      bloc.validation.isNotMember = isNotMember;
+
+                                    });
+
                                   },
                                   isDmSans: false,
                                   radioText: UcpStrings.nIDoTxt,
@@ -180,7 +222,7 @@ class _SignUpFirstPageState extends State<SignUpFirstPage> {
                                   stream: bloc.validation.memberId,
                                   builder: (context, snapshot) {
                                     return Visibility(
-                                      visible: bloc.validation.isMember,
+                                      visible: isMember,
                                       child: CustomizedTextField(
                                         hintTxt: UcpStrings.enterMemberIdTxt,
                                         keyboardType: TextInputType.name,
@@ -194,31 +236,46 @@ class _SignUpFirstPageState extends State<SignUpFirstPage> {
                                 UcpStrings.sCooperativeTxt,
                                 style: CreatoDisplayCustomTextStyle.kTxtMedium
                                     .copyWith(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColor.ucpBlack600),
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColor.ucpBlack600),
                               ),
                               height12,
                               CustomizedTextField(
                                 readOnly: true,
-                                hintTxt: UcpStrings.enterMemberIdTxt,
+                                textEditingController: textEditingController,
+                                hintTxt: UcpStrings.sCooperativeTxt,
                                 keyboardType: TextInputType.name,
                                 surffixWidget: Padding(
                                   padding: EdgeInsets.only(right: 8.w),
                                   child: const Icon(Ionicons.chevron_down),
                                 ),
                                 onTap: () async {
-                                  await showCupertinoModalBottomSheet(
-                                      topRadius: Radius.circular(15.r),
-                                      backgroundColor: AppColor.ucpWhite500,
-                                      context: context,
-                                      builder: (context) {
-                                        return Container(
-                                            height: 485.h,
-                                            color: AppColor.ucpWhite500,
-                                            child: CooperativeListDesign(
-                                                cooperativeList: cooperativeList));
+                                  if (allCooperatives.isEmpty) {
+                                    bloc.add(GetAllCooperativesEvent());
+                                  } else {
+                                    CooperativeListResponse response =
+                                        await showCupertinoModalBottomSheet(
+                                            topRadius: Radius.circular(15.r),
+                                            backgroundColor:
+                                                AppColor.ucpWhite500,
+                                            context: context,
+                                            builder: (context) {
+                                              return Container(
+                                                  height: 485.h,
+                                                  color: AppColor.ucpWhite500,
+                                                  child: CooperativeListDesign(
+                                                      cooperativeList:
+                                                          cooperativeList));
+                                            });
+                                    if (response != null) {
+                                      bloc.validation.selectedCooperative = response;
+                                      setState(() {
+                                        textEditingController.text =
+                                            response.tenantName;
                                       });
+                                    }
+                                  }
                                 },
                               ),
                               height20,
@@ -226,50 +283,55 @@ class _SignUpFirstPageState extends State<SignUpFirstPage> {
                                 UcpStrings.membershipFeeTxt,
                                 style: CreatoDisplayCustomTextStyle.kTxtMedium
                                     .copyWith(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColor.ucpBlack600),
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColor.ucpBlack600),
                               ),
                               height12,
                               StreamBuilder<Object>(
                                   stream: bloc.validation.memberAmount,
                                   builder: (context, snapshot) {
                                     return CustomizedTextField(
+                                      inputFormat: [ThousandSeparatorFormatter(),],
                                       hintTxt: UcpStrings.amountTxt,
                                       keyboardType: TextInputType.number,
+                                      textEditingController: membershipAmountController,
                                       onTap: () {
                                         setState(() {
                                           isVisible = true;
                                         });
                                       },
-                                      onChanged: bloc.validation.setMembershipAmount,
+                                      onChanged:
+                                          bloc.validation.setMembershipAmount,
                                       error: snapshot.error?.toString(),
                                       prefixWidget: Visibility(
                                           child: Padding(
-                                            padding:
-                                            EdgeInsets.only(left: 8.w, right: 8.w),
-                                            child: Text(
-                                              "NGN",
-                                              style: CreatoDisplayCustomTextStyle.kTxtBold
-                                                  .copyWith(
+                                        padding: EdgeInsets.only(
+                                            left: 8.w, right: 8.w),
+                                        child: Text(
+                                          "NGN",
+                                          style: CreatoDisplayCustomTextStyle
+                                              .kTxtBold
+                                              .copyWith(
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 12.sp,
                                                   color: AppColor.ucpBlack500),
-                                            ),
-                                          )),
+                                        ),
+                                      )),
                                     );
                                   }),
                               height30,
                               UCPRadioButton(
-                                isSelected:isAcceptTermsAndConditions,
+                                isSelected: isAcceptTermsAndConditions,
                                 isDmSans: false,
                                 radioText: UcpStrings.aTermsAndConditionsTxt,
                                 onTap: () {
                                   setState(() {
-                                   isAcceptTermsAndConditions =
-                                    !isAcceptTermsAndConditions;
+                                    isAcceptTermsAndConditions =
+                                        !isAcceptTermsAndConditions;
                                   });
-                                  bloc.validation.isAcceptTermsAndCondition = isAcceptTermsAndConditions;
+                                  bloc.validation.isAcceptTermsAndCondition =
+                                      isAcceptTermsAndConditions;
                                 },
                               ),
                             ],
@@ -278,19 +340,17 @@ class _SignUpFirstPageState extends State<SignUpFirstPage> {
                         height30,
                         CustomButton(
                           onTap: () {
-                          //  bloc.validation.firstPageCheck()?
+                              bloc.validation.firstPageCheck()?
                             Get.to(
                               SignUpSecondPage(bloc: bloc),
                               curve: Curves.easeIn,
-                            );
-                              //  null;
+                            ):null;
+                            //  null;
                           },
                           height: 51.h,
                           buttonText: "${UcpStrings.proceedTxt} (1 of 5)",
                           borderRadius: 60.r,
-                          buttonColor: bloc.validation.firstPageCheck()
-                              ? AppColor.ucpBlue500
-                              : AppColor.ucpBlue200,
+                          buttonColor: AppColor.ucpBlue500,
                           textColor: AppColor.ucpWhite500,
                         )
                       ],

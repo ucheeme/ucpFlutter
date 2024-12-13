@@ -67,7 +67,7 @@ class _SignUpThirdPageState extends State<SignUpThirdPage> {
                       ),
                       height16,
                       Image.asset(
-                        "assets/images/logoWithoutText.png",
+                        UcpStrings.ucpLogo,
                         height: 35.h,
                       ),
                       height30,
@@ -134,6 +134,7 @@ class _SignUpThirdPageState extends State<SignUpThirdPage> {
                                               });
                                       setState(() {
                                         genderController.text = result ?? "";
+                                        widget.bloc.validation.setGender(result??"");
                                       });
                                       },
                                     onChanged: widget.bloc.validation.setGender,
@@ -155,6 +156,7 @@ class _SignUpThirdPageState extends State<SignUpThirdPage> {
                                   return CustomizedTextField(
                                     error: snapshot.error?.toString(),
                                     keyboardType: TextInputType.name,
+                                    isConfirmPasswordMatch: false,
                                     onChanged:
                                         widget.bloc.validation.setUserName,
                                   );
@@ -178,16 +180,20 @@ class _SignUpThirdPageState extends State<SignUpThirdPage> {
                             buttonColor: AppColor.ucpBlue50,
                             textColor: AppColor.ucpBlack500,
                           ),
-                          CustomButton(
-                            onTap: () {
-                              Get.to(SignUpFourthPage(bloc: widget.bloc));
-                            },
-                            height: 51.h,
-                            width: 163.5.w,
-                            buttonText: "${UcpStrings.proceedTxt} (3 of 5)",
-                            borderRadius: 60.r,
-                            buttonColor: AppColor.ucpBlue500,
-                            textColor: AppColor.ucpWhite500,
+                          StreamBuilder<Object>(
+                            stream: widget.bloc.validation.completeSignUpThirdPageFormValidation,
+                            builder: (context, snapshot) {
+                              return CustomButton(
+                                onTap: () => snapshot.data == true?
+                                  Get.to(SignUpFourthPage(bloc: widget.bloc)):null,
+                                height: 51.h,
+                                width: 163.5.w,
+                                buttonText: "${UcpStrings.proceedTxt} (3 of 5)",
+                                borderRadius: 60.r,
+                                buttonColor: AppColor.ucpBlue500,
+                                textColor: AppColor.ucpWhite500,
+                              );
+                            }
                           ),
                         ],
                       )

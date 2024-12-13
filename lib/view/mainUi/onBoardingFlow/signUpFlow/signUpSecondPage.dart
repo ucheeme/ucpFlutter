@@ -63,8 +63,7 @@ class _SignUpSecondPageState extends State<SignUpSecondPage> {
                         ),
                       ),
                       height16,
-                      Image.asset(
-                        "assets/images/logoWithoutText.png", height: 35.h,),
+                      Image.asset(UcpStrings.ucpLogo, height: 35.h,),
                       height30,
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -102,6 +101,7 @@ class _SignUpSecondPageState extends State<SignUpSecondPage> {
                                 stream:widget.bloc.validation.firstName,
                                 builder: (context, snapshot) {
                                   return CustomizedTextField(
+                                    isConfirmPasswordMatch: false,
                                     hintTxt: UcpStrings.enterFNTxt,
                                     error: snapshot.error?.toString(),
                                     keyboardType: TextInputType.name,
@@ -121,6 +121,7 @@ class _SignUpSecondPageState extends State<SignUpSecondPage> {
                                 stream: widget.bloc.validation.lastName,
                                 builder: (context, snapshot) {
                                   return CustomizedTextField(
+                                    isConfirmPasswordMatch: false,
                                     hintTxt: UcpStrings.enterLNTxt,
                                     error: snapshot.error?.toString(),
                                     keyboardType: TextInputType.name,
@@ -140,6 +141,7 @@ class _SignUpSecondPageState extends State<SignUpSecondPage> {
                                 stream: widget.bloc.validation.email,
                                 builder: (context, snapshot) {
                                   return CustomizedTextField(
+                                    isConfirmPasswordMatch: false,
                                     hintTxt: UcpStrings.enterEmailTxt,
                                     error: snapshot.error?.toString(),
                                     keyboardType: TextInputType.emailAddress,
@@ -159,6 +161,7 @@ class _SignUpSecondPageState extends State<SignUpSecondPage> {
                                 stream: widget.bloc.validation.phoneNumber,
                                 builder: (context, snapshot) {
                                   return CustomizedTextField(
+                                    isConfirmPasswordMatch: false,
                                     hintTxt: UcpStrings.enterPhoneTxt,
                                     error: snapshot.error?.toString(),
                                     keyboardType: TextInputType.phone,
@@ -184,15 +187,19 @@ class _SignUpSecondPageState extends State<SignUpSecondPage> {
                             buttonColor: AppColor.ucpBlue50,
                             textColor: AppColor.ucpBlack500,
                           ),
-                          CustomButton(onTap: () {
-                            Get.to(SignUpThirdPage(bloc: widget.bloc));
-                          },
-                            height: 51.h,
-                            width: 163.5.w,
-                            buttonText: "${UcpStrings.proceedTxt} (2 of 5)",
-                            borderRadius: 60.r,
-                            buttonColor: AppColor.ucpBlue500,
-                            textColor: AppColor.ucpWhite500,
+                          StreamBuilder<Object>(
+                            stream: widget.bloc.validation.completeSignupSecondPageValidation,
+                            builder: (context, snapshot) {
+                              return CustomButton(onTap: () =>
+                                snapshot.data == true ? Get.to(SignUpThirdPage(bloc: widget.bloc)) : null,
+                                height: 51.h,
+                                width: 163.5.w,
+                                buttonText: "${UcpStrings.proceedTxt} (2 of 5)",
+                                borderRadius: 60.r,
+                                buttonColor: AppColor.ucpBlue500,
+                                textColor: AppColor.ucpWhite500,
+                              );
+                            }
                           ),
                         ],
                       )

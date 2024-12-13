@@ -139,7 +139,7 @@ class _SignUpfifthPageState extends State<SignUpfifthPage> {
                       ),
                       height16,
                       Image.asset(
-                        "assets/images/logoWithoutText.png", height: 35.h,),
+                        UcpStrings.ucpLogo, height: 35.h,),
                       height30,
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

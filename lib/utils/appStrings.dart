@@ -18,7 +18,7 @@ class UcpStrings{
  static const createYourAccountTodayTxt ="Create your account today for seamless collaboration and engagement.";
  static const dYHMemberIDTxt ="Do you have a membership I.D ?";
  static const yIDoTxt ="Yes, I do";
- static const nIDoTxt ="No, I do";
+ static const nIDoTxt ="No, I don't";
  static const enterMemberIdTxt ="Enter your Member ID";
  static const sCooperativeTxt ="Select Cooperative";
  static const membershipFeeTxt ="Membership fee";
@@ -80,6 +80,33 @@ class UcpStrings{
  static const sStateTxt ="Select State";
 
  static const searchTxt ="Search";
+
+  static const cancelTxt = "Cancel";
+  static const doneTxt = "Done";
+  static const ucpLogo = "assets/images/logoWithoutText.png";
+
+  static const awaitCooperativeResponse="Await Cooperative approval!";
+
+  static const awaitCooperativeResponseBody="Await approval process from your cooperative. It usually takes 24-48 hours, but feel free to explore our app till then";
+
+  static const awaitCooperativeResponseBody2="You will be notified, via your registered email and phone number, when there is an update.";
+
+  static const applicationSent ="Your application has been sent, and it’s being worked on, kindly wait a while";
+
+  static const exploreApp="Explore the App";
+
+  static const confirmOtPTxt = "Confirm OTP";
+
+  static const resendTxt = "Resent OTP";
+
+  static const accessYourAccountTxt="Access your cooperative activities with ease. Log in to your member account now.";
+
+  static const enterPasswordTxt ="Enter password";
+  static const passwordTxt ="Password";
+  static const rememberMTxt ="Remember me?";
+  static const forgotPasswordTxt ="Forgot Password?";
+
+  static const dontHaveAnAccountTxt= "Don't have an account?";
 
  // static const sCooperativeTxt ="Select Cooperative";
 }

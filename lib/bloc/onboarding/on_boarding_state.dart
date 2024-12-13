@@ -26,3 +26,17 @@ class AllCooperatives extends OnBoardingState{
   @override
   List<Object?> get props => [response];
 }
+
+class CreateAccountSuccess extends OnBoardingState{
+  final SignUpResponse response;
+  const CreateAccountSuccess(this.response);
+  @override
+  List<Object?> get props => [response];
+}
+
+class LoginSuccess extends OnBoardingState{
+  final LoginResponse response;
+  const LoginSuccess(this.response);
+  @override
+  List<Object?> get props => [response];
+}

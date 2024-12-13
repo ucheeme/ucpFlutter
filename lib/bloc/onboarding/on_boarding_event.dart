@@ -8,3 +8,15 @@ class GetAllCooperativesEvent extends OnBoardingEvent{
   @override
   List<Object> get props => [];
 }
+class CreateAccountEvent extends OnBoardingEvent{
+  final SignupRequest request;
+  const CreateAccountEvent(this.request);
+  @override
+  List<Object> get props => [];
+}
+class LoginEvent extends OnBoardingEvent{
+  final LoginRequest request;
+  const LoginEvent(this.request);
+  @override
+  List<Object> get props => [];
+}
