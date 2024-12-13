@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' as gett;
 import 'package:rxdart/rxdart.dart';
+import 'package:ucp/data/model/request/loginReq.dart';
+import 'package:ucp/data/model/request/signUpReq.dart';
+import '../../data/model/response/cooperativeList.dart';
 import '../../utils/customValidator.dart';
 
 String firstNameTemp = "";
@@ -43,6 +46,7 @@ class OnboardingValidation {
   String? _phoneError;
   String? _passwordError;
   String? _nameError;
+  CooperativeListResponse? selectedCooperative;
 
   String? get emailError => _emailError;
 
@@ -53,6 +57,11 @@ class OnboardingValidation {
   String? get passwordError => _passwordError;
 
   final _emailSubject = BehaviorSubject<String>();
+  final _sCooperativeSubject = BehaviorSubject<CooperativeListResponse>();
+  final _homeAddressSubject = BehaviorSubject<String>();
+  final _countrySubject = BehaviorSubject<String>();
+  final _stateSubject = BehaviorSubject<String>();
+  final _citySubject = BehaviorSubject<String>();
   final _memberSubject = BehaviorSubject<String>();
   final _genderSubject = BehaviorSubject<String>();
   final _membershipAmountSubject = BehaviorSubject<String>();
@@ -71,9 +80,19 @@ class OnboardingValidation {
   final _forgotConfirmPasswordSubject = BehaviorSubject<String>();
 
   Function(String) get setEmail => _emailSubject.sink.add;
+  Function(CooperativeListResponse) get setCooperative => _sCooperativeSubject.sink.add;
 
   Function(String) get setMemberNo => _memberSubject.sink.add;
+
   Function(String) get setGender => _genderSubject.sink.add;
+
+  Function(String) get setHomeAddress => _homeAddressSubject.sink.add;
+
+  Function(String) get setCountry => _countrySubject.sink.add;
+
+  Function(String) get setState => _stateSubject.sink.add;
+
+  Function(String) get setCity => _citySubject.sink.add;
 
   Function(String) get setMembershipAmount => _membershipAmountSubject.sink.add;
 
@@ -105,7 +124,20 @@ class OnboardingValidation {
       _forgotConfirmPasswordSubject.sink.add;
 
   Stream<String> get email => _emailSubject.stream.transform(validateEmail);
-  Stream<String> get gender => _genderSubject.stream.transform(validateFullName);
+  Stream<CooperativeListResponse> get cooperative => _sCooperativeSubject.stream;
+
+  Stream<String> get gender =>
+      _genderSubject.stream.transform(validateFullName);
+
+  Stream<String> get homeAddress =>
+      _homeAddressSubject.stream.transform(validateUserName);
+
+  Stream<String> get state => _stateSubject.stream.transform(validateFullName);
+
+  Stream<String> get city => _citySubject.stream.transform(validateFullName);
+
+  Stream<String> get country =>
+      _countrySubject.stream.transform(validateFullName);
 
   Stream<String> get memberId =>
       _memberSubject.stream.transform(validateUserName);
@@ -146,14 +178,8 @@ class OnboardingValidation {
   Stream<String> get confirmPassword =>
       _confirmPasswordSubject.stream.transform(validateConfirmPassword);
 
-  Stream<bool> get completeRegistrationFormValidation => Rx.combineLatest2(
-      email,
-      confirmPassword,
-      (
-        email,
-        confirmPassword,
-      ) =>
-          true);
+  Stream<bool> get completeSignUpThirdPageFormValidation =>
+      Rx.combineLatest2(gender, userName, (gender, userName) => true);
 
   Stream<bool> get loginCompleteRegistrationFormValidation => Rx.combineLatest2(
       loginUserName,
@@ -163,6 +189,43 @@ class OnboardingValidation {
         loginPassword,
       ) =>
           true);
+
+  Stream<bool> get completeSignupSecondPageValidation => Rx.combineLatest4(
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      (
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+      ) =>
+          true);
+
+  Stream<bool> get completeSignupFourthPageValidation => Rx.combineLatest4(
+      homeAddress,
+      country,
+      state,
+      city,
+      (
+        homeAddress,
+        country,
+        state,
+        city,
+      ) =>
+          true);
+
+  Stream<bool> get completeSignInValidation => Rx.combineLatest3(
+      cooperative,
+      userName,
+      password,
+          (
+          cooperative,
+          userName,
+          password,
+          ) =>
+      true);
 
   Stream<bool> get completePersonalInformationFormValidation =>
       Rx.combineLatest5(
@@ -285,6 +348,8 @@ class OnboardingValidation {
     }
   });
 
+  bool rememberMe = false;
+
   setFirstNameTemp() {
     firstNameTemp = _firstNameSubject.value;
   }
@@ -313,21 +378,56 @@ class OnboardingValidation {
 
   bool firstPageCheck() {
     if (!isMember && !isNotMember) {
+      print("I am the cause");
       return false;
     } else {
       if (isMember) {
-        if (_membershipAmountSubject.valueOrNull!=null &&
-            cooperativeId.isNotEmpty &&
-            _memberSubject.value.isNotEmpty) {
+        if (_membershipAmountSubject.valueOrNull != null &&
+            selectedCooperative != null &&
+            _memberSubject.valueOrNull != null) {
+          print(" Member Donee");
           return true;
+        } else {
+          print("I am the cause M");
+          return false;
         }
       } else {
-        if (_membershipAmountSubject.valueOrNull!=null  &&
-            cooperativeId.isNotEmpty) {
+        if (_membershipAmountSubject.valueOrNull != null &&
+            selectedCooperative != null) {
+          print("Not Member Donee");
           return true;
+        } else {
+          print("I am the cause No M");
+          return false;
         }
       }
     }
-    return false;
+  }
+
+  SignupRequest signupRequest() {
+    var response = SignupRequest(
+      cooperativeId: selectedCooperative!.nodeId,
+      username: _userNameSubject.value.trim(),
+      memberNo: _memberSubject.value.trim(),
+      firstName: _firstNameSubject.value.trim() ?? "",
+      lastName: _lastNameSubject.value.trim() ?? "",
+      gender: _genderSubject.value.trim() ?? "",
+      phoneNumber: _phoneSubject.value.trim() ?? "",
+      emailAddress: _emailSubject.value.trim() ?? "",
+      contributionAmount: double.parse(
+          _membershipAmountSubject.value.trim().replaceAll(",", "") ?? "0"),
+      address: _homeAddressSubject.value.trim() ?? "",
+      country: _countrySubject.value.trim() ?? "",
+      state: _stateSubject.value.trim() ?? "",
+    );
+    print(response);
+    return response;
+  }
+
+  LoginRequest loginRequest() {
+    return LoginRequest(
+        nodeId: selectedCooperative!.nodeId,
+        username: _userNameSubject.value.trim(),
+        password: _passwordSubject.value.trim());
   }
 }

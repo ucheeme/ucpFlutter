@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ucp/data/model/response/cooperativeList.dart';
 
 class MySharedPreference {
   static SharedPreferences? _preferences;
@@ -71,3 +72,6 @@ class MySharedPreference {
     await _preferences?.clear();
   }
 }
+List<CooperativeListResponse> allCooperatives = [];
+String accessToken = "";
+String refreshAccessToken = "";

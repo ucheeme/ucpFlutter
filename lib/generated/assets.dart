@@ -2,6 +2,8 @@
 class Assets {
   Assets._();
 
+  static const String assetsImagesPasswordAlert = 'assets/images/password_alert.png';
+  static const String assetsImagesPasswordCheck = 'assets/images/password_check.png';
   static const String creatoDisplayCreatoDisplayBold = 'assets/font/creatoDisplay/CreatoDisplay-Bold.otf';
   static const String creatoDisplayCreatoDisplayMedium = 'assets/font/creatoDisplay/CreatoDisplay-Medium.otf';
   static const String creatoDisplayCreatoDisplayRegular = 'assets/font/creatoDisplay/CreatoDisplay-Regular.otf';
@@ -46,6 +48,8 @@ class Assets {
   static const String imagesOnboarding2 = 'assets/images/onboarding2.png';
   static const String imagesOnboarding3 = 'assets/images/onboarding3.png';
   static const String imagesOnboardingStars = 'assets/images/onboarding_stars.png';
+  static const String imagesPasswordAlert = 'assets/images/password_alert.png';
+  static const String imagesPasswordCheck = 'assets/images/password_check.png';
   static const String imagesPersonAdd = 'assets/images/person_add.png';
   static const String imagesProfileWithdrawIcon = 'assets/images/profile_withdraw_icon.png';
   static const String imagesPurpleBackground = 'assets/images/purple_background.png';

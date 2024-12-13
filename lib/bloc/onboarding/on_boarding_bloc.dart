@@ -3,8 +3,12 @@ import 'package:equatable/equatable.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:ucp/data/model/response/cooperativeList.dart';
 import 'package:ucp/data/model/response/defaultResponse.dart';
-import 'package:ucp/data/repository/onboarding.dart';
+import 'package:ucp/data/repository/onboardingRepo.dart';
 
+import '../../data/model/request/loginReq.dart';
+import '../../data/model/request/signUpReq.dart';
+import '../../data/model/response/loginResponse.dart';
+import '../../data/model/response/signUpResponse.dart';
 import '../../utils/apputils.dart';
 import 'onBoardingValidation.dart';
 
@@ -17,7 +21,9 @@ class OnBoardingBloc extends Bloc<OnBoardingEvent, OnBoardingState> {
   var errorObs = PublishSubject<String>();
   OnBoardingBloc({required this.onboardingRepository}) : super(OnBoardingInitial()) {
     on<OnBoardingEvent>((event, emit) {});
-    on<GetAllCooperativesEvent>((event, emit){handleGetAllCooperativesEvent();});
+    on<GetAllCooperativesEvent>((event, emit)async{handleGetAllCooperativesEvent();});
+    on<CreateAccountEvent>((event, emit)async{handleCreateAccountEvent(event);});
+    on<LoginEvent>((event, emit)async{handleLoginEvent(event);});
   }
   void handleGetAllCooperativesEvent()async{
     emit(OnboardingIsLoading());
@@ -38,5 +44,38 @@ class OnBoardingBloc extends Bloc<OnBoardingEvent, OnBoardingState> {
   }
   initial(){
     emit(OnBoardingInitial());
+  }
+
+  void handleCreateAccountEvent(request) async{
+    print("I was here");
+    emit(OnboardingIsLoading());
+    try {
+      final response = await onboardingRepository.createAccount(request.request);
+      if (response is SignUpResponse) {
+        emit(CreateAccountSuccess(response));
+        AppUtils.debug("success");
+      }else{
+        emit(OnBoardingError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }    }catch(e,trace){
+      print(trace);
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+
+  void handleLoginEvent(LoginEvent event) async{
+    emit(OnboardingIsLoading());
+    try {
+      final response = await onboardingRepository.loginUser(event.request);
+      if (response is LoginResponse) {
+        emit(LoginSuccess(response));
+        AppUtils.debug("success");
+      }else{
+        emit(OnBoardingError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }    }catch(e,trace){
+      print(trace);
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:ucp/utils/appStrings.dart';
 
 import '../colorrs.dart';
 import '../constant.dart';
@@ -592,6 +593,48 @@ class _BottomsheetRadioButtonRightSideState
           ),
         ),
       ],
+    );
+  }
+}
+
+class RememberMeCheckbox extends StatefulWidget {
+  Function(bool?)? onChanged;
+  bool value;
+   RememberMeCheckbox({Key? key, this.onChanged, required this.value}) : super(key: key);
+  @override
+  _RememberMeCheckboxState createState() => _RememberMeCheckboxState();
+}
+
+class _RememberMeCheckboxState extends State<RememberMeCheckbox> {
+  bool _isRememberMeChecked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Checkbox(
+            activeColor: AppColor.ucpBlue500,
+            checkColor: AppColor.ucpWhite500,
+            value: widget.value,
+            onChanged: (value) {
+              print("This is the value:$value");
+              setState(() {
+               // rememberMe = !rememberMe;
+              });
+            //  bloc.validation.rememberMe = rememberMe;
+            },
+          ),
+          Text(UcpStrings.rememberMTxt,
+            style: CreatoDisplayCustomTextStyle.kTxtMedium
+                .copyWith(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w400,
+                color: AppColor.ucpBlack700),
+          ),
+        ],
+      ),
     );
   }
 }

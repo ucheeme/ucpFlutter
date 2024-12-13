@@ -133,9 +133,11 @@ class CustomValidator {
       return "";
     }else if (!value.isPhoneNumber) {
       return "Please enter a mobile number";
-    } else if (value.length != 10) {
-      return "Mobile number must 10 digits";
-    } else if (!regExp.hasMatch(value)) {
+    }
+    // else if (value.length != 10) {
+    //   return "Mobile number must 10 digits";
+    // }
+    else if (!regExp.hasMatch(value)) {
       return "Mobile Number must be digits";
     }
     return null;

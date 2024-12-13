@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:ucp/app/main/pages.dart';
 import 'package:ucp/utils/apputils.dart';
 import 'package:ucp/utils/colorrs.dart';
+import 'package:ucp/view/mainUi/onBoardingFlow/loginFlow/loginD.dart';
 import 'package:ucp/view/mainUi/onBoardingFlow/signUpFlow/signupFirstpage.dart';
 
 
@@ -91,6 +92,7 @@ class _MyAppState extends State<MyApp> {
           GetPage(name: Pages.initial, page:()=> SplashScreen(),curve: Curves.easeIn,),
           GetPage(name: Pages.onBoardingSplash, page:()=> OnBoarding(),curve: Curves.easeIn,),
           GetPage(name: Pages.signup, page:()=> SignUpFirstPage(),curve: Curves.easeIn,),
+          GetPage(name: Pages.login, page:()=> LoginFlow(),curve: Curves.easeIn,),
 
         ],
         initialRoute: Pages.initial,
