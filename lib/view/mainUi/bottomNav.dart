@@ -4,9 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:ucp/utils/constant.dart';
+import 'package:ucp/utils/sharedPreference.dart';
 import 'package:ucp/view/mainUi/mainScreen/finances/finances.dart';
 import 'package:ucp/view/mainUi/mainScreen/profile/profile.dart';
 import 'package:ucp/view/mainUi/mainScreen/vote/vote.dart';
+import 'package:ucp/view/mainUi/onBoardingFlow/loginFlow/loginD.dart';
 import 'dart:ui';
 
 import '../../utils/colorrs.dart';
@@ -76,7 +78,6 @@ class ScrollableBlurBottomNav extends StatelessWidget {
 
 class MyBottomNav extends StatefulWidget {
   int? position;
-
   MyBottomNav({super.key, this.position});
 
   @override
@@ -109,82 +110,82 @@ class _MyBottomNavState extends State<MyBottomNav> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       body: _screens[_currentIndex],
       extendBody: true,
-      // floatingActionButton: GestureDetector(
-      //   onTap: () async {
-      //   //  Get.to(Moreoptions(), curve: Curves.easeIn);
-      //   },
-      //   child: customerRoundItemBtn(),
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
-        padding: EdgeInsets.symmetric(horizontal: 15.w),
-        height: 83.h,
-        color: Colors.white,
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 12.r,
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            itemWidget(
-                onTap: () {
-                  setState(() {
-                    _currentIndex = 0; // Navigate to Screen 1
-                  });
-                },
-                image: "home_selected",
-                unimage: "home_unselected",
-                title: "Home",
-                active: _currentIndex == 0),
-            itemWidget(
-                onTap: () {
-                  setState(() {
-                    _currentIndex = 1; // Navigate to Screen 1
-                  });
-                },
-                image: "storefront_selected",
-                unimage: "store_unselected",
-                title: "Shop",
-                badgeCount: 0,
-                index: 1,
-                active: _currentIndex == 1),
-            itemWidget(
-                onTap: () {
-                  setState(() {
-                    _currentIndex = 2; // Navigate to Screen 2
-                  });
-                },
-                image: "finance_selected",
-                unimage: "finance_unselected",
-                title: "Finances",
-                active: _currentIndex == 2),
-            itemWidget(
-                onTap: () {
-                  setState(() {
-                    _currentIndex = 3; // Navigate to Screen 4
-                  });
-                },
-                image: "vote_selected",
-                unimage: "vote_unselected",
-                title: "Vote",
-                active: _currentIndex == 3),
-            itemWidget(
-                onTap: () {
-                  setState(() {
-                    _currentIndex = 4; // Navigate to Screen 5
-                  });
-                },
-                userProfileImage: null,
-                title: "Profile",
-                active: _currentIndex == 4),
-          ],
+        elevation: 0.0,
+        padding: EdgeInsets.symmetric(horizontal: 0.w),
+        height: 100.h,
+        color: Colors.transparent,
+        child: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+            child: Container(
+              color: AppColor.ucpBlue25.withOpacity(0.7),
+              child: Row(
+                // mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  itemWidget(
+                      onTap: () {
+                        setState(() {
+                          _currentIndex = 0; // Navigate to Screen 1
+                        });
+                      },
+                      image: "home_selected",
+                      unimage: "home_unselected",
+                      title: "Home",
+                      active: _currentIndex == 0),
+                  itemWidget(
+                      onTap: () {
+                        setState(() {
+                          _currentIndex = 1; // Navigate to Screen 1
+                        });
+                      },
+                      image: "storefront_selected",
+                      unimage: "store_unselected",
+                      title: "Shop",
+                      badgeCount: dashboardResponse?.shopInventory,
+                      index: 1,
+                      active: _currentIndex == 1),
+                  itemWidget(
+                      onTap: () {
+                        setState(() {
+                          _currentIndex = 2; // Navigate to Screen 2
+                        });
+                      },
+                      image: "finance_selected",
+                      unimage: "finance_unselected",
+                      title: "Finances",
+                      active: _currentIndex == 2),
+                  itemWidget(
+                      onTap: () {
+                        setState(() {
+                          _currentIndex = 3; // Navigate to Screen 4
+                        });
+                      },
+                      image: "vote_selected",
+                      unimage: "vote_unselected",
+                      title: "Vote",
+                      active: _currentIndex == 3),
+                  itemWidget(
+                      onTap: () {
+                        setState(() {
+                          _currentIndex = 4; // Navigate to Screen 5
+                        });
+                      },
+                      userProfileImage: null,
+                      title: "Profile",
+                      active: _currentIndex == 4),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
-
   GestureDetector itemWidget(
       {required Function() onTap,
       required String title,
@@ -208,7 +209,7 @@ class _MyBottomNavState extends State<MyBottomNav> {
               height: 58.h,
                width: 58.w,
               child: ColoredBox(
-                color: AppColor.ucpWhite500,
+                color:Colors.transparent,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

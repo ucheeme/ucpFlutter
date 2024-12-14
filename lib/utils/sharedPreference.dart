@@ -1,5 +1,9 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ucp/data/model/response/cooperativeList.dart';
+import 'package:ucp/data/model/response/transactionHistoryResponse.dart';
+
+import '../data/model/response/dashboardResponse.dart';
+import '../data/model/response/loginResponse.dart';
 
 class MySharedPreference {
   static SharedPreferences? _preferences;
@@ -75,3 +79,6 @@ class MySharedPreference {
 List<CooperativeListResponse> allCooperatives = [];
 String accessToken = "";
 String refreshAccessToken = "";
+MemberLoginDetails? memberLoginDetails;
+List<UserTransaction> tempTransactionList =[];
+List<Account> tempAccounts=[];

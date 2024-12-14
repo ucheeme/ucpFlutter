@@ -10,9 +10,6 @@ import '../../utils/apputils.dart';
 import '../../utils/sharedPreference.dart';
 import 'apiResponseCodes.dart';
 import 'apiStatus.dart';
-
-String accessToken = "";
-
 enum HttpMethods { post, put, patch, get, delete }
 
 class ApiService {
@@ -47,6 +44,7 @@ class ApiService {
       HttpHeaders.userAgentHeader: 'dio',
       'Content-Type': 'application/json',
       'Accept': 'application/json',
+      'accept':' text/plain',
       'Authorization': 'Bearer $accessToken'
     }
         : {
@@ -54,6 +52,7 @@ class ApiService {
       'Content-Type': 'application/json',
       'Accept-Language': 'en-US,en;q=0.5',
       'Accept': 'application/json',
+      'accept':' text/plain',
       'Connection':"keep-alive"
     };
   }

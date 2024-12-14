@@ -2,41 +2,41 @@ import 'package:flutter/material.dart';
 // TODO: add flutter_svg package to pubspec.yaml
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../utils/colorrs.dart';
+
 class EmptyNotificationsScreen extends StatelessWidget {
-  const EmptyNotificationsScreen({super.key});
+  String? emptyHeader;
+  String? emptyMessage;
+  Function() press;
+   EmptyNotificationsScreen({super.key,this.emptyHeader,required this.press,this.emptyMessage});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              const Spacer(flex: 2),
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.8,
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: SvgPicture.string(
-                    noNotificationIllistration,
-                    fit: BoxFit.scaleDown,
-                  ),
-                ),
+      body: Column(
+        children: [
+          const Spacer(flex: 2),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.8,
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: SvgPicture.string(
+                noNotificationIllistration,
+                fit: BoxFit.scaleDown,
               ),
-              const Spacer(flex: 2),
-              ErrorInfo(
-                title: "Empty Notifications",
-                description:
-                "It looks like you don't have any notifications right now. We'll let you know when there's something new.",
-                // button: you can pass your custom button,
-                btnText: "Check again",
-                press: () {},
-              ),
-            ],
+            ),
           ),
-        ),
+          const Spacer(flex: 2),
+          ErrorInfo(
+            title: emptyHeader??"Empty Notifications",
+            description:emptyMessage??
+            "It looks like you don't have any notifications right now. We'll let you know when there's something new.",
+            // button: you can pass your custom button,
+            btnText: "Check again",
+            press: press,
+          ),
+        ],
       ),
     );
   }
@@ -86,8 +86,8 @@ class ErrorInfo extends StatelessWidget {
                   onPressed: press,
                   style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 48),
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
+                      backgroundColor: AppColor.ucpBlue500,
+                      foregroundColor:AppColor.ucpWhite00,
                       shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(8)))),
                   child: Text(btnText ?? "Retry".toUpperCase()),

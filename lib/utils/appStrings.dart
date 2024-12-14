@@ -83,7 +83,8 @@ class UcpStrings{
 
   static const cancelTxt = "Cancel";
   static const doneTxt = "Done";
-  static const ucpLogo = "assets/images/logoWithoutText.png";
+
+  static const memberName = "Uche Emeka";
 
   static const awaitCooperativeResponse="Await Cooperative approval!";
 
@@ -107,6 +108,34 @@ class UcpStrings{
   static const forgotPasswordTxt ="Forgot Password?";
 
   static const dontHaveAnAccountTxt= "Don't have an account?";
+  static const balanceTxt ="Balance";
+  static const recetTransTxt ="Recent transactions";
+  static const seeAll ="See all";
+ static const addFundsTxt ="Add funds";
+ static const historyTxt ="History";
+ static const withdrawTxt ="Withdraw";
+ static const transactionHistoryTxt ="transaction history";
+ static const allTxt ="All";
+ static const inFlowTxt ="Inflow";
+ static const outFlowTxt ="Outflow";
 
  // static const sCooperativeTxt ="Select Cooperative";
+
+
+ static const ucpLogo = "assets/images/logoWithoutText.png";
+ static const ucpAddFundsIcon = "assets/images/add_icon.png";
+ static const ucpHistoryIcon = "assets/images/history_Icon.png";
+ static const dashBoardB ="assets/images/dashboard_Background.png";
+ static const ucpWithdrawIcon="assets/images/withdraw_icon.png";
+ static const ucpApplyLoanImage="assets/images/apply_loan_image.png";
+ static const ucpCreditImage="assets/images/income_icon.png";
+ static const ucpDebitImage="assets/images/expenses_icon.png";
+ static const ucpNotificationImage="assets/images/notifications._bell.png";
+ static const ucpBackArrow= "assets/images/arrow-left.png";
+
+
+
+
+
+
 }

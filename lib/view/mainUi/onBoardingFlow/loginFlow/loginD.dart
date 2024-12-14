@@ -8,10 +8,12 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:ucp/data/model/response/dashboardResponse.dart';
 
 import '../../../../app/main/pages.dart';
 import '../../../../bloc/onboarding/on_boarding_bloc.dart';
 import '../../../../data/model/response/cooperativeList.dart';
+import '../../../../data/model/response/loginResponse.dart';
 import '../../../../utils/appStrings.dart';
 import '../../../../utils/apputils.dart';
 import '../../../../utils/colorrs.dart';
@@ -23,7 +25,7 @@ import '../../../../utils/ucpLoader.dart';
 import '../../../bottomSheet/cooperatives.dart';
 import '../../bottomNav.dart';
 import '../signUpFlow/signUpSecondPage.dart';
-
+DashboardResponse? dashboardResponse;
 class LoginFlow extends StatefulWidget {
   const LoginFlow({super.key});
 
@@ -98,6 +100,7 @@ class _LoginFlowState extends State<LoginFlow> {
         }
         if(state is LoginSuccess){
           WidgetsBinding.instance.addPostFrameCallback((_) async {
+            memberLoginDetails=state.response.memberLoginDetails;
             accessToken = state.response.token;
             refreshAccessToken = state.response.refreshToken;
             Get.offAll(MyBottomNav(), predicate: (route) => false);

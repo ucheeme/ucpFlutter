@@ -56,6 +56,7 @@ class CustomTextStyle{
   static TextStyle kTxtMedium = TextStyle(
     color:AppColor.ucpBlack800,
     fontSize: 16.sp,
+  
     fontWeight: FontWeight.w600,
     fontFamily: 'DM Sans Medium',
   );
@@ -63,12 +64,14 @@ class CustomTextStyle{
   static TextStyle kTxtLight = TextStyle(
     color: AppColor.ucpBlack800,
     fontSize: 18.sp,
+   
     fontWeight: FontWeight.w400,
     fontFamily: 'DM Sans Regular',
   );
   static TextStyle kTxtBold= TextStyle(
     color: AppColor.ucpBlack800,
     fontSize: 38.sp,
+    
     fontWeight: FontWeight.w800,
     fontFamily: 'DM Sans',
   );
@@ -78,13 +81,16 @@ class CreatoDisplayCustomTextStyle{
   static TextStyle kTxtRegular = TextStyle(
     color: AppColor.ucpBlack800,
     fontSize: 12.sp,
+   
     fontWeight: FontWeight.w400,
     fontFamily: 'Creato Display',
   );
 
   static TextStyle kTxtMedium = TextStyle(
     color:AppColor.ucpBlack800,
+   
     fontSize: 16.sp,
+
     fontWeight: FontWeight.w600,
     fontFamily: 'Creato Display Medium',
   );
@@ -92,6 +98,7 @@ class CreatoDisplayCustomTextStyle{
   static TextStyle kTxtLight = TextStyle(
     color: AppColor.ucpBlack800,
     fontSize: 18.sp,
+   
     fontWeight: FontWeight.w400,
     fontFamily: 'Creato Display Regular',
   );

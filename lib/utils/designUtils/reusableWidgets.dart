@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -634,6 +636,59 @@ class _RememberMeCheckboxState extends State<RememberMeCheckbox> {
                 color: AppColor.ucpBlack700),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class CircleWithIconSingleColor extends StatelessWidget {
+  String image;
+  Color color;
+  double? height;
+  double? width;
+   CircleWithIconSingleColor({super.key,
+   required this.image,required this.color,
+     this.width, this.height
+   });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height?.w??40.w,
+      width: width?.w??40.w,
+      padding: EdgeInsets.all(10.h),
+      decoration: BoxDecoration(
+        color: AppColor.ucpBlue50,
+        shape: BoxShape.circle,
+      ),
+      child: Image.asset(image),
+    );
+  }
+}
+
+class UCPCustomAppBar extends StatelessWidget {
+  Widget child;
+  double? height;
+  Color? appBarColor;
+   UCPCustomAppBar({super.key, required this.child, this.height,this.appBarColor});
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      child: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+          child: Container(
+            height: height?.h??96.h,
+            color:appBarColor??AppColor.ucpBlue600.withOpacity(0.2),
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            alignment: Alignment.center,
+            child:child ,
+          ),
+        ),
       ),
     );
   }

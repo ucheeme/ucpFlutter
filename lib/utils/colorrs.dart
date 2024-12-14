@@ -31,6 +31,7 @@ class AppColor{
   static const Color ucpLightBlue900 =Color(0xff06212D);
   static const Color ucpLightBlue950 =Color(0xff031116);
 
+
   //UCPBlackColor
   static const Color ucpBlack50 =Color(0xffF2F2F2);
   static const Color ucpBlack100 =Color(0xffE6E6E6);
@@ -42,7 +43,9 @@ class AppColor{
   static const Color ucpBlack700 =Color(0xff4D4D4D);
   static const Color ucpBlack800 =Color(0xff333333);
   static const Color ucpBlack900 =Color(0xff1A1A1A);
+  static const Color ucpBlack920 =Color(0xff1C1B1F);
   static const Color ucpBlack950 =Color(0xff0D0D0D);
+  static const Color ucpBlack1000 =Color(0xff0D0D12);
   //UCPOrangeColor
   static const Color ucpOrange25 =Color(0xffFFFBF6);
   static const Color ucpOrange50 =Color(0xffFEF3E6);
