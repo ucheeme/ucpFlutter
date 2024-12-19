@@ -40,3 +40,24 @@ class AccountSummaryDetails extends DashboardState{
   @override
   List<Object> get props => [response];
 }
+
+class MemberAccounts extends DashboardState{
+  List<UserSavingAccounts> response;
+  MemberAccounts(this.response);
+  @override
+  List<Object> get props => [response];
+}
+
+class UcpPaymentModes extends DashboardState{
+  List<PaymentModes> response;
+  UcpPaymentModes(this.response);
+  @override
+  List<Object> get props => [response];
+}
+
+class UcpBanks extends DashboardState{
+  List<ListOfBank> response;
+  UcpBanks(this.response);
+  @override
+  List<Object> get props => [response];
+}

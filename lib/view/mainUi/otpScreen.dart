@@ -19,10 +19,15 @@ import '../../utils/constant.dart';
 import '../../utils/designUtils/reusableWidgets.dart';
 import '../../utils/sharedPreference.dart';
 import '../../utils/ucpLoader.dart';
+import 'bottomNav.dart';
 import 'onBoardingFlow/signUpFlow/cooperativeFInal.dart';
 String isCreateAccountFirstStep = "";
 class Otpscreen extends StatefulWidget {
-  const Otpscreen({super.key});
+  bool? isLogin;
+  bool? isSignUp;
+  String otpValue;
+  OnBoardingBloc bloc;
+   Otpscreen({super.key,this.isLogin,this.isSignUp,required this.otpValue, required this.bloc});
 
   @override
   State<Otpscreen> createState() => _OtpscreenState();
@@ -31,6 +36,7 @@ class Otpscreen extends StatefulWidget {
 class _OtpscreenState extends State<Otpscreen>with TickerProviderStateMixin {
   StreamController<ErrorAnimationType>? errorController;
   String requiredNumber="";
+  String enteredValue = "";
   FocusNode _pinCodeFocusNode = FocusNode();
   TextEditingController otpController= TextEditingController();
   bool activateKeyboard = false;
@@ -50,36 +56,60 @@ class _OtpscreenState extends State<Otpscreen>with TickerProviderStateMixin {
 
   }
 
- late OnBoardingBloc bloc;
 
 
   @override
   void initState() {
     MySharedPreference.saveCreateAccountStep(key: isCreateAccountFirstStep,value: false);
-    errorController = StreamController<ErrorAnimationType>();
+   // errorController = StreamController<ErrorAnimationType>();
+    otpValue = widget.otpValue;
     startTimer();
     super.initState();
-
-
-
   }
+  String otpValue="";
   @override
   void dispose() {
     errorController!.close();
-
     _timer.cancel();
     super.dispose();
   }
   @override
   Widget build(BuildContext context) {
-    bloc =  BlocProvider.of<OnBoardingBloc>(context);
+
     return BlocBuilder<OnBoardingBloc, OnBoardingState>(
       builder: (context, state) {
         if (state is CreateAccountSuccess) {
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             Get.to(AwaitCooperativeResponse());
           });
-          bloc.initial();
+          widget.bloc.initial();
+        }
+        if(state is LoginSuccess){
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            memberLoginDetails=state.response.memberLoginDetails;
+            accessToken = state.response.token;
+            refreshAccessToken = state.response.refreshToken;
+           Get.offAll(MyBottomNav(), predicate: (route) => false);
+          });
+          widget.bloc.initial();
+        }
+        if(state is SignUpOTPSuccessful){
+          WidgetsBinding.instance.addPostFrameCallback((_)async{
+          AppUtils.showInfoSnack("For test purpose use ${state.response.otp}", context);
+          otpValue=state.response.otp.toString();
+          setState(() {_start=60;});
+          startTimer();
+          });
+          widget.bloc.initial();
+        }
+        if(state is LoginOTPSuccessful){
+          WidgetsBinding.instance.addPostFrameCallback((_)async{
+            AppUtils.showInfoSnack("For test purpose use ${state.response.otp}", context);
+            otpValue=state.response.otp.toString();
+            setState(() {_start=60;});
+            startTimer();
+          });
+          widget.bloc.initial();
         }
         if (state is OnBoardingError) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -89,7 +119,7 @@ class _OtpscreenState extends State<Otpscreen>with TickerProviderStateMixin {
                   context);
             });
           });
-          bloc.initial();
+          widget.bloc.initial();
         }
         return GestureDetector(
           onTap: () {
@@ -99,7 +129,7 @@ class _OtpscreenState extends State<Otpscreen>with TickerProviderStateMixin {
             visible: state is OnboardingIsLoading,
             loaderWidget: LoadingAnimationWidget.discreteCircle(
               color: AppColor.ucpBlue500,
-              size: 50.h,
+              size: 40.h,
               secondRingColor: AppColor.ucpBlue100,
             ),
             //visible: true,
@@ -176,7 +206,7 @@ class _OtpscreenState extends State<Otpscreen>with TickerProviderStateMixin {
                               height40,
                               Padding(
                                 padding:  EdgeInsets.symmetric(horizontal: 16.h),
-                                child: pinCodeTextField(context: context),
+                                child: pinCodeTextField( ),
                               ),
                               height50,
                               Row(
@@ -209,7 +239,16 @@ class _OtpscreenState extends State<Otpscreen>with TickerProviderStateMixin {
                      // Spacer(),
                         CustomButton(
                           onTap: () {
-                             print("thd");
+
+                            if(requiredNumber.length==6 && otpValue==enteredValue){
+                              if(widget.isSignUp==true){
+                                widget.bloc.add(CreateAccountEvent(widget.bloc.validation.signupRequest()));
+                              }
+                              if(widget.isLogin==true){
+                                widget.bloc.add(LoginEvent(widget.bloc.validation.loginRequest()));
+                              }
+
+                            }
                           },
                           height: 51.h,
                           width: 343.w,
@@ -238,8 +277,13 @@ class _OtpscreenState extends State<Otpscreen>with TickerProviderStateMixin {
                               GestureDetector(
                                 onTap: () {
                                   if(_start ==0){
-                                  setState(() {_start=60;});
-                                  startTimer();
+                                  if(widget.isSignUp==true){
+                                    widget.bloc.add(SendSignUpOtpEvent(widget.bloc.validation.signupOtpRequest()));
+                                  }
+                                  if(widget.isLogin==true ){
+                                    widget.bloc.add(SendLoginOtpEvent(widget.bloc.validation.loginOtpRequest()));
+                                  }
+
                                 } },
                                 child: Text(
                                     UcpStrings.resendTxt,
@@ -264,18 +308,18 @@ class _OtpscreenState extends State<Otpscreen>with TickerProviderStateMixin {
     );
   }
 
-  Widget pinCodeTextField({required BuildContext context}){
+  Widget pinCodeTextField(){
     return StreamBuilder<String>(
-        stream: bloc.validation.otpValue,
+        stream:  widget.bloc.validation.otpValue,
         builder: (context, snapshot) {
           return PinCodeTextField(
-              controller: otpController,
-              focusNode: _pinCodeFocusNode,
+              // controller: otpController,
+             // focusNode: _pinCodeFocusNode,
               onTap: (){
                 setState(() {
                   activateKeyboard=true;
                 });
-                _pinCodeFocusNode.requestFocus();
+              //  _pinCodeFocusNode.requestFocus();
               },
               appContext: context,
               enableActiveFill: true,
@@ -291,7 +335,7 @@ class _OtpscreenState extends State<Otpscreen>with TickerProviderStateMixin {
               obscureText: false,
               keyboardType: activateKeyboard?TextInputType.number:TextInputType.none,
               animationType: AnimationType.fade,
-              errorAnimationController: errorController,
+              //errorAnimationController: errorController,
               pinTheme: PinTheme(
                   inactiveFillColor: AppColor.ucpWhite10,
                   activeFillColor: AppColor.ucpWhite10,
@@ -314,8 +358,9 @@ class _OtpscreenState extends State<Otpscreen>with TickerProviderStateMixin {
                 if(requiredNumber.length==6){
                   setState(() {
                     isCompleteOTP=true;
-                    bloc.validation.otpController=value;
+                   // widget.bloc.validation.otpController=value;
                   });
+                  enteredValue=value;
                 }else{
                   setState(() {
                     isWrongOTP=false;

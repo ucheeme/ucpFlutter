@@ -22,6 +22,7 @@ import '../../../../utils/constant.dart';
 import '../../../../utils/designUtils/reusableWidgets.dart';
 import '../../../../utils/ucpLoader.dart';
 import '../../../bottomSheet/gender.dart';
+import '../../otpScreen.dart';
 import 'cooperativeFInal.dart';
 
 class SignUpFourthPage extends StatefulWidget {
@@ -55,6 +56,12 @@ class _SignUpFourthPageState extends State<SignUpFourthPage> {
             Get.to(AwaitCooperativeResponse());
           });
           bloc.initial();
+        }
+        if(state is SignUpOTPSuccessful){
+          WidgetsBinding.instance.addPostFrameCallback((_)async{
+            Get.to(Otpscreen(isSignUp: true,bloc: widget.bloc,otpValue: state.response.otp.toString() ,));
+          });
+          widget.bloc.initial();
         }
         if (state is OnBoardingError) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -461,7 +468,7 @@ class _SignUpFourthPageState extends State<SignUpFourthPage> {
                                     height: 51.h,
                                     width: 163.5.w,
                                     buttonText:
-                                        "${UcpStrings.proceedTxt} (4 of 5)",
+                                        UcpStrings.proceedTxt,
                                     borderRadius: 60.r,
                                     buttonColor: AppColor.ucpBlue500,
                                     textColor: AppColor.ucpWhite500,
@@ -480,6 +487,7 @@ class _SignUpFourthPageState extends State<SignUpFourthPage> {
   }
   _creatUser(){
    // var signupRequest = bloc.validation.signupRequest();
-    bloc.add(CreateAccountEvent( bloc.validation.signupRequest()));
+    bloc.add(SendSignUpOtpEvent(bloc.validation.signupOtpRequest()));
+   // bloc.add(CreateAccountEvent( bloc.validation.signupRequest()));
   }
 }

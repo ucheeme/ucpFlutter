@@ -7,6 +7,10 @@ import 'package:ucp/data/model/response/defaultResponse.dart';
 import 'package:ucp/data/model/response/transactionHistoryResponse.dart';
 import 'package:ucp/data/repository/dashboardRepo.dart';
 
+import '../../data/model/request/saveToAccount.dart';
+import '../../data/model/response/listOfBankResponse.dart';
+import '../../data/model/response/memberSavingAccount.dart';
+import '../../data/model/response/paymentModeResponse.dart';
 import '../../data/model/response/userAcctResponse.dart';
 import '../../utils/apputils.dart';
 
@@ -22,6 +26,10 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     on<GetDashboardDataEvent>((event,emit){handleGetDashboardDataEvent();});
     on<GetTransactionHistory>((event,emit){handleGetTransactionHistory(event);});
     on<GetUserAccountSummary>((event,emit){handleGetUserAccountSummary();});
+    on<GetPaymentModes>((event,emit){handleGetPaymentModes();});
+    on<GetListOfBank>((event,emit){handleGetListOfBank();});
+    on<GetMemberSavingAccounts>((event,emit){handleGetMemberSavingAccounts();});
+    on<SaveToAccountEvent>((event,emit){handleGetUserAccountSummary();});
   }
   void handleGetDashboardDataEvent()async{
     emit(DashboardIsLoading());
@@ -73,6 +81,55 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       emit(DashboardError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+  void handleGetPaymentModes()async{
+    emit(DashboardIsLoading());
+    try{
+      final response = await dashboardRepository.getPaymentMethods();
+      if (response is   List<PaymentModes>) {
+        emit(UcpPaymentModes(response));
+        AppUtils.debug("success");
+      }else{
+        emit(DashboardError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(DashboardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleGetListOfBank()async{
+    emit(DashboardIsLoading());
+    try{
+      final response = await dashboardRepository.getBanks();
+      if (response is   List<ListOfBank>) {
+        emit(UcpBanks(response));
+        AppUtils.debug("success");
+      }else{
+        emit(DashboardError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(DashboardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleGetMemberSavingAccounts()async{
+    emit(DashboardIsLoading());
+    try{
+      final response = await dashboardRepository.getMemberAccounts();
+      if (response is   List<UserSavingAccounts>) {
+        emit(MemberAccounts(response));
+        AppUtils.debug("success");
+      }else{
+        emit(DashboardError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(DashboardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+
   initial(){
     emit(DashboardInitial());
   }

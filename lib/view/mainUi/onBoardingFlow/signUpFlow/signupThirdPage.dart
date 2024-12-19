@@ -188,7 +188,7 @@ class _SignUpThirdPageState extends State<SignUpThirdPage> {
                                   Get.to(SignUpFourthPage(bloc: widget.bloc)):null,
                                 height: 51.h,
                                 width: 163.5.w,
-                                buttonText: "${UcpStrings.proceedTxt} (3 of 5)",
+                                buttonText: "${UcpStrings.proceedTxt} (3 of 4)",
                                 borderRadius: 60.r,
                                 buttonColor: AppColor.ucpBlue500,
                                 textColor: AppColor.ucpWhite500,

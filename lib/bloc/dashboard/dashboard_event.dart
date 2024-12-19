@@ -26,3 +26,30 @@ class GetUserAccountSummary extends DashboardEvent {
   // TODO: implement props
   List<Object?> get props => [];
 }
+
+class GetMemberSavingAccounts extends DashboardEvent {
+  const GetMemberSavingAccounts();
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}
+
+class GetListOfBank extends DashboardEvent {
+  const GetListOfBank();
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}
+class GetPaymentModes extends DashboardEvent {
+  const GetPaymentModes();
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}
+class SaveToAccountEvent extends DashboardEvent{
+  SaveToAccountRequest request;
+  SaveToAccountEvent(this.request);
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}

@@ -200,7 +200,7 @@ class CustomizedTextField extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: AppColor.ucpWhite10),
+                  borderSide: BorderSide(color:isTouched ??false ? AppColor.ucpBlue100 : AppColor.ucpWhite10),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 errorBorder: (error == null || error == "")
@@ -415,7 +415,7 @@ class _UCPWelcomeOptionState extends State<UCPWelcomeOption> {
                               fontWeight: FontWeight.w700,
                               fontSize: 16.sp),
                         ),
-                        Spacer(),
+                        Gap(3.h),
                         Text(
                           widget.bodyText,
                           style: CreatoDisplayCustomTextStyle.kTxtRegular
@@ -452,6 +452,65 @@ class _UCPWelcomeOptionState extends State<UCPWelcomeOption> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class MultilineTextInput extends StatefulWidget {
+  final int maxLines;
+  final TextInputType inputType;
+  final String? hintText;
+  final TextStyle? hintStyle;
+  final TextStyle? textStyle;
+  final TextEditingController? controller;
+  final Function(String)? onChanged;
+
+  const MultilineTextInput({
+    Key? key,
+    this.maxLines = 5,
+    this.inputType = TextInputType.multiline,
+    this.hintText,
+    this.hintStyle,
+    this.textStyle,
+    this.controller,
+    this.onChanged,
+  }) : super(key: key);
+
+  @override
+  _MultilineTextInputState createState() => _MultilineTextInputState();
+}
+
+class _MultilineTextInputState extends State<MultilineTextInput> {
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.requestFocus();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      focusNode: _focusNode,
+      maxLines: widget.maxLines,
+      keyboardType: widget.inputType,
+      controller: widget.controller,
+      onChanged: widget.onChanged,
+      decoration: InputDecoration(
+        hintText: widget.hintText,
+        hintStyle: widget.hintStyle,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      style: widget.textStyle,
     );
   }
 }
@@ -643,10 +702,12 @@ class _RememberMeCheckboxState extends State<RememberMeCheckbox> {
 
 class CircleWithIconSingleColor extends StatelessWidget {
   String image;
+  Icon? isIcon;
   Color color;
   double? height;
   double? width;
    CircleWithIconSingleColor({super.key,
+     this.isIcon,
    required this.image,required this.color,
      this.width, this.height
    });
@@ -661,7 +722,7 @@ class CircleWithIconSingleColor extends StatelessWidget {
         color: AppColor.ucpBlue50,
         shape: BoxShape.circle,
       ),
-      child: Image.asset(image),
+      child:isIcon??Image.asset(image),
     );
   }
 }

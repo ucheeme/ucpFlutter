@@ -32,16 +32,21 @@ class _SignUpFirstPageState extends State<SignUpFirstPage> {
   bool isVisible = false;
   late OnBoardingBloc bloc;
   List<CooperativeListResponse> cooperativeList = [];
-  bool isMember = false,
+  bool isMember = true,
       isNotMember = false,
       isAcceptTermsAndConditions = false;
+  int? selectedCooperativeId;
 TextEditingController textEditingController = TextEditingController();
+TextEditingController memberIdController = TextEditingController();
 TextEditingController membershipAmountController = TextEditingController();
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      bloc.validation.isMember = true;
       if(allCooperatives.isEmpty){
         bloc.add(GetAllCooperativesEvent());
+      }else{
+       cooperativeList= allCooperatives;
       }
     });
     super.initState();
@@ -59,27 +64,14 @@ TextEditingController membershipAmountController = TextEditingController();
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             cooperativeList = state.response;
             allCooperatives= cooperativeList;
-            CooperativeListResponse response =
-                await showCupertinoModalBottomSheet(
-                topRadius: Radius.circular(15.r),
-                backgroundColor:
-                AppColor.ucpWhite500,
-                context: context,
-                builder: (context) {
-                  return Container(
-                      height: 485.h,
-                      color: AppColor.ucpWhite500,
-                      child: CooperativeListDesign(
-                          cooperativeList:
-                          cooperativeList));
-                });
-            if (response != null) {
-              bloc.validation.selectedCooperative = response;
-              setState(() {
-                textEditingController.text =
-                    response.tenantName;
-              });
-            }
+            await showAllCooperative(context);
+          });
+          bloc.initial();
+        }
+        if(state is GetNextMemberIdSuccess){
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            memberIdController.text = state.response.nextMemberNo.toString();
+            bloc.validation.setMemberNo(memberIdController.text);
           });
           bloc.initial();
         }
@@ -101,7 +93,7 @@ TextEditingController membershipAmountController = TextEditingController();
             visible: state is OnboardingIsLoading,
             loaderWidget: LoadingAnimationWidget.discreteCircle(
               color: AppColor.ucpBlue500,
-              size: 50.h,
+              size: 40.h,
               secondRingColor: AppColor.ucpBlue100,
             ),
             //visible: true,
@@ -181,14 +173,12 @@ TextEditingController membershipAmountController = TextEditingController();
                                     isSelected: isMember,
                                     isDmSans: false,
                                     radioText: UcpStrings.yIDoTxt,
-                                    onTap: () {
+                                    onTap: () async {
                                       setState(() {
                                         isMember = true;
                                         isNotMember = false;
                                         bloc.validation.isMember = isMember;
-
                                       });
-
                                     },
                                   )),
                               SizedBox(
@@ -196,14 +186,17 @@ TextEditingController membershipAmountController = TextEditingController();
                                 width: 171.5.w,
                                 child: UCPRadioButton(
                                   isSelected: isNotMember,
-                                  onTap: () {
+                                  onTap: () async {
                                     setState(() {
                                       isMember = false;
                                       isNotMember = true;
                                       bloc.validation.isNotMember = isNotMember;
-
                                     });
-
+                                    if(selectedCooperativeId != null){
+                                      bloc.add(GetNextMemberIdEvent(selectedCooperativeId!));
+                                    }else{
+                                      await showAllCooperative(context,isNotMember: true);
+                                    }
                                   },
                                   isDmSans: false,
                                   radioText: UcpStrings.nIDoTxt,
@@ -221,14 +214,13 @@ TextEditingController membershipAmountController = TextEditingController();
                               StreamBuilder<Object>(
                                   stream: bloc.validation.memberId,
                                   builder: (context, snapshot) {
-                                    return Visibility(
-                                      visible: isMember,
-                                      child: CustomizedTextField(
-                                        hintTxt: UcpStrings.enterMemberIdTxt,
-                                        keyboardType: TextInputType.name,
-                                        onChanged: bloc.validation.setMemberNo,
-                                        error: snapshot.error?.toString(),
-                                      ),
+                                    return CustomizedTextField(
+                                      readOnly: isNotMember,
+                                      textEditingController: memberIdController,
+                                      hintTxt: UcpStrings.enterMemberIdTxt,
+                                      keyboardType: TextInputType.name,
+                                      onChanged: bloc.validation.setMemberNo,
+                                      error: snapshot.error?.toString(),
                                     );
                                   }),
                               height10,
@@ -254,27 +246,7 @@ TextEditingController membershipAmountController = TextEditingController();
                                   if (allCooperatives.isEmpty) {
                                     bloc.add(GetAllCooperativesEvent());
                                   } else {
-                                    CooperativeListResponse response =
-                                        await showCupertinoModalBottomSheet(
-                                            topRadius: Radius.circular(15.r),
-                                            backgroundColor:
-                                                AppColor.ucpWhite500,
-                                            context: context,
-                                            builder: (context) {
-                                              return Container(
-                                                  height: 485.h,
-                                                  color: AppColor.ucpWhite500,
-                                                  child: CooperativeListDesign(
-                                                      cooperativeList:
-                                                          cooperativeList));
-                                            });
-                                    if (response != null) {
-                                      bloc.validation.selectedCooperative = response;
-                                      setState(() {
-                                        textEditingController.text =
-                                            response.tenantName;
-                                      });
-                                    }
+                                    await showAllCooperative(context);
                                   }
                                 },
                               ),
@@ -348,7 +320,7 @@ TextEditingController membershipAmountController = TextEditingController();
                             //  null;
                           },
                           height: 51.h,
-                          buttonText: "${UcpStrings.proceedTxt} (1 of 5)",
+                          buttonText: "${UcpStrings.proceedTxt} (1 of 4)",
                           borderRadius: 60.r,
                           buttonColor: AppColor.ucpBlue500,
                           textColor: AppColor.ucpWhite500,
@@ -361,5 +333,35 @@ TextEditingController membershipAmountController = TextEditingController();
         );
       },
     );
+  }
+
+  Future<void> showAllCooperative(BuildContext context,{bool isNotMember = false}) async {
+         CooperativeListResponse response =
+        await showCupertinoModalBottomSheet(
+        topRadius: Radius.circular(15.r),
+        backgroundColor:
+        AppColor.ucpWhite500,
+        context: context,
+        builder: (context) {
+          return Container(
+              height: 485.h,
+              color: AppColor.ucpWhite500,
+              child: CooperativeListDesign(
+                  cooperativeList:
+                  cooperativeList));
+        });
+    if (response != null) {
+      bloc.validation.selectedCooperative = response;
+      setState(() {
+        textEditingController.text = response.tenantName;
+        selectedCooperativeId = response.nodeId;
+      });
+      if(isNotMember){
+
+        bloc.add(GetNextMemberIdEvent(selectedCooperativeId!));
+      }
+    }else{
+      textEditingController.text = "";
+    }
   }
 }

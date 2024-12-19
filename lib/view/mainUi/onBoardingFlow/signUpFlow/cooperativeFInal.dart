@@ -12,6 +12,7 @@ import 'package:ucp/view/mainUi/otpScreen.dart';
 
 import '../../../../utils/colorrs.dart';
 import '../../../../utils/constant.dart';
+import '../loginFlow/loginD.dart';
 
 class AwaitCooperativeResponse extends StatefulWidget {
   const AwaitCooperativeResponse({super.key});
@@ -237,8 +238,9 @@ class _AwaitCooperativeResponseState extends State<AwaitCooperativeResponse> {
               ),
               Gap(157.h),
               CustomButton(onTap: (){
-                Get.to(Otpscreen());
-              }, buttonText: UcpStrings.exploreApp,
+                // Get.to(Otpscreen());
+                Get.offAll(LoginFlow(), predicate: (route) => false);
+              }, buttonText: UcpStrings.returnToSignIApp,
                 buttonColor: AppColor.ucpBlue500,
               borderRadius: 25.r,
                 height: 51.h,

@@ -1,9 +1,13 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ucp/data/model/request/saveToAccount.dart';
 import 'package:ucp/data/model/response/cooperativeList.dart';
+import 'package:ucp/data/model/response/paymentModeResponse.dart';
 import 'package:ucp/data/model/response/transactionHistoryResponse.dart';
 
 import '../data/model/response/dashboardResponse.dart';
+import '../data/model/response/listOfBankResponse.dart';
 import '../data/model/response/loginResponse.dart';
+import '../data/model/response/memberSavingAccount.dart';
 
 class MySharedPreference {
   static SharedPreferences? _preferences;
@@ -82,3 +86,12 @@ String refreshAccessToken = "";
 MemberLoginDetails? memberLoginDetails;
 List<UserTransaction> tempTransactionList =[];
 List<Account> tempAccounts=[];
+List<ListOfBank>tempBankList = [];
+List<UserSavingAccounts> tempSavingAccounts= [];
+List<PaymentModes> tempPaymentModes= [];
+SaveToAccountRequest saveToAccountRequest = SaveToAccountRequest(
+    amount:"",
+    modeOfpayment: "",
+    description: "", accountNumber: "", bank: "",
+    bankAccountNumber: "", bankTeller: "", paidDate: "",
+    uploadTeller: null);

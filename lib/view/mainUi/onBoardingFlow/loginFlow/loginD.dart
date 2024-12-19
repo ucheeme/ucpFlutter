@@ -24,6 +24,7 @@ import '../../../../utils/sharedPreference.dart';
 import '../../../../utils/ucpLoader.dart';
 import '../../../bottomSheet/cooperatives.dart';
 import '../../bottomNav.dart';
+import '../../otpScreen.dart';
 import '../signUpFlow/signUpSecondPage.dart';
 DashboardResponse? dashboardResponse;
 class LoginFlow extends StatefulWidget {
@@ -98,14 +99,21 @@ class _LoginFlowState extends State<LoginFlow> {
             _handleAllCooperativesState(state);
           });
         }
-        if(state is LoginSuccess){
-          WidgetsBinding.instance.addPostFrameCallback((_) async {
-            memberLoginDetails=state.response.memberLoginDetails;
-            accessToken = state.response.token;
-            refreshAccessToken = state.response.refreshToken;
-            Get.offAll(MyBottomNav(), predicate: (route) => false);
+        if(state is LoginOTPSuccessful){
+          WidgetsBinding.instance.addPostFrameCallback((_)async{
+            AppUtils.showInfoSnack("For test purpose use ${state.response.otp}", context);
+            Get.to(Otpscreen(isLogin: true,bloc: bloc,otpValue: state.response.otp.toString()));
           });
+          bloc.initial();
         }
+        // if(state is LoginSuccess){
+        //   WidgetsBinding.instance.addPostFrameCallback((_) async {
+        //     memberLoginDetails=state.response.memberLoginDetails;
+        //     accessToken = state.response.token;
+        //     refreshAccessToken = state.response.refreshToken;
+        //   //  Get.offAll(MyBottomNav(), predicate: (route) => false);
+        //   });
+        // }
 
         if (state is OnBoardingError)
           WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -312,7 +320,8 @@ class _LoginFlowState extends State<LoginFlow> {
                         CustomButton(
                           onTap: () {
                           // bloc.validation.loginRequest();
-                           bloc.add(LoginEvent( bloc.validation.loginRequest()));
+                            bloc.add(SendLoginOtpEvent(bloc.validation.loginOtpRequest()));
+                         //  bloc.add(LoginEvent( bloc.validation.loginRequest()));
                             //  null;
                           },
                           height: 51.h,
