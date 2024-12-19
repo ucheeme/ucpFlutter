@@ -1,9 +1,9 @@
 # ucpFlutter
  CWG cooperative app
  To build app apk for various variant 
- stagging -- flutter build apk -t \lib/flavour/main_stagging.dart
+ stagging -- flutter build apk -t \lib/app/main/main_stagging.dart
 
-production -- flutter build apk -t\lib/flavour/main_production.dart
+production -- flutter build apk -t\lib/app/main/main_production.dart
 
 To build appBundle
 production --  flutter build appbundle -t \lib/flavour/main_production.dart

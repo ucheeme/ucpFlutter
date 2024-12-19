@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:ucp/bloc/dashboard/dashboard_bloc.dart';
 import 'package:ucp/data/model/request/transactionRequest.dart';
 import 'package:ucp/utils/appExtentions.dart';
@@ -17,12 +18,14 @@ import 'package:ucp/utils/constant.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:ucp/utils/sharedPreference.dart';
 import 'package:ucp/utils/ucpLoader.dart';
+import 'package:ucp/view/bottomSheet/enterAmoun.dart';
 import 'package:ucp/view/mainUi/mainScreen/home/transactionHistory.dart';
 
 import '../../../../data/model/response/dashboardResponse.dart';
 import '../../../../data/model/response/transactionHistoryResponse.dart';
 import '../../../../utils/apputils.dart';
 import '../../../../utils/colorrs.dart';
+import '../../../../utils/designUtils/reusableFunctions.dart';
 import '../../../../utils/designUtils/reusableWidgets.dart';
 import 'homeWidgets.dart';
 
@@ -35,7 +38,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
-  Account? selectedOption;
+  Account selectedOption=Account(acctProduct: "", bookbalance: 0);
 
   late DashboardBloc bloc;
   List<UserTransaction> transactionList = [];
@@ -59,7 +62,15 @@ class _HomeScreenState extends State<HomeScreen> {
           transactionList = tempTransactionList;
         });
       }
-
+      if(tempBankList.isEmpty){
+        bloc.add(GetListOfBank());
+      }
+      if(tempSavingAccounts.isEmpty){
+        bloc.add(GetMemberSavingAccounts());
+      }
+      if(tempPaymentModes.isEmpty) {
+        bloc.add(GetPaymentModes());
+      }
 
     });
 
@@ -91,6 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         if (state is AccountSummaryDetails) {
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+
             bloc.add(GetTransactionHistory(TransactionRequest(
                 month: '3',
                 pageNumber: '1',
@@ -100,9 +112,28 @@ class _HomeScreenState extends State<HomeScreen> {
           bloc.initial();
         }
         if (state is TransactionHistory) {
-          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            tempTransactionList =state.response.transactionList;
             transactionList = state.response.transactionList;
             // bloc.add(GetTransactionHistory(TransactionRequest(acctNumber: '')));
+          });
+          bloc.initial();
+        }
+        if(state is UcpBanks){
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            tempBankList = state.response;
+          });
+          bloc.initial();
+        }
+        if(state is MemberAccounts){
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            tempSavingAccounts = state.response;
+          });
+          bloc.initial();
+        }
+        if(state is UcpPaymentModes){
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            tempPaymentModes = state.response;
           });
           bloc.initial();
         }
@@ -167,7 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       : Colors.transparent),
                                               child: Center(
                                                 child: Text(
-                                                  accounts[index].acctProduct,
+                                                  formatFirstTitle(accounts[index].acctProduct),
                                                   style: CreatoDisplayCustomTextStyle
                                                       .kTxtMedium
                                                       .copyWith(
@@ -198,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            selectedOption?.acctProduct ?? "",
+                                            formatFirstTitle(selectedOption?.acctProduct ?? ""),
                                             style: CreatoDisplayCustomTextStyle
                                                 .kTxtMedium
                                                 .copyWith(
@@ -249,10 +280,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                           ),
-                          Container(
-                            height: Get.height.h-90.h,
-                            color: AppColor.ucpWhite10,
-                            child: Expanded(
+                          SingleChildScrollView(
+                            child: Container(
+                              height: Get.height.h,
+                              color: AppColor.ucpWhite10,
                               child: Column(
                                 children: [
                                   Gap(62.h),
@@ -324,7 +355,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   height12,
                                   SizedBox(
                                     height: 300.h,
-                                    child: Column(
+                                    child: ListView(
+                                      padding: EdgeInsets.zero,
                                       children: transactionList
                                           .mapIndexed(
                                               (element, index) => Padding(
@@ -362,8 +394,18 @@ class _HomeScreenState extends State<HomeScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 shortCut(
-                                  onTap: () {
-                                    Get.to(TransactionHistoryScreen(title: selectedOption!.acctProduct,));
+                                  onTap: () async {
+                                    await showCupertinoModalBottomSheet(
+                                    topRadius: Radius.circular(15.r),
+                                    backgroundColor:
+                                    AppColor.ucpWhite500,
+                                    context: context,
+                                    builder: (context) {
+                                      return Container(
+                                          height: 220.h,
+                                          color: AppColor.ucpWhite500,
+                                          child: EnterAmountBottomSheet());
+                                    });
                                   },
                                     UcpStrings.addFundsTxt,
                                     CircleWithIconSingleColor(
@@ -466,8 +508,9 @@ class _HomeScreenState extends State<HomeScreen> {
       onTap: onTap,
       child: SizedBox(
         height: 81.h,
+
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             child,
             Gap(8.h),

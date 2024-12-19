@@ -1,8 +1,11 @@
 import 'dart:convert';
 
 import 'package:ucp/app/apiService/appUrl.dart';
+import 'package:ucp/data/model/request/loginOtpRequest.dart';
 import 'package:ucp/data/model/request/loginReq.dart';
 import 'package:ucp/data/model/request/signUpReq.dart';
+import 'package:ucp/data/model/request/signUpSendOtp.dart';
+import 'package:ucp/data/model/response/loginOtpValidationResponse.dart';
 import 'package:ucp/data/model/response/loginResponse.dart';
 import 'package:ucp/data/model/response/signUpResponse.dart';
 
@@ -10,6 +13,7 @@ import '../../app/apiService/apiService.dart';
 import '../../app/apiService/apiStatus.dart';
 import '../model/response/cooperativeList.dart';
 import '../model/response/defaultResponse.dart';
+import '../model/response/nextMemberIdResponse.dart';
 import 'defaultRepository.dart';
 
 class OnboardingRepo extends DefaultRepository{
@@ -28,8 +32,6 @@ class OnboardingRepo extends DefaultRepository{
   }
 
   Future<Object> createAccount(SignupRequest request) async {
-    print(request);
-    print("Wowww");
     var response = await postRequest(
       request, UCPUrls.createAccount, false, HttpMethods.post,);
     var r = handleSuccessResponse(response);
@@ -54,6 +56,55 @@ class OnboardingRepo extends DefaultRepository{
     if(response is Success) {
       LoginResponse res  = loginResponseFromJson(response.response as String);
       return res;
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+  Future<Object> getMemberId(int request) async {
+    var response = await postRequest(
+      null, "${UCPUrls.getMemberId}?cooperativeId=$request", false, HttpMethods.get,);
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        NextMemberId res = nextMemberIdFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+
+  Future<Object> sendSignUpOTP(SignupOtpRequest request) async {
+    var response = await postRequest(
+      request, UCPUrls.getSignUpOtp, false, HttpMethods.post,);
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        OTPValidationResponse res = loginOtpValidationResponseFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+  Future<Object> sendLoginOtp(LoginSendOtpRequest request) async {
+    var response = await postRequest(
+      request, UCPUrls.getLoginOtp, false, HttpMethods.post,);
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        OTPValidationResponse res = loginOtpValidationResponseFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
     } else {
       handleErrorResponse(response);
       return errorResponse!;

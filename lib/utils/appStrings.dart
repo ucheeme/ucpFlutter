@@ -21,6 +21,15 @@ class UcpStrings{
  static const nIDoTxt ="No, I don't";
  static const enterMemberIdTxt ="Enter your Member ID";
  static const sCooperativeTxt ="Select Cooperative";
+ static const sMakePaymentTxt ="Add Funds";
+ static const sBankTxt ="Select Bank";
+ static const decriptionTxt ="Description";
+ static const sEnterBankAccountTxt ="Bank Account";
+ static const sEnterBankTellTxt ="Bank Teller";
+ static const sPaymentModeTxt ="Select Mode of payment";
+ static const sMemberAccountTxt ="Select Account";
+ static const datePaidText ="Date Paid";
+ static const uploadTellerText ="Upload Teller";
  static const membershipFeeTxt ="Membership fee";
  static const aTermsAndConditionsTxt ="Accept terms and conditions";
  static const alreadyHaveAnAcctTxt ="Already have an account? ";
@@ -60,6 +69,7 @@ class UcpStrings{
  static const uHaveSuccessfullyCreatedUrAcctTxt ="You have successfully created your account. Amazing experience is waiting on you...";
  static const setUpPinTxt ="Setup pin";
  static const emptyCoopTxt ="No Available Cooperative";
+ static const noAvaliableTxt ="No Available";
  static const amountTxt =" 2000";
  static const enterFNTxt =" Enter First Name";
  static const enterLNTxt =" Enter Last Name";
@@ -95,10 +105,11 @@ class UcpStrings{
   static const applicationSent ="Your application has been sent, and it’s being worked on, kindly wait a while";
 
   static const exploreApp="Explore the App";
+  static const returnToSignIApp="Return to Sign In";
 
   static const confirmOtPTxt = "Confirm OTP";
 
-  static const resendTxt = "Resent OTP";
+  static const resendTxt = "Resend OTP";
 
   static const accessYourAccountTxt="Access your cooperative activities with ease. Log in to your member account now.";
 
@@ -118,7 +129,15 @@ class UcpStrings{
  static const allTxt ="All";
  static const inFlowTxt ="Inflow";
  static const outFlowTxt ="Outflow";
-
+ static const emptyTransactionTxt ="Empty Transaction History";
+ static const inflowEmptyTransactionTxt ="Empty Credit Transaction History";
+ static const outflowEmptyTransactionTxt ="Empty Debit Transaction History";
+ static const emptyMessageTxt ="It looks like you don't have any transaction history yet!";
+ static const inflowEmptyMessageTxt ="It looks like you don't have any credit transaction on this account!";
+ static const outflowEmptyMessageTxt ="It looks like you don't have any debit transaction on this account";
+ static const userDifferentAccts ="Select Account";
+ static const transactionHistoryFilter ="Filter Transaction History";
+ static const selectMonth ="Filter duration";
  // static const sCooperativeTxt ="Select Cooperative";
 
 
@@ -132,6 +151,12 @@ class UcpStrings{
  static const ucpDebitImage="assets/images/expenses_icon.png";
  static const ucpNotificationImage="assets/images/notifications._bell.png";
  static const ucpBackArrow= "assets/images/arrow-left.png";
+
+  static const monthsTxt="months";
+
+  static const enterAmount="Enter Amount";
+
+
 
 
 

@@ -1,5 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+
+import '../colorrs.dart';
 
 String formatWithCommas(String text) {
   if (text.isEmpty) return text;
@@ -117,4 +120,29 @@ double getHeight(int value){
     default:
       return 0.5;
   }
+}
+
+String getInitials(String sentence) {
+  // Split the sentence into words
+  List<String> words = sentence.split(' ');
+
+  // Extract the first letter of each word, convert to uppercase, and join
+  String initials = words
+      .where((word) => word.isNotEmpty) // Ensure no empty strings are processed
+      .map((word) => word[0].toUpperCase())
+      .join('');
+
+  return initials;
+}
+
+Future<DateTime?> selectDate(TextEditingController controller, {
+  String labelText = "", context
+}) async {
+  DateTime? response = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2100)
+  );
+ return response;
 }

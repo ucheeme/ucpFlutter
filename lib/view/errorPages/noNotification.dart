@@ -13,7 +13,7 @@ class EmptyNotificationsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColor.ucpWhite10,
       body: Column(
         children: [
           const Spacer(flex: 2),
@@ -70,6 +70,7 @@ class ErrorInfo extends StatelessWidget {
           children: [
             Text(
               title,
+              textAlign: TextAlign.center,
               style: Theme.of(context)
                   .textTheme
                   .headlineSmall!
@@ -92,7 +93,7 @@ class ErrorInfo extends StatelessWidget {
                           borderRadius: BorderRadius.all(Radius.circular(8)))),
                   child: Text(btnText ?? "Retry".toUpperCase()),
                 ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 9),
           ],
         ),
       ),

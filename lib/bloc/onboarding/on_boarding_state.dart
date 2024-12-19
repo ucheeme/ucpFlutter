@@ -34,9 +34,32 @@ class CreateAccountSuccess extends OnBoardingState{
   List<Object?> get props => [response];
 }
 
-class LoginSuccess extends OnBoardingState{
+class LoginSuccess extends OnBoardingState {
   final LoginResponse response;
+
   const LoginSuccess(this.response);
+
+  @override
+  List<Object?> get props => [response];
+}
+
+class GetNextMemberIdSuccess extends OnBoardingState{
+  final NextMemberId response;
+   GetNextMemberIdSuccess(this.response);
+  @override
+  List<Object?> get props => [response];
+}
+
+class LoginOTPSuccessful extends OnBoardingState{
+  final OTPValidationResponse response;
+  LoginOTPSuccessful(this.response);
+  @override
+  List<Object?> get props => [response];
+}
+
+class SignUpOTPSuccessful extends OnBoardingState{
+  final OTPValidationResponse response;
+  SignUpOTPSuccessful(this.response);
   @override
   List<Object?> get props => [response];
 }

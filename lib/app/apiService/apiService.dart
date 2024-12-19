@@ -2,12 +2,15 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/adapter.dart';
+import 'package:get/get.dart' as gettt;
+import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:ucp/data/model/response/defaultResponse.dart';
 
 import '../../utils/apputils.dart';
 import '../../utils/sharedPreference.dart';
+import '../../view/errorPages/apierror.dart';
 import 'apiResponseCodes.dart';
 import 'apiStatus.dart';
 enum HttpMethods { post, put, patch, get, delete }
@@ -135,6 +138,8 @@ class ApiService {
       }
     } on DioError catch (e){
       AppUtils.debug(e.message);
+      AppUtils.debug("Dio Error");
+      gettt.Get.to(NoconnectionScreen(press: () {  },));
       return  NetWorkFailure();
     }
   }
@@ -151,7 +156,7 @@ class ApiService {
       };
       request.files.add(
         http.MultipartFile(
-          'document_file',
+          '',
           requestBody.documentFile!.readAsBytes().asStream(),
           requestBody.documentFile!.lengthSync(),
           filename: requestBody.documentCategory,

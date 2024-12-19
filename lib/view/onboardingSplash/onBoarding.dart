@@ -128,7 +128,7 @@ class _SplashScreenState extends State<OnBoarding> {
               CustomButton(
                   height: 51.h,
                   borderRadius: 60.r,
-                  buttonColor:AppColor.ucpBlue800,
+                  buttonColor:AppColor.ucpBlue600,
                   textColor: AppColor.ucpWhite500,
                   textStyle: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
                     fontSize: 16.sp,

@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' as gett;
 import 'package:rxdart/rxdart.dart';
+import 'package:ucp/data/model/request/loginOtpRequest.dart';
 import 'package:ucp/data/model/request/loginReq.dart';
 import 'package:ucp/data/model/request/signUpReq.dart';
+import '../../data/model/request/signUpSendOtp.dart';
 import '../../data/model/response/cooperativeList.dart';
 import '../../utils/customValidator.dart';
 
@@ -13,7 +15,7 @@ String firstNameTemp = "";
 class OnboardingValidation {
   TextEditingController passwordController = TextEditingController();
   TextEditingController memberIdController = TextEditingController();
-  String otpController = "";
+ // String otpController = "";
   String cooperativeId = "";
   TextEditingController transactionPinController = TextEditingController();
   TextEditingController twoFactorController = TextEditingController();
@@ -130,7 +132,7 @@ class OnboardingValidation {
       _genderSubject.stream.transform(validateFullName);
 
   Stream<String> get homeAddress =>
-      _homeAddressSubject.stream.transform(validateUserName);
+      _homeAddressSubject.stream;
 
   Stream<String> get state => _stateSubject.stream.transform(validateFullName);
 
@@ -140,7 +142,7 @@ class OnboardingValidation {
       _countrySubject.stream.transform(validateFullName);
 
   Stream<String> get memberId =>
-      _memberSubject.stream.transform(validateUserName);
+      _memberSubject.stream;
 
   Stream<String> get memberAmount =>
       _membershipAmountSubject.stream.transform(validatePrice);
@@ -385,7 +387,6 @@ class OnboardingValidation {
         if (_membershipAmountSubject.valueOrNull != null &&
             selectedCooperative != null &&
             _memberSubject.valueOrNull != null) {
-          print(" Member Donee");
           return true;
         } else {
           print("I am the cause M");
@@ -403,8 +404,18 @@ class OnboardingValidation {
       }
     }
   }
-
+  SignupOtpRequest signupOtpRequest() {
+    print("I am here");
+    return SignupOtpRequest(
+      cooperativeId: selectedCooperative!.nodeId,
+      emailAddress: _emailSubject.value.trim() ?? "",
+      username: _userNameSubject.value.trim(),
+      fullName: _firstNameSubject.value.trim() ?? "",
+    );
+  }
   SignupRequest signupRequest() {
+    double amount = double.parse(_membershipAmountSubject.value.trim().replaceAll(",", "") ?? "0");
+    print("This is the amount $amount");
     var response = SignupRequest(
       cooperativeId: selectedCooperative!.nodeId,
       username: _userNameSubject.value.trim(),
@@ -429,5 +440,11 @@ class OnboardingValidation {
         nodeId: selectedCooperative!.nodeId,
         username: _userNameSubject.value.trim(),
         password: _passwordSubject.value.trim());
+  }
+
+  LoginSendOtpRequest loginOtpRequest() {
+    return LoginSendOtpRequest(
+        cooperativeId: selectedCooperative!.nodeId,
+        username: _userNameSubject.value.trim());
   }
 }

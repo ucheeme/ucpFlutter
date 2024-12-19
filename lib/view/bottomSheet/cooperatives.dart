@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:ucp/data/model/response/cooperativeList.dart';
@@ -47,7 +48,7 @@ class _CooperativeListDesignState extends State<CooperativeListDesign> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        backgroundColor: AppColor.ucpWhite50,
+        backgroundColor: AppColor.ucpWhite500,
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -58,7 +59,7 @@ class _CooperativeListDesignState extends State<CooperativeListDesign> {
                   horizontal: 16.w,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColor.ucpBlue50, //Color( 0xffEDF4FF),
+                  color: AppColor.ucpBlue25, //Color( 0xffEDF4FF),
                   borderRadius: BorderRadius.only(
                     topRight: Radius.circular(15.r),
                     topLeft: Radius.circular(15.r),
@@ -66,44 +67,53 @@ class _CooperativeListDesignState extends State<CooperativeListDesign> {
                 ),
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text(
-                    UcpStrings.sCooperativeTxt,
-                    style: CreatoDisplayCustomTextStyle.kTxtBold.copyWith(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16.sp,
-                        color: AppColor.ucpBlack500),
+                  child: Row(
+                    children: [
+                      Icon(Icons.arrow_back ,size: 28.h, color: AppColor.ucpBlack500),
+                      Gap(10.w),
+                      Text(
+                        UcpStrings.sCooperativeTxt,
+                        style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16.sp,
+                            color: AppColor.ucpBlack500),
+                      ),
+                    ],
                   ),
                 ),
               ),
               height10,
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10.w),
-                child: CupertinoSearchTextField(
-                  controller: searchController,
-                  placeholder: UcpStrings.searchTxt,
-                  placeholderStyle: CustomTextStyle.kTxtMedium.copyWith(
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w400,
-                      color: AppColor.ucpBlack500),
-                  onSubmitted: (value) {
-                    setState(() {
-                      searchSelected = false;
-                    });
-                  },
-                  onChanged: searchCooperativeList,
-                  decoration: BoxDecoration(
-                    color: AppColor.ucpWhite500,
-                    borderRadius: BorderRadius.circular(10.r),
-                    border: Border.all(
-                        color: searchSelected
-                            ? AppColor.ucpBlue500
-                            : AppColor.ucpWhite100),
+                child: SizedBox(
+                  height: 51.h,
+                  child: CupertinoSearchTextField(
+                    controller: searchController,
+                    placeholder: UcpStrings.searchTxt,
+                    placeholderStyle: CustomTextStyle.kTxtMedium.copyWith(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w400,
+                        color: AppColor.ucpBlack500),
+                    onSubmitted: (value) {
+                      setState(() {
+                        searchSelected = false;
+                      });
+                    },
+                    onChanged: searchCooperativeList,
+                    decoration: BoxDecoration(
+                      color: AppColor.ucpWhite500,
+                      borderRadius: BorderRadius.circular(10.r),
+                      border: Border.all(
+                          color: searchSelected
+                              ? AppColor.ucpBlue500
+                              : AppColor.ucpWhite100),
+                    ),
+                    onTap: () {
+                      setState(() {
+                        searchSelected = true;
+                      });
+                    },
                   ),
-                  onTap: () {
-                    setState(() {
-                      searchSelected = true;
-                    });
-                  },
                 ),
               ),
               height20,

@@ -188,18 +188,18 @@ class _SignUpSecondPageState extends State<SignUpSecondPage> {
                             textColor: AppColor.ucpBlack500,
                           ),
                           StreamBuilder<Object>(
-                            stream: widget.bloc.validation.completeSignupSecondPageValidation,
-                            builder: (context, snapshot) {
-                              return CustomButton(onTap: () =>
+                              stream: widget.bloc.validation.completeSignupSecondPageValidation,
+                              builder: (context, snapshot) {
+                                return CustomButton(onTap: () =>
                                 snapshot.data == true ? Get.to(SignUpThirdPage(bloc: widget.bloc)) : null,
-                                height: 51.h,
-                                width: 163.5.w,
-                                buttonText: "${UcpStrings.proceedTxt} (2 of 5)",
-                                borderRadius: 60.r,
-                                buttonColor: AppColor.ucpBlue500,
-                                textColor: AppColor.ucpWhite500,
-                              );
-                            }
+                                  height: 51.h,
+                                  width: 163.5.w,
+                                  buttonText: "${UcpStrings.proceedTxt} (2 of 4)",
+                                  borderRadius: 60.r,
+                                  buttonColor: AppColor.ucpBlue500,
+                                  textColor: AppColor.ucpWhite500,
+                                );
+                              }
                           ),
                         ],
                       )
