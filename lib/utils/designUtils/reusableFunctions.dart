@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -25,10 +27,10 @@ String dateTimeFormatter(String time){
   return formattedDate;
 }
 
-String dateTimeFormatterMDY(String time){
+String dateTimeFormatterMDY(String time,{String format = 'MMM d, y'}){
   DateTime dateTime = DateTime.parse(time);
   // Define the format: 'd MMM, y • hh:mm a'
-  String formattedDate = DateFormat('MMM d, y').
+  String formattedDate = DateFormat(format).
   format(dateTime.toLocal());
   return formattedDate;
 }
@@ -146,3 +148,29 @@ Future<DateTime?> selectDate(TextEditingController controller, {
   );
  return response;
 }
+bool compareJsonStructure(dynamic json1, dynamic json2) {
+  try {
+    // Ensure both inputs are maps
+    final Map<String, dynamic> map1 = json1 is String ? json.decode(json1) : json1;
+    final Map<String, dynamic> map2 = json2 is String ? json.decode(json2) : json2;
+
+    return _compareKeys(map1, map2);
+  } catch (e) {
+    print("Error comparing JSON structures: $e");
+    return false;
+  }
+}
+
+bool _compareKeys(Map<String, dynamic> map1, Map<String, dynamic> map2) {
+  if (map1.keys.length != map2.keys.length) return false;
+  for (var key in map1.keys) {
+    if (!map2.containsKey(key)) return false;
+    if (map1[key] is Map && map2[key] is Map) {
+      if (!_compareKeys(map1[key], map2[key])) return false;
+    }
+  }
+  return true;
+}
+
+
+//1 cash 2 cheque 3 member bank account

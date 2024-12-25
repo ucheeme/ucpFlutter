@@ -7,7 +7,7 @@ class UCPLoadingScreen extends StatelessWidget {
   final Widget? loaderWidget;
   final bool visible; // Controls visibility of the overlay
 
-  const UCPLoadingScreen({
+  UCPLoadingScreen({
     Key? key,
     this.overlayColor = Colors.black,
     this.loaderWidget,

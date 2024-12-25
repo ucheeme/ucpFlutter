@@ -25,6 +25,7 @@ var height6=SizedBox(height: 6.h,);
 var height8=SizedBox(height: 8.h,);
 var height10=SizedBox(height: 10.h,);
 var height12=SizedBox(height: 12.h,);
+var height14=SizedBox(height: 14.h,);
 var height16=SizedBox(height: 16.h,);
 var height20=SizedBox(height: 20.h,);
 var height22=SizedBox(height: 22.h,);
@@ -56,7 +57,7 @@ class CustomTextStyle{
   static TextStyle kTxtMedium = TextStyle(
     color:AppColor.ucpBlack800,
     fontSize: 16.sp,
-  
+
     fontWeight: FontWeight.w600,
     fontFamily: 'DM Sans Medium',
   );
@@ -64,14 +65,14 @@ class CustomTextStyle{
   static TextStyle kTxtLight = TextStyle(
     color: AppColor.ucpBlack800,
     fontSize: 18.sp,
-   
+
     fontWeight: FontWeight.w400,
     fontFamily: 'DM Sans Regular',
   );
   static TextStyle kTxtBold= TextStyle(
     color: AppColor.ucpBlack800,
     fontSize: 38.sp,
-    
+
     fontWeight: FontWeight.w800,
     fontFamily: 'DM Sans',
   );
@@ -81,7 +82,7 @@ class CreatoDisplayCustomTextStyle{
   static TextStyle kTxtRegular = TextStyle(
     color: AppColor.ucpBlack800,
     fontSize: 12.sp,
-   
+
     fontWeight: FontWeight.w400,
     fontFamily: 'Creato Display',
   );
@@ -105,6 +106,7 @@ class CreatoDisplayCustomTextStyle{
   static TextStyle kTxtBold= TextStyle(
     color: AppColor.ucpBlack800,
     fontSize: 38.sp,
+
     fontWeight: FontWeight.w800,
     fontFamily: 'Creato Display Bold',
   );

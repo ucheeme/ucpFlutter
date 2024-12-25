@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // TODO: add flutter_svg package to pubspec.yaml
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:ucp/utils/colorrs.dart';
 
 class NoconnectionScreen extends StatelessWidget {
   Function() press;

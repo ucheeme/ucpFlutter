@@ -9,12 +9,13 @@ import 'package:dio/dio.dart';
 import 'package:ucp/data/model/response/defaultResponse.dart';
 
 import '../../utils/apputils.dart';
+import '../../utils/designUtils/reusableFunctions.dart';
 import '../../utils/sharedPreference.dart';
 import '../../view/errorPages/apierror.dart';
 import 'apiResponseCodes.dart';
 import 'apiStatus.dart';
 enum HttpMethods { post, put, patch, get, delete }
-
+UcpDefaultResponse defaultResponse = UcpDefaultResponse(isSuccessful: false, message: "Error", errors: [], statusCode: 01, data: "");
 class ApiService {
   static Dio dio = Dio();
 
@@ -72,6 +73,7 @@ class ApiService {
       }
     } on SocketException catch (_) {
       print('network error');
+      gettt.Get.to(NoconnectionScreen(press: () { gettt.Get.back(); },));
       return  NetWorkFailure();
     }
     initiateDio(requireAccess,  baseUrl);
@@ -113,20 +115,64 @@ class ApiService {
             response.statusCode == ApiResponseCodes.create_success ) {
           return Success(response.statusCode!,response.data as String);
         }
-        if (  399 <= (response.statusCode ?? 400) && (response.statusCode ?? 400)  <= 500){
-          if ( response.data is String ) {
+        if (399 <= (response.statusCode ?? 400) && (response.statusCode ?? 400) <= 500) {
+
+          if (response.data is Map<String, dynamic>) {
+            print("response yessss: ${response.data}");
             try {
-              var apiRes = ucpDefaultResponseFromJson(response.data as String);
-              return Failure(response.statusCode ?? 400,
-                  (apiRes));
+              // The expected structure of UcpDefaultResponse as a map
+              final expectedStructure = UcpDefaultResponse(
+                isSuccessful: false,
+                message: '',
+                errors: [],
+                statusCode: response.statusCode ?? 400,
+                data: null,
+              ).toJson();
+
+              // Compare JSON structures
+              final isSameStructure = compareJsonStructure(response.data, expectedStructure);
+
+              if (!isSameStructure) {
+                // If structure is different, format the response data into UcpDefaultResponse
+                final formattedResponse = UcpDefaultResponse(
+                  isSuccessful: false,
+                  message: "Error response from server",
+                  errors: [],
+                  statusCode: response.statusCode ?? 400,
+                  data: null,
+                );
+
+                print("Interesting: Response formatted to default structure");
+                return Failure(response.statusCode ?? 400, formattedResponse);
+              } else {
+                // If structure matches, return the parsed UcpDefaultResponse
+                print("Not interesting: Returning parsed UcpDefaultResponse");
+                final apiResponse = ucpDefaultResponseFromJson(response.data as String);
+                return Failure(response.statusCode ?? 400, apiResponse);
+              }
+            } catch (e) {
+              // Handle errors during processing
+              print("Error: $e");
+              return Failure(response.statusCode ?? 400, UcpDefaultResponse(
+                isSuccessful: false,
+                message: "An error occurred while processing the response.",
+                errors: [e.toString()],
+                statusCode: response.statusCode ?? 400,
+                data: null,
+              ));
             }
-            catch(e){
-              print("error: $e");
-            }
-          }else {
-            return ForbiddenAccess();
+          } else {
+            return Failure(response.statusCode ?? 400, UcpDefaultResponse(
+              isSuccessful: false,
+              message: jsonDecode(response.data as String)['message']??jsonDecode(response.data as String)["errorMessage"],
+              errors: [response.data.toString()],
+              statusCode: response.statusCode ?? 400,
+              data: null,
+            ));
           }
         }
+
+
         if (ApiResponseCodes.authorizationError == response.statusCode){
           return ForbiddenAccess();
         }
@@ -189,6 +235,7 @@ class ApiService {
         return  Success(res.statusCode!,response);
       }
       if (ApiResponseCodes.error == res.statusCode || ApiResponseCodes.internalServerError == res.statusCode){
+       print("interesting");
         return  Failure(res.statusCode,(ucpDefaultResponseFromJson( response)));
       }
       if (ApiResponseCodes.authorizationError == res.statusCode){

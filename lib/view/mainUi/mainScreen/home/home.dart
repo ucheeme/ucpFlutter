@@ -20,6 +20,7 @@ import 'package:ucp/utils/sharedPreference.dart';
 import 'package:ucp/utils/ucpLoader.dart';
 import 'package:ucp/view/bottomSheet/enterAmoun.dart';
 import 'package:ucp/view/mainUi/mainScreen/home/transactionHistory.dart';
+import 'package:ucp/view/mainUi/mainScreen/home/withdraw.dart';
 
 import '../../../../data/model/response/dashboardResponse.dart';
 import '../../../../data/model/response/transactionHistoryResponse.dart';
@@ -355,8 +356,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                   height12,
                                   SizedBox(
                                     height: 300.h,
-                                    child: ListView(
-                                      padding: EdgeInsets.zero,
+                                    child: transactionList.isEmpty?
+                                    Center(
+                                      child: Text(UcpStrings.emptyTransactionTxt,style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16.sp,
+                                        color: AppColor.ucpBlack500
+                                      )),
+                                    ):
+                                    ListView(
+                                      padding: EdgeInsets.symmetric(horizontal:16.w),
                                       children: transactionList
                                           .mapIndexed(
                                               (element, index) => Padding(
@@ -423,7 +432,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     )),
                                 shortCut(
                                     onTap: () {
-                                      Get.to(TransactionHistoryScreen(title: selectedOption!.acctProduct,),
+                                      Get.to(WithdrawScreen(),
                                       curve: Curves.easeIn);
                                     },
                                     UcpStrings.withdrawTxt,

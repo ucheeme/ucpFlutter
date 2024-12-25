@@ -59,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Gap(212.h),
+              Gap(150.h),
               SizedBox(
                 height: 350.05.h,
                 width: 343.w,
@@ -128,7 +128,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ],
                 ),
               ),
-             Gap(188.95.h),
+             Gap(178.95.h),
               AnimatedBuilder(
                 animation: _controller,
                 builder: (context, child) {
@@ -153,8 +153,7 @@ class _SplashScreenState extends State<SplashScreen>
                   );
                 },
               ),
-          
-              height47
+             // Spacer(flex: 2,),
             ],
           ),
         ),

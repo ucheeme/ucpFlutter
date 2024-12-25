@@ -46,6 +46,7 @@ class AppColor{
   static const Color ucpBlack920 =Color(0xff1C1B1F);
   static const Color ucpBlack950 =Color(0xff0D0D0D);
   static const Color ucpBlack1000 =Color(0xff0D0D12);
+  static const Color ucpFullBlack =Color(0xff000000);
   //UCPOrangeColor
   static const Color ucpOrange25 =Color(0xffFFFBF6);
   static const Color ucpOrange50 =Color(0xffFEF3E6);

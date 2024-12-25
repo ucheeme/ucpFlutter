@@ -44,6 +44,7 @@ class Assets {
   static const String imagesMembershipIcon = 'assets/images/membership_icon.png';
   static const String imagesMoneyBag = 'assets/images/money_bag.png';
   static const String imagesMoneyTransferFlat = 'assets/images/money_transfer_flat.png';
+  static const String imagesNotificationsBell = 'assets/images/notifications_bell.png';
   static const String imagesOnboarding = 'assets/images/onboarding.png';
   static const String imagesOnboarding2 = 'assets/images/onboarding2.png';
   static const String imagesOnboarding3 = 'assets/images/onboarding3.png';
@@ -69,7 +70,15 @@ class Assets {
   static const String imagesVoteIcon = 'assets/images/vote_icon.png';
   static const String imagesVoteSelectedIcon = 'assets/images/vote_selected_icon.png';
   static const String imagesWithdrawIcon = 'assets/images/withdraw_icon.png';
+  static const String selectedFinanceSelected = 'assets/images/bottomNavIcons/selected/finance_selected.png';
+  static const String selectedHomeSelected = 'assets/images/bottomNavIcons/selected/home_selected.png';
+  static const String selectedStorefrontSelected = 'assets/images/bottomNavIcons/selected/storefront_selected.png';
+  static const String selectedVoteSelected = 'assets/images/bottomNavIcons/selected/vote_selected.png';
   static const String signUpPerson = 'assets/images/signUp/person.png';
   static const String signUpPersonAddUnfilled = 'assets/images/signUp/person_add_unfilled.png';
+  static const String unseletedFinanceUnselected = 'assets/images/bottomNavIcons/unseleted/finance_unselected.png';
+  static const String unseletedHomeUnselected = 'assets/images/bottomNavIcons/unseleted/home_unselected.png';
+  static const String unseletedStoreUnselected = 'assets/images/bottomNavIcons/unseleted/store_unselected.png';
+  static const String unseletedVoteUnselected = 'assets/images/bottomNavIcons/unseleted/vote_unselected.png';
 
 }

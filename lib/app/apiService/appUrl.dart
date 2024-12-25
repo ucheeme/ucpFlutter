@@ -14,4 +14,14 @@ class UCPUrls{
   static const  getPaymentMode= "${baseUrl}Savings/get-mode-of-payments";
   static const  getBankList= "${baseUrl}Common/get-banks";
   static const  getMemberAccountst= "${baseUrl}Savings/get-member-savings-account-numbers";
+  static const  getMemberWithdrawAccountDetail= "${baseUrl}Withdrawal/get-member-withdrawal-detail";
+  static const  getWithdrawHistory= "${baseUrl}Withdrawal/get-member-withdrawal-histories";
+  static const  withdrawRequest= "${baseUrl}Withdrawal/withdrawal-request";
+  static const  getShopItems= "${baseUrl}Shop/get-shop-items";
+  static const  addItemToCart= "${baseUrl}Shop/add-item-to-cart";
+  static const  increaseItemCountOnCart= "${baseUrl}Shop/increase-item-in-cart";
+  static const  decreaseItemCountOnCart= "${baseUrl}Shop/decrease-item-in-cart";
+  static const  markItemAsFavourite= "${baseUrl}Shop/add-favourite-item";
+  static const  getAllFavouriteItems= "${baseUrl}Shop/get-all-favourite-memmber-purchased-item";
+  static const  getAllItemOnCart= "${baseUrl}Shop/get-cart-items";
 }

@@ -100,16 +100,19 @@ class _SplashScreenState extends State<OnBoarding> {
                       children: [
                         Text(splashData[currentPage]["textHeader"]!,
                         style: CreatoDisplayCustomTextStyle.kTxtBold.copyWith(
-                          color: AppColor.ucpBlack800,
+                          color: AppColor.ucpFullBlack,
                           fontWeight: FontWeight.w700,
+                         // height: 14.16.h,
+                            letterSpacing: -1,
                           fontSize: 22.sp
                         ),
                         ),
-                        height20,
+                        height10,
                         Text(splashData[currentPage]["textBody"]!,
                         style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
                           color: AppColor.ucpBlack700,
                           fontWeight: FontWeight.w400,
+                          letterSpacing: 0.03,
                           fontSize: 14.sp
                         ),
                           textAlign: TextAlign.center,
@@ -124,7 +127,7 @@ class _SplashScreenState extends State<OnBoarding> {
                   ),
                 ),
               ),
-              Gap(54.h),
+              Gap(40.h),
               CustomButton(
                   height: 51.h,
                   borderRadius: 60.r,

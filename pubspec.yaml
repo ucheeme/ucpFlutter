@@ -60,7 +60,9 @@ dependencies:
   provider:
   flutter_keyboard_visibility: ^6.0.0
   cupertino_icons: ^1.0.8
+  shimmer: ^3.0.0
   badges: ^3.1.2
+  custom_refresh_indicator: ^4.0.1
   modal_bottom_sheet:
     git:
       url: https://github.com/followthemoney1/modal_bottom_sheet.git
@@ -90,6 +92,9 @@ flutter:
     - assets/images/bottomNavIcons/selected/
     - assets/images/bottomNavIcons/unseleted/
     - assets/images/signUp/
+    - assets/images/memberBg1.png
+    - assets/images/memberBg2.png
+    - assets/images/memberBg3.png
     - assets/images/password_alert.png
     - assets/images/password_check.png
 

@@ -6,7 +6,7 @@ class AnimationManager {
   late Animation<Offset> imageSlideUpAnimation;
   late Animation<double> imageScaleAnimation;
   late Animation<Offset> contentSlideAnimation;
-
+  late Animation<double> _scaleAnimation;
   AnimationManager({required this.controller});
 
   void initAnimations() {
@@ -50,6 +50,66 @@ class AnimationManager {
       CurvedAnimation(
         parent: controller,
         curve:  const Interval(0.7, 1.0, curve: Curves.easeIn),
+      ),
+    );
+  }
+}
+class BouncingWidget extends StatefulWidget {
+  final Widget child;
+  final Duration duration;
+
+  const BouncingWidget({
+    Key? key,
+    required this.child,
+    this.duration = const Duration(milliseconds: 300),
+  }) : super(key: key);
+
+  @override
+  _BouncingWidgetState createState() => _BouncingWidgetState();
+}
+
+class _BouncingWidgetState extends State<BouncingWidget>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: widget.duration,
+      lowerBound: 0.8,
+      upperBound: 1.0,
+    );
+
+    _scaleAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.elasticOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _bounce() {
+    _controller.forward().then((_) {
+      _controller.reverse();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        _bounce();
+      },
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: widget.child,
       ),
     );
   }

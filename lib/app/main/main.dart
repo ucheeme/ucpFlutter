@@ -98,7 +98,7 @@ class _MyAppState extends State<MyApp> {
         initialRoute: Pages.initial,
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: AppColor.ucpBlue500),
           useMaterial3: true,
         ),
         builder: (context, widget) {

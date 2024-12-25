@@ -15,66 +15,7 @@ import '../../utils/colorrs.dart';
 import 'mainScreen/home/home.dart';
 import 'mainScreen/shop/shop.dart';
 
-class ScrollableBlurBottomNav extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      body: Stack(
-        children: [
-          ListView.builder(
-            // padding: EdgeInsets.only(bottom: 80.0),
-            itemCount: 50,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text('Item $index'),
-              );
-            },
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                child: Container(
-                  color: AppColor.ucpBlue400,
-                  child: BottomNavigationBar(
-                    type: BottomNavigationBarType.fixed,
-                    backgroundColor: Colors.transparent,
-                    selectedItemColor: Colors.white,
-                    unselectedItemColor: Colors.white70,
-                    items: const [
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.home),
-                        label: 'Home',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.search),
-                        label: 'Search',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.notifications),
-                        label: 'Notifications',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.person),
-                        label: 'Profile',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.settings),
-                        label: 'Settings',
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+
 
 class MyBottomNav extends StatefulWidget {
   int? position;

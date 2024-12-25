@@ -8,3 +8,44 @@ final class FinanceInitial extends FinanceState {
   @override
   List<Object> get props => [];
 }
+
+
+class FinanceIsLoading extends FinanceState{
+  @override
+  List<Object> get props => [];
+}
+
+class FinanceError extends FinanceState{
+  UcpDefaultResponse errorResponse;
+  FinanceError(this.errorResponse);
+  @override
+  List<Object> get props => [errorResponse];
+}
+
+class FinanceMemberAccounts extends FinanceState {
+  List<UserSavingAccounts> memberAccountsList;
+  FinanceMemberAccounts(this.memberAccountsList);
+  @override
+  List<Object> get props => [memberAccountsList];
+}
+
+class FinanceMemberAccountBalance extends FinanceState {
+  WithdrawAccountBalanceInfo withdrawAccountBalanceInfo;
+  FinanceMemberAccountBalance(this.withdrawAccountBalanceInfo);
+  @override
+  List<Object> get props => [withdrawAccountBalanceInfo];
+}
+
+class FinanceMemberWithdrawalHistory extends FinanceState {
+  WithdrawTransaction response;
+  FinanceMemberWithdrawalHistory(this.response);
+  @override
+  List<Object> get props => [response];
+}
+
+class FinanceRequestWithdrawalSent extends FinanceState {
+  UcpDefaultResponse response;
+  FinanceRequestWithdrawalSent(this.response);
+  @override
+  List<Object> get props => [response];
+}

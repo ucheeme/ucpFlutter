@@ -79,11 +79,11 @@ class AppUtils{
     var format = NumberFormat.simpleCurrency(name: "NGN");
     return "NGN";
   }
-  static UcpDefaultResponse defaultErrorResponse({String msg = "Error occurred"}){
+  static UcpDefaultResponse defaultErrorResponse({String msg = ""}){
     var returnValue =  UcpDefaultResponse(data: null,message: "Error occurred",
-        errors: ["Developer Error"], isSuccessful: false, statusCode: 0);
+        errors: [], isSuccessful: false, statusCode: 0);
     returnValue.message = msg;
-    print("Developer Error Detail: $msg");
+    // print("Developer Error Detail: $msg");
     return returnValue;
   }
 

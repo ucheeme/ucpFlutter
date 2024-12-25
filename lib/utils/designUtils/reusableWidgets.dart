@@ -19,6 +19,7 @@ class CustomButton extends StatelessWidget {
     this.borderColor,
     required this.buttonText,
     this.height,
+    this.child,
     this.width,
     this.textStyle,
     this.textfontSize,
@@ -30,7 +31,7 @@ class CustomButton extends StatelessWidget {
   VoidCallback onTap;
   IconData? icon;
   Color? buttonColor;
-
+  Widget? child;
   double? borderRadius;
 
   Color? textColor;
@@ -56,7 +57,7 @@ class CustomButton extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           child: Center(
-            child: Row(
+            child: child??Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Visibility(
@@ -98,7 +99,8 @@ class CustomizedTextField extends StatelessWidget {
   final Function(String)? onChanged;
   final bool? readOnly;
   bool? isPasswordVisible;
-  bool? isTouched = false;
+  bool? isTouched;
+  Color? fillColor;
   bool? isProfile = false;
   final String? Function(String?)? validator;
   final void Function()? onTap;
@@ -120,6 +122,7 @@ class CustomizedTextField extends StatelessWidget {
       this.prefixWidget,
       this.prefixIconConstraints,
       this.error,
+        this.fillColor,
       this.isConfirmPasswordMatch,
       this.onEditingComplete,
       this.maxLines,
@@ -164,6 +167,10 @@ class CustomizedTextField extends StatelessWidget {
             onChanged: onChanged,
             maxLength: maxLength,
             maxLines: maxLines ?? 1,
+            style: CustomTextStyle.kTxtMedium.copyWith(
+                color: AppColor.ucpBlack800,
+                fontWeight: FontWeight.w400,
+                fontSize: 14.sp),
             validator: validator ??
                 (value) {
                   if (value!.isEmpty) {
@@ -172,10 +179,6 @@ class CustomizedTextField extends StatelessWidget {
                     return null;
                   }
                 },
-            style: CustomTextStyle.kTxtMedium.copyWith(
-                color: AppColor.ucpBlack800,
-                fontWeight: FontWeight.w400,
-                fontSize: 14.sp),
             decoration: InputDecoration(
                 hintText: hintTxt,
                 contentPadding: EdgeInsets.symmetric(vertical: 15.h),
@@ -192,15 +195,15 @@ class CustomizedTextField extends StatelessWidget {
                 suffixIconConstraints: suffixIconConstraints ??
                     BoxConstraints(minWidth: 19.w, minHeight: 19.h),
                 suffixIcon: surffixWidget ?? const SizedBox.shrink(),
-                fillColor: AppColor.ucpWhite10,
+                fillColor:fillColor?? AppColor.ucpWhite10,
                 filled: true,
                 focusedBorder: OutlineInputBorder(
                   borderSide:
-                      BorderSide(color: AppColor.ucpWhite10, width: 0.5.w),
+                      BorderSide(color:(isTouched==true) ? AppColor.ucpBlue300 :AppColor.ucpWhite10, width: 0.5.w),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color:isTouched ??false ? AppColor.ucpBlue100 : AppColor.ucpWhite10),
+                  borderSide: BorderSide(color:(isTouched==true) ? AppColor.ucpBlue300 : AppColor.ucpWhite10),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 errorBorder: (error == null || error == "")
@@ -215,8 +218,7 @@ class CustomizedTextField extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 focusedErrorBorder: OutlineInputBorder(
-                  borderSide:
-                      BorderSide(color: AppColor.ucpBlue100, width: 0.5.w),
+                  borderSide: BorderSide(color: AppColor.ucpBlue100, width: 0.5.w),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 hintStyle: CustomTextStyle.kTxtRegular.copyWith(
@@ -410,9 +412,9 @@ class _UCPWelcomeOptionState extends State<UCPWelcomeOption> {
                       children: [
                         Text(
                           widget.headerText,
-                          style: CreatoDisplayCustomTextStyle.kTxtBold.copyWith(
-                              color: AppColor.ucpBlack800,
-                              fontWeight: FontWeight.w700,
+                          style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                              color: AppColor.ucpBlack500,
+                              fontWeight: FontWeight.w500,
                               fontSize: 16.sp),
                         ),
                         Gap(3.h),

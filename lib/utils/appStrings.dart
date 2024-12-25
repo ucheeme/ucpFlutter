@@ -20,7 +20,7 @@ class UcpStrings{
  static const yIDoTxt ="Yes, I do";
  static const nIDoTxt ="No, I don't";
  static const enterMemberIdTxt ="Enter your Member ID";
- static const sCooperativeTxt ="Select Cooperative";
+ static const sCooperativeTxt ="Select cooperative";
  static const sMakePaymentTxt ="Add Funds";
  static const sBankTxt ="Select Bank";
  static const decriptionTxt ="Description";
@@ -88,7 +88,7 @@ class UcpStrings{
  static const sCityTxt ="Select City";
  static const sCountryTxt ="Select Country";
  static const sStateTxt ="Select State";
-
+ static const orderSummary ="Order Summary";
  static const searchTxt ="Search";
 
   static const cancelTxt = "Cancel";
@@ -106,6 +106,7 @@ class UcpStrings{
 
   static const exploreApp="Explore the App";
   static const returnToSignIApp="Return to Sign In";
+  static const inCartTxt="In cart";
 
   static const confirmOtPTxt = "Confirm OTP";
 
@@ -126,9 +127,16 @@ class UcpStrings{
  static const historyTxt ="History";
  static const withdrawTxt ="Withdraw";
  static const transactionHistoryTxt ="transaction history";
+ static const withdrawalTxt ="Withdrawal";
+ static const withdrawalsReqTxt ="Withdrawals request";
  static const allTxt ="All";
+ static const shopTxt ="Shop";
+ static const shoppingTxt ="Shopping";
+ static const favouriteTxt ="Favourite";
  static const inFlowTxt ="Inflow";
  static const outFlowTxt ="Outflow";
+ static const withdrawalsTxt ="Withdrawals";
+ static const requestTxt ="Requests";
  static const emptyTransactionTxt ="Empty Transaction History";
  static const inflowEmptyTransactionTxt ="Empty Credit Transaction History";
  static const outflowEmptyTransactionTxt ="Empty Debit Transaction History";
@@ -138,10 +146,24 @@ class UcpStrings{
  static const userDifferentAccts ="Select Account";
  static const transactionHistoryFilter ="Filter Transaction History";
  static const selectMonth ="Filter duration";
+ static const withdrawFunds ="Withdraw funds";
+ static const cartSummary ="Cart summary";
+ static const enterDesiredAmountToWithdraw ="Enter desired amount to withdraw";
+ static const selectPaymentMode ="Select payment method";
+ static const allAvailableItem ="All available items";
+ static const payTxt="Pay";
+ static const subTotalTxt="Subtotal";
+ static const estimatedTotalTxt="Estimated total";
  // static const sCooperativeTxt ="Select Cooperative";
 
 
  static const ucpLogo = "assets/images/logoWithoutText.png";
+ static const addToCartIcon = "assets/images/storefront_cart_icon.png";
+ static const reduceInventoryIcon = "assets/images/reduce_inventory_count.png";
+ static const increaseInventoryIcon = "assets/images/increase_inventory_count.png";
+ static const removeItemFromCart = "assets/images/removeFromCart.png";
+ static const inventoryCartIcon = "assets/images/inventory_cart_icon.png";
+ static const basketI = "assets/images/imagesBasket.png";
  static const ucpAddFundsIcon = "assets/images/add_icon.png";
  static const ucpHistoryIcon = "assets/images/history_Icon.png";
  static const dashBoardB ="assets/images/dashboard_Background.png";
@@ -149,12 +171,20 @@ class UcpStrings{
  static const ucpApplyLoanImage="assets/images/apply_loan_image.png";
  static const ucpCreditImage="assets/images/income_icon.png";
  static const ucpDebitImage="assets/images/expenses_icon.png";
- static const ucpNotificationImage="assets/images/notifications._bell.png";
+ static const ucpNotificationImage="assets/images/notifications_bell.png";
+ static const ucpShoppingCart="assets/images/shopping_cart.png";
  static const ucpBackArrow= "assets/images/arrow-left.png";
-
+ static const ucpMemberAccount1= "assets/images/memberBg1.png";
+ static const ucpMemberAccount2= "assets/images/memberBg2.png";
+ static const ucpMemberAccount3= "assets/images/memberBg3.png";
+ static const favouriteI= "assets/images/favoriteChecked.png";
+ static const unFavouriteI= "assets/images/favoriteUnchecked.png";
+ static const loadingCartIcon= "assets/images/shopping_cart_loading.png";
   static const monthsTxt="months";
 
   static const enterAmount="Enter Amount";
+
+
 
 
 

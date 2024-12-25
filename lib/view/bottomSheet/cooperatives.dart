@@ -69,7 +69,7 @@ class _CooperativeListDesignState extends State<CooperativeListDesign> {
                   alignment: Alignment.centerLeft,
                   child: Row(
                     children: [
-                      Icon(Icons.arrow_back ,size: 28.h, color: AppColor.ucpBlack500),
+                      Icon(Icons.arrow_back ,size:18.h, color: AppColor.ucpBlack500),
                       Gap(10.w),
                       Text(
                         UcpStrings.sCooperativeTxt,
@@ -84,7 +84,7 @@ class _CooperativeListDesignState extends State<CooperativeListDesign> {
               ),
               height10,
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.w),
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: SizedBox(
                   height: 51.h,
                   child: CupertinoSearchTextField(
@@ -133,6 +133,7 @@ class _CooperativeListDesignState extends State<CooperativeListDesign> {
                   : SizedBox(
                       height: 270.h,
                       child: ListView(
+
                           children: cooperativeList
                               .mapIndexed((element, index) =>
                               GestureDetector(
@@ -147,7 +148,7 @@ class _CooperativeListDesignState extends State<CooperativeListDesign> {
                                             ? 70.h
                                             : 48.h,
                                         margin: EdgeInsets.only(
-                                            bottom: 14.h, left: 15.w, right: 15.w),
+                                            bottom: 14.h, left: 16.w, right: 16.w),
                                         padding:
                                             EdgeInsets.symmetric(horizontal: 12.h),
                                         decoration: BoxDecoration(
@@ -176,7 +177,8 @@ class _CooperativeListDesignState extends State<CooperativeListDesign> {
                                               ? 24.h
                                               : 16.h,
                                         )),
-                                  ))
+                                  )
+                          )
                               .toList()),
                     ),
 

@@ -76,11 +76,11 @@ class OnBoardingBloc extends Bloc<OnBoardingEvent, OnBoardingState> {
       final response = await onboardingRepository.loginUser(event.request);
       if (response is LoginResponse) {
         emit(LoginSuccess(response));
-        AppUtils.debug("success");
       }else{
         emit(OnBoardingError(response as UcpDefaultResponse));
         AppUtils.debug("error");
-      }    }catch(e,trace){
+      }
+    }catch(e,trace){
       print(trace);
       emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }

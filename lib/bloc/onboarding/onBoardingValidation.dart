@@ -292,7 +292,6 @@ class OnboardingValidation {
     if (customValidator.validatePassword(value) != null) {
       sink.addError(customValidator.validatePassword(value)!);
     } else {
-      print("this is pasd");
       sink.add(value);
     }
   });

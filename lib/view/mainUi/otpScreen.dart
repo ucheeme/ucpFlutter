@@ -106,6 +106,7 @@ class _OtpscreenState extends State<Otpscreen>with TickerProviderStateMixin {
           WidgetsBinding.instance.addPostFrameCallback((_)async{
             AppUtils.showInfoSnack("For test purpose use ${state.response.otp}", context);
             otpValue=state.response.otp.toString();
+            print("the otp: ${state.response.otp}");
             setState(() {_start=60;});
             startTimer();
           });
@@ -313,13 +314,13 @@ class _OtpscreenState extends State<Otpscreen>with TickerProviderStateMixin {
         stream:  widget.bloc.validation.otpValue,
         builder: (context, snapshot) {
           return PinCodeTextField(
-              // controller: otpController,
-             // focusNode: _pinCodeFocusNode,
+            //  controller: otpController,
+            // focusNode: _pinCodeFocusNode,
               onTap: (){
                 setState(() {
                   activateKeyboard=true;
                 });
-              //  _pinCodeFocusNode.requestFocus();
+             //  _pinCodeFocusNode.requestFocus();
               },
               appContext: context,
               enableActiveFill: true,
