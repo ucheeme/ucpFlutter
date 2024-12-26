@@ -50,3 +50,9 @@ class MarkItemAsFavoriteEvent extends ShopEvent {
   @override
   List<Object> get props => [];
 }
+class RemoveItemAsFavEvent extends ShopEvent {
+  RemoveItemAsFavRequest request;
+  RemoveItemAsFavEvent(this.request);
+  @override
+  List<Object> get props => [];
+}

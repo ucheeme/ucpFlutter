@@ -81,23 +81,8 @@ class _ShopScreenState extends State<ShopScreen> {
             // allFavoriteItem2.clear();
             bloc.add(GetAllFavoriteItemsEvent(PaginationRequest(
                 currentPage: currentPage, pageSize: pageSize)));
-            //Populate the favorite items list
-            // for (var element in shopItemsList) {
-            //   allFavoriteItem2.add(
-            //     ItemsMarkedAsFavorite(
-            //       itemCode: element.itemCode,
-            //       itemName: element.itemName,
-            //       itemPrice: element.itemPrice,
-            //       quantity: element.quantity ?? 0,
-            //       isFavourite: false,
-            //     ),
-            //   );
-            // }
 
-            // Logging the size of the lists for debugging
-            print(
-              "This is the list of favorite items: ${allFavoriteItem2.length} and shop items: ${shopItemsList.length}",
-            );
+
           });
 
           // Reinitializing the bloc after processing the items
@@ -110,19 +95,26 @@ class _ShopScreenState extends State<ShopScreen> {
         }
         if (state is ShopAllFavoriteItemsLoaded) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
+            allFavoriteItem2.clear();
             allFavoriteItems = state.allFavoriteItems.modelResult;
-            print(allFavoriteItems.length);
-            print("the value");
+            String id = "";
             if (allFavoriteItems.isNotEmpty) {
               for (var element in shopItemsList) {
                 bool isFavorite = allFavoriteItems.any(
-                  (item) =>
-                      double.parse(element.itemCode) ==
-                      double.parse(item.itemCode),
+                  (item) {
+                    if( double.parse(element.itemCode) ==
+                        double.parse(item.itemCode)){
+                      id = item.id.toString();
+                      return true;
+                    }else{
+                      return false;
+                    }
+                    },
                 );
 
                 allFavoriteItem2.add(
                   ItemsMarkedAsFavorite(
+                    id: id,
                     itemCode: element.itemCode,
                     itemName: element.itemName,
                     itemPrice: element.itemPrice,
@@ -135,6 +127,7 @@ class _ShopScreenState extends State<ShopScreen> {
               allFavoriteItem2.addAll(
                 shopItemsList.map(
                   (element) => ItemsMarkedAsFavorite(
+                    id: "",
                     itemCode: element.itemCode,
                     itemName: element.itemName,
                     itemPrice: element.itemPrice,
@@ -144,7 +137,7 @@ class _ShopScreenState extends State<ShopScreen> {
                 ),
               );
             }
-            print("IIIII");
+
           });
           bloc.initial();
         }
@@ -155,7 +148,17 @@ class _ShopScreenState extends State<ShopScreen> {
           bloc.initial();
         }
         if (state is ShopItemMarkedAsFavorite) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {});
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            bloc.add(GetAllFavoriteItemsEvent(PaginationRequest(
+                currentPage: currentPage, pageSize: pageSize)));
+          });
+          bloc.initial();
+        }
+        if (state is ShopItemUnMarkedAsFavorite) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            bloc.add(GetAllFavoriteItemsEvent(PaginationRequest(
+                currentPage: currentPage, pageSize: pageSize)));
+          });
           bloc.initial();
         }
         return UCPLoadingScreen(
@@ -175,198 +178,201 @@ class _ShopScreenState extends State<ShopScreen> {
                     child: displayScreen(state),
                   ),
                   UCPCustomAppBar(
-                      height: 195.h,
+                      height: MediaQuery.of(context).size.height*0.23,
                       appBarColor: AppColor.ucpWhite10.withOpacity(0.3),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Gap(20.h),
-                          Text(
-                            UcpStrings.shoppingTxt,
-                            style: CreatoDisplayCustomTextStyle.kTxtMedium
-                                .copyWith(
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColor.ucpBlack500),
-                          ),
-                          height14,
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                height: 40.h,
-                                width: 248.w,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 8.w, vertical: 5.h),
-                                decoration: BoxDecoration(
-                                  color: AppColor.ucpBlue25,
-                                  borderRadius: BorderRadius.circular(40.r),
-                                ),
-                                child: Row(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          isShop = true;
-                                          isRequest = false;
-                                          isFavorite = false;
-                                        });
-                                      },
-                                      child: AnimatedContainer(
-                                        height: 32.h,
-                                        width: 57.w,
-                                        decoration: BoxDecoration(
-                                          color: isShop
-                                              ? AppColor.ucpBlue600
-                                              : Colors.transparent,
-                                          borderRadius:
-                                              BorderRadius.circular(40.r),
-                                        ),
-                                        duration:
-                                            const Duration(milliseconds: 500),
-                                        child: Center(
-                                          child: Text(
-                                            UcpStrings.shopTxt,
-                                            style: CreatoDisplayCustomTextStyle
-                                                .kTxtMedium
-                                                .copyWith(
-                                              fontSize: 14.sp,
-                                              color: isShop
-                                                  ? AppColor.ucpWhite500
-                                                  : AppColor.ucpBlack800,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          isShop = false;
-                                          isRequest = true;
-                                          isFavorite = false;
-                                        });
-                                      },
-                                      child: AnimatedContainer(
-                                        duration:
-                                            const Duration(milliseconds: 400),
-                                        height: 32.h,
-                                        width: 84.w,
-                                        decoration: BoxDecoration(
-                                          color: isRequest
-                                              ? AppColor.ucpBlue600
-                                              : Colors.transparent,
-                                          borderRadius:
-                                              BorderRadius.circular(40.r),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            UcpStrings.requestTxt,
-                                            style: CreatoDisplayCustomTextStyle
-                                                .kTxtMedium
-                                                .copyWith(
-                                              fontSize: 14.sp,
-                                              color: isRequest
-                                                  ? AppColor.ucpWhite500
-                                                  : AppColor.ucpBlack800,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          isShop = false;
-                                          isRequest = false;
-                                          isFavorite = true;
-                                        });
-                                      },
-                                      child: AnimatedContainer(
-                                        duration:
-                                            const Duration(milliseconds: 500),
-                                        height: 32.h,
-                                        width: 90.w,
-                                        decoration: BoxDecoration(
-                                          color: isFavorite
-                                              ? AppColor.ucpBlue600
-                                              : Colors.transparent,
-                                          borderRadius:
-                                              BorderRadius.circular(40.r),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            UcpStrings.favouriteTxt,
-                                            style: CreatoDisplayCustomTextStyle
-                                                .kTxtMedium
-                                                .copyWith(
-                                              fontSize: 14.sp,
-                                              color: isFavorite
-                                                  ? AppColor.ucpWhite500
-                                                  : AppColor.ucpBlack800,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          height12,
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                UcpStrings.allAvailableItem,
-                                style: CreatoDisplayCustomTextStyle.kTxtBold
-                                    .copyWith(
-                                        fontSize: 14.sp,
-                                        letterSpacing: -1,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColor.ucpBlack500),
-                              ),
-                              GestureDetector(
-                                onTap: (){
-                                  Get.to(CartSummary(allItemInCart:allItemInCart));
-                                },
-                                child: Container(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Gap(20.h),
+                            Text(
+                              UcpStrings.shoppingTxt,
+                              style: CreatoDisplayCustomTextStyle.kTxtMedium
+                                  .copyWith(
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColor.ucpBlack500),
+                            ),
+                            height14,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
                                   height: 40.h,
-                                  width: 40.w,
-                                  padding: EdgeInsets.all(6.h),
-                                  decoration: const BoxDecoration(
-                                      color: AppColor.ucpBlue50,
-                                      shape: BoxShape.circle),
-                                  child: badges.Badge(
-                                    badgeStyle: const badges.BadgeStyle(
-                                        badgeColor: AppColor.ucpOrange600),
-                                    stackFit: StackFit.expand,
-                                    position: badges.BadgePosition.custom(
-                                        bottom: 15, start: 10),
-                                    badgeContent: Text(
-                                      allItemInCart.length.toString(),
-                                      style: CreatoDisplayCustomTextStyle
-                                          .kTxtMedium
-                                          .copyWith(
-                                              fontSize: 12.sp,
-                                              fontWeight: FontWeight.w500,
-                                              color: AppColor.ucpWhite500),
-                                    ),
-                                    child: Image.asset(
-                                      UcpStrings.ucpShoppingCart,
-                                      height: 24.h,
-                                      width: 24.w,
-                                    ),
+                                  width: 248.w,
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8.w, vertical: 5.h),
+                                  decoration: BoxDecoration(
+                                    color: AppColor.ucpBlue25,
+                                    borderRadius: BorderRadius.circular(40.r),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            isShop = true;
+                                            isRequest = false;
+                                            isFavorite = false;
+                                          });
+                                        },
+                                        child: AnimatedContainer(
+                                          height: 32.h,
+                                          width: 57.w,
+                                          decoration: BoxDecoration(
+                                            color: isShop
+                                                ? AppColor.ucpBlue600
+                                                : Colors.transparent,
+                                            borderRadius:
+                                                BorderRadius.circular(40.r),
+                                          ),
+                                          duration:
+                                              const Duration(milliseconds: 500),
+                                          child: Center(
+                                            child: Text(
+                                              UcpStrings.shopTxt,
+                                              style: CreatoDisplayCustomTextStyle
+                                                  .kTxtMedium
+                                                  .copyWith(
+                                                fontSize: 14.sp,
+                                                color: isShop
+                                                    ? AppColor.ucpWhite500
+                                                    : AppColor.ucpBlack800,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            isShop = false;
+                                            isRequest = true;
+                                            isFavorite = false;
+                                          });
+                                        },
+                                        child: AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 400),
+                                          height: 32.h,
+                                          width: 84.w,
+                                          decoration: BoxDecoration(
+                                            color: isRequest
+                                                ? AppColor.ucpBlue600
+                                                : Colors.transparent,
+                                            borderRadius:
+                                                BorderRadius.circular(40.r),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              UcpStrings.requestTxt,
+                                              style: CreatoDisplayCustomTextStyle
+                                                  .kTxtMedium
+                                                  .copyWith(
+                                                fontSize: 14.sp,
+                                                color: isRequest
+                                                    ? AppColor.ucpWhite500
+                                                    : AppColor.ucpBlack800,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            isShop = false;
+                                            isRequest = false;
+                                            isFavorite = true;
+                                          });
+                                        },
+                                        child: AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 500),
+                                          height: 32.h,
+                                          width: 90.w,
+                                          decoration: BoxDecoration(
+                                            color: isFavorite
+                                                ? AppColor.ucpBlue600
+                                                : Colors.transparent,
+                                            borderRadius:
+                                                BorderRadius.circular(40.r),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              UcpStrings.favouriteTxt,
+                                              style: CreatoDisplayCustomTextStyle
+                                                  .kTxtMedium
+                                                  .copyWith(
+                                                fontSize: 14.sp,
+                                                color: isFavorite
+                                                    ? AppColor.ucpWhite500
+                                                    : AppColor.ucpBlack800,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              )
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                            height12,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  UcpStrings.allAvailableItem,
+                                  style: CreatoDisplayCustomTextStyle.kTxtBold
+                                      .copyWith(
+                                          fontSize: 14.sp,
+                                          letterSpacing: -1,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColor.ucpBlack500),
+                                ),
+                                GestureDetector(
+                                  onTap: (){
+                                    Get.to(CartSummary(allItemInCart:allItemInCart));
+                                  },
+                                  child: Container(
+                                    height: 40.h,
+                                    width: 40.w,
+                                    padding: EdgeInsets.all(6.h),
+                                    decoration: const BoxDecoration(
+                                        color: AppColor.ucpBlue50,
+                                        shape: BoxShape.circle),
+                                    child: badges.Badge(
+                                      badgeStyle: const badges.BadgeStyle(
+                                          badgeColor: AppColor.ucpOrange600),
+                                      stackFit: StackFit.expand,
+                                      position: badges.BadgePosition.custom(
+                                          bottom: 15, start: 10),
+                                      badgeContent: Text(
+                                        allItemInCart.length.toString(),
+                                        style: CreatoDisplayCustomTextStyle
+                                            .kTxtMedium
+                                            .copyWith(
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w500,
+                                                color: AppColor.ucpWhite500),
+                                      ),
+                                      child: Image.asset(
+                                        UcpStrings.ucpShoppingCart,
+                                        height: 24.h,
+                                        width: 24.w,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
                       )),
                 ],
               )),
@@ -386,7 +392,7 @@ class _ShopScreenState extends State<ShopScreen> {
       return Shoprequestscreen();
     } else {
       return ShopFavoriteItemScreen(
-        allFavoriteItems: allFavoriteItem2,
+        allFavoriteItems: allFavoriteItem2.where((element) => element.isFavourite==true).toList(),
         bloc: bloc,
       );
     }

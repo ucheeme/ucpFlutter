@@ -4,42 +4,42 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'dart:math' as math;
 import 'package:get/get.dart';
+import 'dart:math' as math;
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:ucp/utils/appCustomClasses.dart';
-// import 'package:ucp/bloc/dashboard/dashboard_bloc.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:ucp/utils/appExtentions.dart';
-import 'package:ucp/utils/ucpLoader.dart';
 
-import 'package:ucp/view/mainUi/mainScreen/home/transactionHistory.dart';
+import '../../../../../bloc/finance/finance_bloc.dart';
+import '../../../../../data/model/response/memberSavingAccount.dart';
+import '../../../../../data/model/response/withdrawBalanceInfo.dart';
+import '../../../../../data/model/response/withdrawTransactionHistory.dart';
+import '../../../../../data/repository/FinanceRepo.dart';
+import '../../../../../utils/appCustomClasses.dart';
+import '../../../../../utils/appStrings.dart';
+import '../../../../../utils/apputils.dart';
+import '../../../../../utils/colorrs.dart';
+import '../../../../../utils/constant.dart';
+import '../../../../../utils/designUtils/reusableFunctions.dart';
+import '../../../../../utils/designUtils/reusableWidgets.dart';
+import '../../../../../utils/sharedPreference.dart';
+import '../../../../../utils/ucpLoader.dart';
+import '../../../../bottomSheet/enterAmoun.dart';
+import '../../home/homeWidgets.dart';
+import '../../home/transactionHistory.dart';
+import '../withdraw/withdrawFundScreen.dart';
+import '../withdraw/withdrawRequestScreen.dart';
 
-import '../../../../bloc/finance/finance_bloc.dart';
-import '../../../../data/model/response/memberSavingAccount.dart';
-import '../../../../data/model/response/withdrawBalanceInfo.dart';
-import '../../../../data/model/response/withdrawTransactionHistory.dart';
-import '../../../../data/repository/FinanceRepo.dart';
-import '../../../../utils/appStrings.dart';
-import '../../../../utils/apputils.dart';
-import '../../../../utils/colorrs.dart';
-import '../../../../utils/constant.dart';
-import '../../../../utils/designUtils/reusableFunctions.dart';
-import '../../../../utils/designUtils/reusableWidgets.dart';
-import '../../../../utils/sharedPreference.dart';
-import '../finances/withdraw/withdrawFundScreen.dart';
-import '../finances/withdraw/withdrawRequestScreen.dart';
-import 'homeWidgets.dart';
-
-class WithdrawScreen extends StatefulWidget {
-  const WithdrawScreen({super.key});
+class SavingsScreen extends StatefulWidget {
+  const SavingsScreen({super.key});
 
   @override
-  State<WithdrawScreen> createState() => _WithdrawScreenState();
+  State<SavingsScreen> createState() => _SavingsScreenState();
 }
 
-class _WithdrawScreenState extends State<WithdrawScreen> {
+class _SavingsScreenState extends State<SavingsScreen> {
   late FinanceBloc bloc;
   bool isWithdraw = true;
   bool isRequest = false;
@@ -52,7 +52,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
   int pageNumber =1;
   int pageSize =10;
   List<WithdrawalBackground> memberAcctWithBackground = [];
-  List<WithdrawTransactionHistory> withdrawTransactionList = [];
+  List<WithdrawTransactionHistory> memberSavingHistory = [];
   List<String>backgroundImages=[UcpStrings.dashBoardB,UcpStrings.ucpMemberAccount1, UcpStrings.ucpMemberAccount2, UcpStrings.ucpMemberAccount3];
   UserSavingAccounts selectedOption=UserSavingAccounts(accountNumber: '', accountProduct: '');
   WithdrawAccountBalanceInfo selectedAccoutBalanceInfo = WithdrawAccountBalanceInfo(accountBalance: 0, loanInterest: 0, loanPrinicpal: 0, retirementAmt: 0);
@@ -60,42 +60,42 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
 
   @override
   void initState() {
-   WidgetsBinding.instance.addPostFrameCallback((_){
-     if(tempMemberSavingAccounts.isEmpty) {
-       bloc.add(const GetMemberSavingAccounts());
-     }
-     else{
-       setState(() {
-         accounts= tempMemberSavingAccounts;
-         selectedOption= accounts[0];
-       });
-       for(var element in accounts){
-         if(selectedBGIndex<=3){
-           memberAcctWithBackground.add(
-               WithdrawalBackground(
-                   userSavingAccounts: element,
-                   backgroundImage: backgroundImages[selectedBGIndex]
-               ));
-         }else{
-           selectedBGIndex=0;
-           memberAcctWithBackground.add(
-               WithdrawalBackground(
-                   userSavingAccounts: element,
-                   backgroundImage: backgroundImages[selectedBGIndex]
-               ));
-         }
-         selectedBGIndex++;
-       }
-       bloc.add(GetMemberAccountBalance(WithdrawAccountBalanceRequest(
-           accountNumber: selectedOption.accountNumber, accountName:selectedOption.accountProduct)));
-     }
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      if(tempMemberSavingAccounts.isEmpty) {
+        bloc.add(const GetMemberSavingAccounts());
+      }
+      else{
+        setState(() {
+          accounts= tempMemberSavingAccounts;
+          selectedOption= accounts[0];
+        });
+        for(var element in accounts){
+          if(selectedBGIndex<=3){
+            memberAcctWithBackground.add(
+                WithdrawalBackground(
+                    userSavingAccounts: element,
+                    backgroundImage: backgroundImages[selectedBGIndex]
+                ));
+          }else{
+            selectedBGIndex=0;
+            memberAcctWithBackground.add(
+                WithdrawalBackground(
+                    userSavingAccounts: element,
+                    backgroundImage: backgroundImages[selectedBGIndex]
+                ));
+          }
+          selectedBGIndex++;
+        }
+        bloc.add(GetMemberAccountBalance(WithdrawAccountBalanceRequest(
+            accountNumber: selectedOption.accountNumber, accountName:selectedOption.accountProduct)));
+      }
 
-    // if(tempWithdrawTransactionHistory.isEmpty){
-       bloc.add(GetWithdrawalHistoryEvent( PaginationRequest(pageSize: pageSize, currentPage: pageNumber)));
-     // }else{
-     //   withdrawTransactionList = tempWithdrawTransactionHistory;
-     // }
-   });
+      // if(tempWithdrawTransactionHistory.isEmpty){
+      bloc.add(GetWithdrawalHistoryEvent( PaginationRequest(pageSize: pageSize, currentPage: pageNumber)));
+      // }else{
+      //   memberSavingHistory = tempWithdrawTransactionHistory;
+      // }
+    });
     super.initState();
   }
   @override
@@ -142,10 +142,10 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
           });
           bloc.initial();
         }
-        if(state is FinanceMemberWithdrawalHistory){
+        if(state is FinanceMemberSavingHistory){
           WidgetsBinding.instance.addPostFrameCallback((_){
-            tempWithdrawTransactionHistory = state.response.modelResult;
-            withdrawTransactionList = state.response.modelResult;
+            tempMemberSavingHistory = state.response.modelResult;
+            memberSavingHistory = state.response.modelResult;
           });
           bloc.initial();
         }
@@ -166,7 +166,6 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                   SingleChildScrollView(
                     child: Stack(
                       children: [
-                        isWithdraw?
                         CustomMaterialIndicator(
                           onRefresh: onRefresh, // Your refresh logic
                           backgroundColor: Colors.white,
@@ -181,7 +180,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                           },
                           child: Column(
                             children: [
-                              Gap(160.h),
+                              Gap(100.h),
                               Container(
                                 height: 280.h,
                                 decoration: BoxDecoration(
@@ -205,10 +204,10 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                                                     holderImager =memberAcctWithBackground[index].backgroundImage;
                                                     selectedIndex = index;
                                                     selectedOption =
-                                                    memberAcctWithBackground[index].userSavingAccounts;
+                                                        memberAcctWithBackground[index].userSavingAccounts;
                                                   });
-                                                 bloc.add(GetMemberAccountBalance(WithdrawAccountBalanceRequest(
-                                                     accountNumber: selectedOption.accountNumber, accountName:selectedOption.accountProduct)));
+                                                  bloc.add(GetMemberAccountBalance(WithdrawAccountBalanceRequest(
+                                                      accountNumber: selectedOption.accountNumber, accountName:selectedOption.accountProduct)));
                                                 },
                                                 child: Container(
                                                   height: 40.h,
@@ -227,7 +226,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                                                   child: Center(
                                                     child: Text(
                                                       formatFirstTitle(memberAcctWithBackground[index].userSavingAccounts.accountProduct),
-                                                     // formatFirstTitle("CONTRIBUTOR"),
+                                                      // formatFirstTitle("CONTRIBUTOR"),
                                                       style: CreatoDisplayCustomTextStyle
                                                           .kTxtMedium
                                                           .copyWith(
@@ -311,11 +310,11 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                               ),
                               SingleChildScrollView(
                                 child: Container(
-                                  height: withdrawTransactionList.isEmpty?600.h:Get.height.h,
+                                  height: memberSavingHistory.isEmpty?600.h:Get.height.h,
                                   color: AppColor.ucpWhite10,
                                   child: Column(
                                     children: [
-                                      Gap(40.h),
+                                      Gap(80.h),
                                       height16,
                                       SizedBox(
                                         height: 48.h,
@@ -376,7 +375,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                                         ),
                                       ),
                                       height12,
-                                      withdrawTransactionList.isEmpty?
+                                      memberSavingHistory.isEmpty?
                                       SizedBox(
                                         height: 200.h,
                                         child: Center(
@@ -392,7 +391,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                                         child:
                                         ListView(
                                           padding: EdgeInsets.symmetric(horizontal:16.w),
-                                          children: withdrawTransactionList
+                                          children: memberSavingHistory
                                               .mapIndexed(
                                                   (element, index) => Padding(
                                                 padding: EdgeInsets.only(
@@ -409,73 +408,52 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                               )
                             ],
                           ),
-                        ):
-                        WithdrawRequestScreen(bloc: bloc,),
-                        // dashboard shortcuts
-                        Visibility(
-                          visible: isWithdraw,
-                          child: Positioned(
-                              top: 390.h,
-                              left: 50.w,
-                              right: 50.w,
-                              child: Container(
-                                height: 100.h,
-                                width: 239.w,
-                                margin: EdgeInsets.symmetric(horizontal: 16.w),
-                                // padding: EdgeInsets.symmetric(vertical: 4.h),
-                                decoration: BoxDecoration(
-                                    color: AppColor.ucpWhite500,
-                                    borderRadius: BorderRadius.circular(16.r),
-                                    border: Border.all(
-                                        color: AppColor.ucpBlue100, width: 0.5.w)),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-
-                                    shortCut(
-                                        onTap: () {
-                                          Get.to(TransactionHistoryScreen(title: selectedOption!.accountProduct,));
-                                        },
-                                        UcpStrings.historyTxt,
-                                        CircleWithIconSingleColor(
-                                          image: UcpStrings.ucpHistoryIcon,
-                                          color: AppColor.ucpBlue50,
-                                        )),
-                                    shortCut(
-                                        onTap: () async {
-                                          setState(() {
-                                            isWithdrawFunds=false;
-                                          });
-                                       bool? response=  await Get.to(WithdrawFunds(), curve: Curves.easeIn);
-                                       if(response==true){
-
-                                         setState(() {
-                                           isWithdrawFunds=true;
-                                           isRequest=true;
-                                           isWithdraw= false;
-                                         });
-                                         bloc.add(GetWithdrawalHistoryEvent( PaginationRequest(pageSize: pageSize, currentPage: pageNumber)));
-                                       }
-                                        },
-                                        UcpStrings.withdrawTxt,
-                                        CircleWithIconSingleColor(
-                                          image: UcpStrings.ucpWithdrawIcon,
-                                          color: AppColor.ucpBlue50,
-                                        )),
-                                  ],
-                                ),
-                              )),
                         ),
+                        // dashboard shortcuts
+                        Positioned(
+                            top: 320.h,
+                            left: 100.w,
+                            right: 100.w,
+                            child: Container(
+                              height: 120.h,
+                              // width: 80.w,
+                              margin: EdgeInsets.symmetric(horizontal: 16.w),
+                              // padding: EdgeInsets.symmetric(vertical: 4.h),
+                              decoration: BoxDecoration(
+                                  color: AppColor.ucpWhite500,
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  border: Border.all(
+                                      color: AppColor.ucpBlue100, width: 0.5.w)),
+                              child: shortCut(
+                                  onTap:() async {
+                                    await showCupertinoModalBottomSheet(
+                                        topRadius: Radius.circular(15.r),
+                                        backgroundColor:
+                                        AppColor.ucpWhite500,
+                                        context: context,
+                                        builder: (context) {
+                                          return Container(
+                                              height: 220.h,
+                                              color: AppColor.ucpWhite500,
+                                              child: EnterAmountBottomSheet());
+                                        });
+                                  },
+                                  UcpStrings.addFundsTxt,
+                                  CircleWithIconSingleColor(
+                                    image: UcpStrings.ucpAddFundsIcon,
+                                    color: AppColor.ucpBlue50,
+                                  )),
+                            )),
                       ],
                     ),
                   ),
                   UCPCustomAppBar(
-                      height: 150.h,
+                      height: 100.h,
                       appBarColor: AppColor.ucpWhite10.withOpacity(0.3),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Gap(40.h),
+                          Gap(50.h),
                           Row(
                             children: [
                               GestureDetector(
@@ -496,7 +474,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                                 ),
                               ),
                               Gap(12.w),
-                              Text(isRequest?"${UcpStrings.withdrawalsTxt} request":"${UcpStrings.withdrawTxt}",
+                              Text("${UcpStrings.savingTxt} ",
                                 style: CreatoDisplayCustomTextStyle.kTxtMedium
                                     .copyWith(
                                     fontSize: 14.sp,
@@ -504,92 +482,6 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                                     color: AppColor.ucpBlack500),
                               )
                             ],
-                          ),
-                          height10,
-                          Container(
-                            height: 40.h,
-                            width: 225.w,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8.w, vertical: 5.h),
-                            decoration: BoxDecoration(
-                              color: AppColor.ucpBlue25,
-                              borderRadius: BorderRadius.circular(40.r),
-                            ),
-                            child: Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      isWithdraw = true;
-                                      isRequest = false;
-                                    });
-                                  },
-                                  child: AnimatedContainer(
-                                    height: 32.h,
-                                    width: 104.w,
-                                    decoration: BoxDecoration(
-                                      color: isWithdraw
-                                          ? AppColor.ucpBlue600
-                                          : Colors.transparent,
-                                      borderRadius:
-                                      BorderRadius.circular(40.r),
-                                    ),
-                                    duration:
-                                    const Duration(milliseconds: 500),
-                                    child: Center(
-                                      child: Text(
-                                        UcpStrings.withdrawalsTxt,
-                                        style: CreatoDisplayCustomTextStyle
-                                            .kTxtMedium
-                                            .copyWith(
-                                          fontSize: 14.sp,
-                                          color: isWithdraw
-                                              ? AppColor.ucpWhite500
-                                              : AppColor.ucpBlack800,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      isWithdraw = false;
-                                      isRequest = true;
-                                    });
-                                  },
-                                  child: AnimatedContainer(
-                                    duration:
-                                    const Duration(milliseconds: 400),
-                                    height: 32.h,
-                                    width: 103.w,
-                                    decoration: BoxDecoration(
-                                      color: isRequest
-                                          ? AppColor.ucpBlue600
-                                          : Colors.transparent,
-                                      borderRadius:
-                                      BorderRadius.circular(40.r),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        UcpStrings.requestTxt,
-                                        style: CreatoDisplayCustomTextStyle
-                                            .kTxtMedium
-                                            .copyWith(
-                                          fontSize: 14.sp,
-                                          color: isRequest
-                                              ? AppColor.ucpWhite500
-                                              : AppColor.ucpBlack800,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-
-                              ],
-                            ),
                           ),
                         ],
                       )),
@@ -604,12 +496,12 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
       onTap: onTap,
       child: SizedBox(
         height: 81.h,
-
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             child,
-            Gap(8.h),
+            Gap(10.h),
             Text(
               text,
               style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(

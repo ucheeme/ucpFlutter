@@ -12,6 +12,7 @@ import 'package:ucp/view/mainUi/mainScreen/shop/shopFavorites.dart';
 
 import '../../../../app/customAnimations/animationManager.dart';
 import '../../../../data/model/request/addToCartRequest.dart';
+import '../../../../data/model/request/increaseDecreaseCartItemQuantity.dart';
 import '../../../../data/model/request/markAsFavorite.dart';
 import '../../../../data/model/response/itemsOnCart.dart';
 import '../../../../data/model/response/shopList.dart';
@@ -78,18 +79,28 @@ class _ShopListItemDesignState extends State<ShopListItemDesign> {
                   child: Stack(
                     children: [
                       Container(
-                          height: 88.h,
-                          width: 112.w,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: AppColor.ucpBlack50),
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(12.r),
-                                bottomLeft: Radius.circular(12.r)),
-                          ),
-                          child: Image.asset(
-                            UcpStrings.basketI,
-                            // fit: BoxFit.fill,
-                          )),
+                        height: 88.h,
+                        width: 112.w,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: AppColor.ucpBlack50),
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(12.r),
+                              bottomLeft: Radius.circular(12.r)),
+                        ),
+                        child: Container(
+                            height: 88.h,
+                            width: 112.w,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: AppColor.ucpBlack50),
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(12.r),
+                                  bottomLeft: Radius.circular(12.r)),
+                            ),
+                            child: Image.asset(
+                              UcpStrings.basketI,
+                              // fit: BoxFit.fill,
+                            )),
+                      ),
                       Positioned(
                         child: BouncingWidget(
                           duration: Duration(milliseconds: 100),
@@ -207,6 +218,7 @@ class _ShopListItemDesignState extends State<ShopListItemDesign> {
     } else if (state is ShopItemAddedToCart&& widget.selectedIndex==widget.index) {
       return CartItemIncreaseDecreaseDesign(
         state: state,
+        bloc: widget.bloc,
       );
     } else {
       return GestureDetector(
@@ -253,9 +265,11 @@ class AddingItemToCartLoading extends StatelessWidget {
 class CartItemIncreaseDecreaseDesign extends StatefulWidget {
   String? itemCode;
   ShopState state;
+  ShopBloc bloc;
   int? itemQuantity;
   CartItemIncreaseDecreaseDesign(
-      {super.key, this.itemCode,this.itemQuantity, required this.state});
+      {super.key,required this.bloc,required,
+  this.itemCode,this.itemQuantity, required this.state});
 
   @override
   State<CartItemIncreaseDecreaseDesign> createState() =>
@@ -274,7 +288,7 @@ class _CartItemIncreaseDecreaseDesignState
   }
   @override
   Widget build(BuildContext context) {
-    bloc = BlocProvider.of<ShopBloc>(context);
+  bloc= BlocProvider.of<ShopBloc>(context);
     return BlocBuilder<ShopBloc, ShopState>(
       builder: (context, state) {
         if (state is ShopError) {
@@ -309,8 +323,16 @@ class _CartItemIncreaseDecreaseDesignState
                     GestureDetector(
                         onTap: () {
                           if (quantity == 0) {
-                            // bloc.add(RemoveItemFromCartEvent(itemCode: widget.itemCode));
+                            bloc.add(RemoveReduceItemQuantityFromCartEvent(
+                                AddReduceItemQuantityOnCartRequest(
+                                    itemCode: widget.itemCode!, quantity: 1)
+                            )
+                            );
                           } else {
+                            bloc.add(RemoveReduceItemQuantityFromCartEvent(
+                                AddReduceItemQuantityOnCartRequest(
+                                    itemCode: widget.itemCode!, quantity: 1)
+                           ));
                             setState(() {
                               quantity--;
                             });
@@ -326,6 +348,10 @@ class _CartItemIncreaseDecreaseDesignState
                             color: AppColor.ucpBlack500)),
                     GestureDetector(
                         onTap: () {
+
+                          bloc.add(IncreaseItemQuantityOnCartEvent(
+                              AddReduceItemQuantityOnCartRequest(
+                                  itemCode: widget.itemCode!, quantity: 1)));
                           setState(() {
                             quantity++;
                           });
@@ -338,7 +364,7 @@ class _CartItemIncreaseDecreaseDesignState
               highlightColor: AppColor.ucpOrange500.withOpacity(0.5),
               enabled: true,
               child: Visibility(
-                visible: widget.state
+                visible: state
                     is ShopIsIncreasingDecreasingItemQuantityOnCartLoading,
                 child: Container(
                   height: 38.h,
@@ -361,7 +387,10 @@ class _CartItemIncreaseDecreaseDesignState
 class CartSummaryListDesign extends StatefulWidget {
   ItemsOnCart element;
   ShopState state;
-  CartSummaryListDesign({super.key,required this.element,required this.state});
+  ShopBloc bloc;
+  CartSummaryListDesign({super.key,
+    required this.bloc,
+    required this.element,required this.state});
 
   @override
   State<CartSummaryListDesign> createState() => _CartSummaryListDesignState();
@@ -373,7 +402,6 @@ class _CartSummaryListDesignState extends State<CartSummaryListDesign> {
     return Container(
       height: 70.h,
       // width: 330.w,
-
       decoration: BoxDecoration(
         color: AppColor.ucpWhite500,
         borderRadius: BorderRadius.circular(12.r),
@@ -433,6 +461,7 @@ class _CartSummaryListDesignState extends State<CartSummaryListDesign> {
                   ),
                   CartItemIncreaseDecreaseDesign(
                     state: widget.state,
+                    bloc: widget.bloc,
                     itemQuantity: widget.element.quantity,
                   )
                 ],
@@ -442,5 +471,16 @@ class _CartSummaryListDesignState extends State<CartSummaryListDesign> {
         ],
       ),
     );
+  }
+}
+
+
+
+class ItemRequestedGroupDesign extends StatelessWidget {
+  const ItemRequestedGroupDesign({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
   }
 }

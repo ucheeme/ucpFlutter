@@ -37,7 +37,7 @@ class _OtpscreenState extends State<Otpscreen>with TickerProviderStateMixin {
   StreamController<ErrorAnimationType>? errorController;
   String requiredNumber="";
   String enteredValue = "";
-  FocusNode _pinCodeFocusNode = FocusNode();
+  final FocusNode _pinCodeFocusNode = FocusNode();
   TextEditingController otpController= TextEditingController();
   bool activateKeyboard = false;
   late Timer _timer;

@@ -79,12 +79,14 @@ class _ShopFavoriteItemScreenState extends State<ShopFavoriteItemScreen> {
 }
 
 class ItemsMarkedAsFavorite{
+  String id;
   String itemCode;
   String itemName;
   dynamic itemPrice;
   int quantity;
   bool isFavourite;
   ItemsMarkedAsFavorite({
+    required this.id,
     required this.itemCode,
     required this.quantity,
     required this.itemName,

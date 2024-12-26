@@ -14,7 +14,8 @@ class AppColor{
   static const Color ucpBlue100 =Color(0xffCDE1FE);
   static const Color ucpBlue50 =Color(0xffE6F0FF);
   static const Color ucpBlue25 =Color(0xffEDF4FF);
-  
+  static const Color ucpBlue15 =Color(0xffF0F5FF);
+
 
   //UCPLight-BlueColor
   static const Color ucpLightBlue10 =Color(0xffF4FAFD);
@@ -49,6 +50,7 @@ class AppColor{
   static const Color ucpFullBlack =Color(0xff000000);
   //UCPOrangeColor
   static const Color ucpOrange25 =Color(0xffFFFBF6);
+  static const Color ucpOrange15 =Color(0xffFEF3EC);
   static const Color ucpOrange50 =Color(0xffFEF3E6);
   static const Color ucpOrange100 =Color(0xffFDE7CE);
   static const Color ucpOrange200 =Color(0xffFBCF9D);
@@ -82,10 +84,12 @@ class AppColor{
 
 //UCPDangerColor
   static const Color ucpDanger50 =Color(0xffF6DADA);
+  static const Color ucpDanger25 =Color(0xffFEEDED);
   static const Color ucpDanger75 =Color(0xffFBC3C3);
   static const Color ucpDanger100 =Color(0xffDC2626);
   static const Color ucpDanger150 =Color(0xffC62222);
   static const Color ucpDanger200 =Color(0xff9A1B1B);
+
 
   //UCPSuccessColor
   static const Color ucpSuccess50 =Color(0xffD8EDE0);
@@ -96,6 +100,7 @@ class AppColor{
   //UCPCSKColor
   static const Color ucpCSK500 =Color(0xff532494);
   static const Color ucpCSK50 =Color(0xffF1EAFA);
+  static const Color ucpCSK25 =Color(0xffF0EDFE);
   static const Color ucpCSK100 =Color(0xffE3D6F5);
   static const Color ucpCSK300 =Color(0xffAB84E1);
   static const Color ucpCSK200 =Color(0xffC7ADEB);

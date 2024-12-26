@@ -19,6 +19,7 @@ class UcpStrings{
  static const dYHMemberIDTxt ="Do you have a membership I.D ?";
  static const yIDoTxt ="Yes, I do";
  static const nIDoTxt ="No, I don't";
+ static const mustNotBeEmptyNull ="Please ensure all fields are filled and check boxes checked";
  static const enterMemberIdTxt ="Enter your Member ID";
  static const sCooperativeTxt ="Select cooperative";
  static const sMakePaymentTxt ="Add Funds";
@@ -136,11 +137,14 @@ class UcpStrings{
  static const inFlowTxt ="Inflow";
  static const outFlowTxt ="Outflow";
  static const withdrawalsTxt ="Withdrawals";
+ static const retireTxt ="Retire";
  static const requestTxt ="Requests";
  static const emptyTransactionTxt ="Empty Transaction History";
+ static const emptyRequestTxt ="No Request Available";
  static const inflowEmptyTransactionTxt ="Empty Credit Transaction History";
  static const outflowEmptyTransactionTxt ="Empty Debit Transaction History";
  static const emptyMessageTxt ="It looks like you don't have any transaction history yet!";
+ static const emptyWithdrawalRequestTxt ="It looks like you have not made any withdrawal request yet!";
  static const inflowEmptyMessageTxt ="It looks like you don't have any credit transaction on this account!";
  static const outflowEmptyMessageTxt ="It looks like you don't have any debit transaction on this account";
  static const userDifferentAccts ="Select Account";
@@ -148,25 +152,59 @@ class UcpStrings{
  static const selectMonth ="Filter duration";
  static const withdrawFunds ="Withdraw funds";
  static const cartSummary ="Cart summary";
+ static const profileTxt ="Profile";
  static const enterDesiredAmountToWithdraw ="Enter desired amount to withdraw";
  static const selectPaymentMode ="Select payment method";
  static const allAvailableItem ="All available items";
  static const payTxt="Pay";
  static const subTotalTxt="Subtotal";
  static const estimatedTotalTxt="Estimated total";
+ static const financeTxt="Finances";
+ static const financeSTxt="Quick access to your funds, Tips for effective growth.";
+ static const loanMTxt="Loan management";
+ static const loanMSGTxt="Effectively manage loans.";
+ static const savingTxt="Savings";
+ static const savingMSGTxt="Manage your savings effectively and easily.";
+ static const withdrawalMSGTxt="Easily withdraw your cash anytime.";
+ static const retirementTxt="Retirement";
+ static const retirementMSGTxt="Close your account and retire today.";
+ static const tRetirementAmt="TOTAL RETIREMENT AMOUNT";
+ static const memberBalance="MEMBER BALANCE";
+ static const loanPrincipal="LOAN PRINCIPAL";
+ static const loanInterest="LOAN INTEREST";
+ static const charges="CHARGES";
  // static const sCooperativeTxt ="Select Cooperative";
 
 
  static const ucpLogo = "assets/images/logoWithoutText.png";
+ static const ucpArrowForward = "assets/images/arrow_forward.png";
+ static const ucpEditProfileImage = "assets/images/edit_profilee.png";
+ static const ucpWithdrawProfileImage = "assets/images/profileWithdraw.png";
+ static const ucpSavingsImage = "assets/images/savings_finance.png";
+ static const ucpLoanImage = "assets/images/loan_finance2.png";
+ static const ucpBiometericProfileImage = "assets/images/biometerics_icon.png";
+ static const ucpChangePasswordProfileImage = "assets/images/change_password_icon.png";
+ static const ucpContributionProfileImage = "assets/images/contributions_icon.png";
+ static const ucpSupportProfileImage = "assets/images/support_icon.png";
+ static const ucpPushNotProfileImage = "assets/images/push_notification_icon.png";
+ static const ucpBankAcctProfileImage = "assets/images/bank_account_icon.png";
+ static const ucpWithdrawalImage = "assets/images/withdrawal_finance.png";
+ static const ucpRetirementImage = "assets/images/retirement_finance.png";
+ static const ucpRetirementProfileImage = "assets/images/profileRetirement.png";
+ static const financeIcon = "assets/images/finance_icon.png";
  static const addToCartIcon = "assets/images/storefront_cart_icon.png";
  static const reduceInventoryIcon = "assets/images/reduce_inventory_count.png";
  static const increaseInventoryIcon = "assets/images/increase_inventory_count.png";
  static const removeItemFromCart = "assets/images/removeFromCart.png";
  static const inventoryCartIcon = "assets/images/inventory_cart_icon.png";
  static const basketI = "assets/images/imagesBasket.png";
+ static const tempImage = "assets/images/tempImage.png";
  static const ucpAddFundsIcon = "assets/images/add_icon.png";
+ static const profileBaG = "assets/images/profileBG.png";
  static const ucpHistoryIcon = "assets/images/history_Icon.png";
  static const dashBoardB ="assets/images/dashboard_Background.png";
+ static const dashBoard2B ="assets/images/otherDashboard.png";
+ static const dashBoard3B ="assets/images/dashboard3B.png";
  static const ucpWithdrawIcon="assets/images/withdraw_icon.png";
  static const ucpApplyLoanImage="assets/images/apply_loan_image.png";
  static const ucpCreditImage="assets/images/income_icon.png";
@@ -184,13 +222,7 @@ class UcpStrings{
 
   static const enterAmount="Enter Amount";
 
-
-
-
-
-
-
-
-
-
 }
+
+List<String> profileDataString =["Edit profile","Withdraw","Retirement","Biometrics",
+ "Change password","Contributions","Bank account","Bank account","Bank account","Logout",];

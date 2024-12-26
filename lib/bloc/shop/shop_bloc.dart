@@ -6,6 +6,7 @@ import 'package:ucp/data/repository/FinanceRepo.dart';
 import '../../data/model/request/addToCartRequest.dart';
 import '../../data/model/request/increaseDecreaseCartItemQuantity.dart';
 import '../../data/model/request/markAsFavorite.dart';
+import '../../data/model/request/removeFavItem.dart';
 import '../../data/model/response/defaultResponse.dart';
 import '../../data/model/response/favoriteItemsResponse.dart';
 import '../../data/model/response/itemsOnCart.dart';
@@ -28,6 +29,7 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
     on<IncreaseItemQuantityOnCartEvent>((event, emit) {handleIncreaseItemQuantityOnCartEvent(event);});
     on<MarkItemAsFavoriteEvent>((event, emit) {handleMarkItemAsFavoriteEvent(event);});
     on<AddItemToCartEvent>((event, emit) {handleAddItemToCartEvent(event);});
+    on<RemoveItemAsFavEvent>((event, emit) {handleRemoveItemAsFavEvent(event);});
   }
   void handleGetShopItemsEvent()async{
     emit(ShopIsLoading());
@@ -115,6 +117,22 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
       final response = await repo.markAsFavorite(event.request);
       if (response is UcpDefaultResponse && response.isSuccessful == true) {
         emit(ShopItemMarkedAsFavorite(response));
+        AppUtils.debug("success");
+      }else{
+        emit(ShopError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ShopError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleRemoveItemAsFavEvent(event)async{
+   // emit(ShopIsIncreasingDecreasingItemQuantityOnCartLoading());
+    try{
+      final response = await repo.unMarkAsFavorite(event.request);
+      if (response is UcpDefaultResponse && response.isSuccessful == true) {
+        emit(ShopItemUnMarkedAsFavorite(response));
         AppUtils.debug("success");
       }else{
         emit(ShopError(response as UcpDefaultResponse));

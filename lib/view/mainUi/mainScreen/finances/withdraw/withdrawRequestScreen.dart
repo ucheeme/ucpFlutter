@@ -6,13 +6,15 @@ import 'package:gap/gap.dart';
 import 'package:ucp/bloc/finance/finance_bloc.dart';
 import 'package:ucp/utils/appExtentions.dart';
 
-import '../../../../data/model/response/memberSavingAccount.dart';
-import '../../../../data/model/response/withdrawTransactionHistory.dart';
-import '../../../../data/repository/FinanceRepo.dart';
-import '../../../../utils/apputils.dart';
-import '../../../../utils/colorrs.dart';
-import '../../../../utils/sharedPreference.dart';
-import 'financeWidgets.dart';
+import '../../../../../data/model/response/memberSavingAccount.dart';
+import '../../../../../data/model/response/withdrawTransactionHistory.dart';
+import '../../../../../data/repository/FinanceRepo.dart';
+import '../../../../../utils/appStrings.dart';
+import '../../../../../utils/apputils.dart';
+import '../../../../../utils/colorrs.dart';
+import '../../../../../utils/sharedPreference.dart';
+import '../../../../errorPages/noNotification.dart';
+import '../financeWidgets.dart';
 class WithdrawRequestScreen extends StatefulWidget {
   FinanceBloc bloc;
    WithdrawRequestScreen({super.key,required this.bloc});
@@ -68,6 +70,21 @@ class _WithdrawRequestScreenState extends State<WithdrawRequestScreen> {
         child: Column(
           children: [
             Gap(140.h),
+           withdrawTransactionList.isEmpty?
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              height:600.h,
+              child: EmptyNotificationsScreen(
+                  emptyHeader: UcpStrings.emptyRequestTxt,
+                  emptyMessage: UcpStrings.emptyWithdrawalRequestTxt,
+                  press: () {
+                    widget.bloc.add(GetWithdrawalHistoryEvent(PaginationRequest(
+                        pageSize: pageSize, currentPage: pageNumber))
+                    );
+                  }
+                  ),
+            )
+                :
             Column(
               children: withdrawTransactionList.mapIndexed((element, index)=>
                   Padding(

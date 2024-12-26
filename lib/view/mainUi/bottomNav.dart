@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:super_profile_picture/super_profile_picture.dart';
 import 'package:ucp/utils/constant.dart';
 import 'package:ucp/utils/sharedPreference.dart';
 import 'package:ucp/view/mainUi/mainScreen/finances/finances.dart';
@@ -11,6 +12,7 @@ import 'package:ucp/view/mainUi/mainScreen/vote/vote.dart';
 import 'package:ucp/view/mainUi/onBoardingFlow/loginFlow/loginD.dart';
 import 'dart:ui';
 
+import '../../utils/appStrings.dart';
 import '../../utils/colorrs.dart';
 import 'mainScreen/home/home.dart';
 import 'mainScreen/shop/shop.dart';
@@ -53,7 +55,7 @@ class _MyBottomNavState extends State<MyBottomNav> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: _screens[_currentIndex],
-      extendBody: true,
+      // extendBody: true,
       bottomNavigationBar: BottomAppBar(
         elevation: 0.0,
         padding: EdgeInsets.symmetric(horizontal: 0.w),
@@ -63,7 +65,8 @@ class _MyBottomNavState extends State<MyBottomNav> {
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
             child: Container(
-              color: AppColor.ucpBlue25.withOpacity(0.7),
+
+             color: AppColor.ucpBlue25.withOpacity(0.7),
               child: Row(
                 // mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -116,7 +119,8 @@ class _MyBottomNavState extends State<MyBottomNav> {
                           _currentIndex = 4; // Navigate to Screen 5
                         });
                       },
-                      userProfileImage: null,
+                      isUserImage: true,
+                      userProfileImage: "hkhkh",
                       title: "Profile",
                       active: _currentIndex == 4),
                 ],
@@ -136,7 +140,7 @@ class _MyBottomNavState extends State<MyBottomNav> {
         int? index,
       String? userProfileImage,
       required bool active,
-      bool isUserImage = false}) {
+      bool isUserImage =false}) {
     return GestureDetector(
         onTap: onTap,
         child: Stack(
@@ -156,17 +160,20 @@ class _MyBottomNavState extends State<MyBottomNav> {
                   children: [
                     Gap(3.h),
                     isUserImage
-                        ? CircleAvatar(
-                      child: Image.network(
-                        userProfileImage ??
-                            "https://unsplash.com/photos/a-person-using-a-laptop-computer-on-a-table-AoDMssi2UOU",
-                        fit: BoxFit.cover,
-                        height: 24.h,
-                        width: 24.h,
+                        ?
+                    SizedBox(
+                      height: 30.h,
+                      width: 30.w,
+                      child: const SuperProfilePicture(
+                        label: "",
+                        radius: 30,
+                        image: AssetImage(
+                          UcpStrings.tempImage,),
                       ),
                     )
-                        : Stack(children: [
-                      active
+                        : Stack(
+                        children: [
+                        active
                           ? Image.asset(
                         "assets/images/bottomNavIcons/selected/$image.png",
                         height: 22.h,

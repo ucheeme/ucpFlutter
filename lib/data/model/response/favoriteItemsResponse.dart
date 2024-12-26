@@ -37,6 +37,7 @@ class AllFavoriteItems {
 }
 
 class FavoriteItem {
+  String id;
   String itemCode;
   String itemName;
   dynamic itemPrice;
@@ -45,6 +46,7 @@ class FavoriteItem {
   int status;
 
   FavoriteItem({
+    required this.id,
     required this.itemCode,
     required this.itemName,
     required this.itemPrice,
@@ -60,9 +62,11 @@ class FavoriteItem {
     quantity: json["quantity"],
     sellingPrice: json["sellingPrice"],
     status: json["status"],
+    id: json["id"],
   );
 
   Map<String, dynamic> toJson() => {
+    "id": id,
     "itemCode": itemCode,
     "itemName": itemName,
     "itemPrice": itemPrice,

@@ -4,7 +4,7 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:ucp/utils/constant.dart';
 import 'package:ucp/utils/designUtils/reusableFunctions.dart';
-import 'package:ucp/view/mainUi/mainScreen/finances/withdrawRequestScreen.dart';
+import 'package:ucp/view/mainUi/mainScreen/finances/withdraw/withdrawRequestScreen.dart';
 
 import '../../../../data/model/response/withdrawTransactionHistory.dart';
 import '../../../../utils/colorrs.dart';
@@ -137,4 +137,68 @@ Color getStatusColorSmallCircle(String status){
     return AppColor.ucpDanger200;
   }
   return AppColor.ucpOrange500;
+}
+
+class FinanceOptionDesign extends StatelessWidget {
+  String title;
+  String message;
+  String icon;
+  Color color;
+  Function()? onTap;
+   FinanceOptionDesign({super.key,
+     this.onTap,
+     required this.color, required this.title,
+   required this.icon, required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 190.h,
+        width: 167.w,
+        padding: EdgeInsets.symmetric(horizontal: 12.w,vertical: 18.h),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12.r),
+          color: color,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.asset(icon,height: 32.h,width: 32.w,),
+            Spacer(),
+            SizedBox(
+              height: 100.h,
+              width: 141.w,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+
+                children: [
+                  Text(title,
+                    style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w500,
+                        color: AppColor.ucpBlack500
+                    ),
+                  ),
+                 Spacer(),
+                  SizedBox(
+                    // height: 45.h,
+                    width: 141.w,
+                    child: Text(message,
+                      style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                          color: AppColor.ucpBlack600
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
 }

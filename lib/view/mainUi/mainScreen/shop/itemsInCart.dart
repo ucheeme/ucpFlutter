@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,19 +27,23 @@ class CartSummary extends StatefulWidget {
 }
 
 class _CartSummaryState extends State<CartSummary> {
-  List<ItemsOnCart> allItemInCart=[
-    ItemsOnCart(id: 0, itemcode: "", quantity: 10, accountnumber: "", username: "", createDate: DateTime.now(), status: "Approved", itemName: "Rice", sellprice: 112000, totalprice: (10*112000)),
-    ItemsOnCart(id: 0, itemcode: "", quantity: 10, accountnumber: "", username: "", createDate: DateTime.now(), status: "Approved", itemName: "Rice", sellprice: 112000, totalprice: (10*112000)),
-    ItemsOnCart(id: 0, itemcode: "", quantity: 10, accountnumber: "", username: "", createDate: DateTime.now(), status: "Approved", itemName: "Rice", sellprice: 112000, totalprice: (10*112000)),
-    ItemsOnCart(id: 0, itemcode: "", quantity: 10, accountnumber: "", username: "", createDate: DateTime.now(), status: "Approved", itemName: "Rice", sellprice: 112000, totalprice: (10*112000)),
-    ItemsOnCart(id: 0, itemcode: "", quantity: 10, accountnumber: "", username: "", createDate: DateTime.now(), status: "Approved", itemName: "Rice", sellprice: 112000, totalprice: (10*112000)),
-    ItemsOnCart(id: 0, itemcode: "", quantity: 10, accountnumber: "", username: "", createDate: DateTime.now(), status: "Approved", itemName: "Rice", sellprice: 112000, totalprice: (10*112000)),
-    ItemsOnCart(id: 0, itemcode: "", quantity: 10, accountnumber: "", username: "", createDate: DateTime.now(), status: "Approved", itemName: "Rice", sellprice: 112000, totalprice: (10*112000)),
-    ItemsOnCart(id: 0, itemcode: "", quantity: 10, accountnumber: "", username: "", createDate: DateTime.now(), status: "Approved", itemName: "Rice", sellprice: 112000, totalprice: (10*112000)),
-    ItemsOnCart(id: 0, itemcode: "", quantity: 10, accountnumber: "", username: "", createDate: DateTime.now(), status: "Approved", itemName: "Rice", sellprice: 112000, totalprice: (10*112000)),
-    ItemsOnCart(id: 0, itemcode: "", quantity: 10, accountnumber: "", username: "", createDate: DateTime.now(), status: "Approved", itemName: "Rice", sellprice: 112000, totalprice: (10*112000)),
-  ];
+  List<ItemsOnCart> allItemInCart=[];
+  double subTotal=0;
   late ShopBloc bloc;
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      allItemInCart=widget.allItemInCart;
+      allItemInCart.forEach((element) {
+        subTotal = subTotal+(element.quantity*element.sellprice);
+      });
+      setState(() {
+        subTotal=subTotal;
+      });
+    });
+
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     bloc=BlocProvider.of<ShopBloc>(context);
@@ -67,7 +73,7 @@ class _CartSummaryState extends State<CartSummary> {
                     NumberFormat.currency(
                       symbol: "NGN",
                       decimalDigits: 0
-                    ).format(25000),
+                    ).format(subTotal),
                     style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
@@ -95,7 +101,7 @@ class _CartSummaryState extends State<CartSummary> {
                       ],
                     ),
                   )
-                
+
 
                 ],
               ),
@@ -125,7 +131,7 @@ class _CartSummaryState extends State<CartSummary> {
                 children: [
                   Gap(80.h),
                   SizedBox(
-                    height: Get.height,
+                    height: 90.h * allItemInCart.length,
                     child: SingleChildScrollView(
                       physics: NeverScrollableScrollPhysics(),
                       child: Column(
@@ -133,7 +139,9 @@ class _CartSummaryState extends State<CartSummary> {
                         children: allItemInCart.mapIndexed((element,index)=>
                             Padding(
                               padding:  EdgeInsets.only(bottom: 8.h),
-                              child: CartSummaryListDesign(element: element,state: state,),
+                              child: CartSummaryListDesign(
+                                bloc: bloc,
+                                element: element,state: state,),
                             )
                         ).toList(),
                       ),
@@ -161,7 +169,7 @@ class _CartSummaryState extends State<CartSummary> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(element.itemName,
+                            Text(element.itemName.isEmpty?"Unknown":element.itemName,
                               style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
                                   fontSize: 14.sp,
                                   fontWeight: FontWeight.w500,
@@ -175,7 +183,7 @@ class _CartSummaryState extends State<CartSummary> {
                                   color: AppColor.ucpBlack500
                               ),
                             ),
-                            Text(NumberFormat.currency(name: "NGN",decimalDigits: 0).format(1000),
+                            Text(NumberFormat.currency(name: "NGN",decimalDigits: 0).format(element.sellprice),
                               style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
                                   fontSize: 14.sp,
                                   fontWeight: FontWeight.w500,
@@ -212,7 +220,7 @@ class _CartSummaryState extends State<CartSummary> {
                                   color: AppColor.ucpBlack500
                                 ),
                                 ),
-                                Text(NumberFormat.currency(name: "NGN",decimalDigits: 0).format(1000),
+                                Text(NumberFormat.currency(name: "NGN",decimalDigits: 0).format(subTotal),
                                   style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
                                       fontSize: 14.sp,
                                       fontWeight: FontWeight.w500,
@@ -234,7 +242,7 @@ class _CartSummaryState extends State<CartSummary> {
                                   color: AppColor.ucpBlack500
                                 ),
                                 ),
-                                Text(NumberFormat.currency(name: "NGN",decimalDigits: 0).format(1000),
+                                Text(NumberFormat.currency(name: "NGN",decimalDigits: 0).format(subTotal),
                                   style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
                                       fontSize: 14.sp,
                                       fontWeight: FontWeight.w500,
@@ -254,12 +262,13 @@ class _CartSummaryState extends State<CartSummary> {
             ),
           ),
           UCPCustomAppBar(
-              height: 70.h,
+              height: 93.h,
               appBarColor: AppColor.ucpWhite10.withOpacity(0.3),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Gap(25.h),
+                   height30,
                   Row(
                     children: [
                       GestureDetector(

@@ -77,3 +77,9 @@ class ShopItemMarkedAsFavorite extends ShopState{
   @override
   List<Object> get props => [response];
 }
+class ShopItemUnMarkedAsFavorite extends ShopState{
+  UcpDefaultResponse response;
+  ShopItemUnMarkedAsFavorite(this.response);
+  @override
+  List<Object> get props => [response];
+}

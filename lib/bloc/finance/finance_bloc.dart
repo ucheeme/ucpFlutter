@@ -25,6 +25,9 @@ class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
     on<GetMemberAccountBalance>((event,emit){handleGetMemberAccountBalance(event);});
     on<GetWithdrawalHistoryEvent>((event,emit){handleGetWithdrawalHistoryEvent(event);});
     on<RequestWithdrawEvent>((event,emit){handleRequestWithdrawEvent(event);});
+    on<RequestRetirementEvent>((event,emit){handleRequestRetirementEvent(event);});
+    on<GetRetirementHistory>((event,emit){handleGetRetirementHistory(event);});
+    on<GetMemberSavingHistoryEvent>((event,emit){handleGetMemberSavingHistoryEvent(event);});
   }
   void handleGetMemberSavingAccounts()async{
     emit(FinanceIsLoading());
@@ -74,6 +77,38 @@ class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
       emit(FinanceError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
+  void handleGetRetirementHistory(event)async{
+    emit(FinanceIsLoading());
+    try{
+      final response = await financeRepository.getRetirementHistory(event.request);
+      if (response is WithdrawTransaction) {
+        emit(FinanceMemberRetirementHistory(response));
+        AppUtils.debug("success");
+      }else{
+        emit(FinanceError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(FinanceError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
+  void handleGetMemberSavingHistoryEvent(event)async{
+    emit(FinanceIsLoading());
+    try{
+      final response = await financeRepository.getSavingHistory(event.request);
+      if (response is WithdrawTransaction) {
+        emit(FinanceMemberSavingHistory(response));
+        AppUtils.debug("success");
+      }else{
+        emit(FinanceError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(FinanceError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
   void handleRequestWithdrawEvent(event)async{
     emit(FinanceIsLoading());
     try{
@@ -90,7 +125,22 @@ class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
       emit(FinanceError(AppUtils.defaultErrorResponse(msg: e.toString())));
     }
   }
-
+  void handleRequestRetirementEvent(event)async{
+    emit(FinanceIsLoading());
+    try{
+      final response = await financeRepository.requestRetirement(event.request);
+      if (response is UcpDefaultResponse && response.isSuccessful == true) {
+        emit(FinanceRetirementRequestSent(response));
+        AppUtils.debug("success");
+      }else{
+        emit(FinanceError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(FinanceError(AppUtils.defaultErrorResponse(msg: e.toString())));
+    }
+  }
 
 
   initial(){

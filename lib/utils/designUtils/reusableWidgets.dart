@@ -745,7 +745,7 @@ class UCPCustomAppBar extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
           child: Container(
-            height: height?.h??96.h,
+            height: height??96.h,
             color:appBarColor??AppColor.ucpBlue600.withOpacity(0.2),
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             alignment: Alignment.center,

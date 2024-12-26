@@ -17,11 +17,16 @@ class UCPUrls{
   static const  getMemberWithdrawAccountDetail= "${baseUrl}Withdrawal/get-member-withdrawal-detail";
   static const  getWithdrawHistory= "${baseUrl}Withdrawal/get-member-withdrawal-histories";
   static const  withdrawRequest= "${baseUrl}Withdrawal/withdrawal-request";
+  static const  retirementRequest= "${baseUrl}Retirement/retirement-request";
+  static const  getRetirementHistory= "${baseUrl}Retirement/get-member-retirement-histories";
+  static const  getSavingHistory= "${baseUrl}Savings/get-member-savings-histories";
   static const  getShopItems= "${baseUrl}Shop/get-shop-items";
   static const  addItemToCart= "${baseUrl}Shop/add-item-to-cart";
   static const  increaseItemCountOnCart= "${baseUrl}Shop/increase-item-in-cart";
   static const  decreaseItemCountOnCart= "${baseUrl}Shop/decrease-item-in-cart";
   static const  markItemAsFavourite= "${baseUrl}Shop/add-favourite-item";
+  static const  unmarkAsFavourite= "${baseUrl}Shop/delete-favourite-item";
   static const  getAllFavouriteItems= "${baseUrl}Shop/get-all-favourite-memmber-purchased-item";
   static const  getAllItemOnCart= "${baseUrl}Shop/get-cart-items";
+  static const  getMemberProfile= "${baseUrl}Profile/get-member-detail";
 }

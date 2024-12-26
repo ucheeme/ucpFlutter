@@ -8,6 +8,7 @@ import '../../app/apiService/appUrl.dart';
 import '../model/request/addToCartRequest.dart';
 import '../model/request/increaseDecreaseCartItemQuantity.dart';
 import '../model/request/markAsFavorite.dart';
+import '../model/request/removeFavItem.dart';
 import '../model/response/defaultResponse.dart';
 import '../model/response/favoriteItemsResponse.dart';
 import '../model/response/itemsOnCart.dart';
@@ -121,7 +122,27 @@ class ShoppingRepository extends DefaultRepository{
   Future<Object> markAsFavorite(MarkAsFavoriteRequest request) async {
     var response = await postRequest(
       request,
-      UCPUrls.addItemToCart,
+      UCPUrls.markItemAsFavourite,
+      true,
+      HttpMethods.post,
+    );
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        UcpDefaultResponse res = ucpDefaultResponseFromJson(json.encode(r));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+  Future<Object> unMarkAsFavorite(RemoveItemAsFavRequest request) async {
+    var response = await postRequest(
+      request,
+      UCPUrls.unmarkAsFavourite,
       true,
       HttpMethods.post,
     );

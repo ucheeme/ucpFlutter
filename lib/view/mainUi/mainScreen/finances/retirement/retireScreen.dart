@@ -1,4 +1,3 @@
-import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,35 +8,36 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:ucp/utils/appExtentions.dart';
-import 'package:ucp/view/mainUi/mainScreen/finances/withdrawRequestScreen.dart';
 
-import '../../../../bloc/finance/finance_bloc.dart';
-import '../../../../data/model/request/withdrawalRequest.dart';
-import '../../../../data/model/response/memberSavingAccount.dart';
-import '../../../../data/model/response/withdrawBalanceInfo.dart';
-import '../../../../utils/appCustomClasses.dart';
-import '../../../../utils/appStrings.dart';
-import '../../../../utils/apputils.dart';
-import '../../../../utils/colorrs.dart';
-import '../../../../utils/constant.dart';
-import '../../../../utils/designUtils/reusableFunctions.dart';
-import '../../../../utils/designUtils/reusableWidgets.dart';
-import '../../../../utils/sharedPreference.dart';
-import '../../../../utils/ucpLoader.dart';
+import '../../../../../bloc/finance/finance_bloc.dart';
+import '../../../../../data/model/request/withdrawalRequest.dart';
+import '../../../../../data/model/response/memberSavingAccount.dart';
+import '../../../../../data/model/response/withdrawBalanceInfo.dart';
+import '../../../../../utils/appCustomClasses.dart';
+import '../../../../../utils/appStrings.dart';
+import '../../../../../utils/apputils.dart';
+import '../../../../../utils/colorrs.dart';
+import '../../../../../utils/constant.dart';
+import '../../../../../utils/designUtils/reusableFunctions.dart';
+import '../../../../../utils/designUtils/reusableWidgets.dart';
+import '../../../../../utils/sharedPreference.dart';
+import '../../../../../utils/ucpLoader.dart';
+import '../withdraw/withdrawFundScreen.dart';
+import '../withdraw/withdrawRequestScreen.dart';
 
-class WithdrawFunds extends StatefulWidget {
-  const WithdrawFunds({super.key});
+class RetireScreen extends StatefulWidget {
+  const RetireScreen({super.key});
 
   @override
-  State<WithdrawFunds> createState() => _WithdrawFundsState();
+  State<RetireScreen> createState() => _RetireScreenState();
 }
 
-class _WithdrawFundsState extends State<WithdrawFunds> {
+class _RetireScreenState extends State<RetireScreen> {
   late FinanceBloc bloc;
-  bool isWithdraw = true;
-  bool isRequest = false;
-  bool isWithdrawFunds = false;
-  List<WithdrawPaymentMode>modeOfPayment =[WithdrawPaymentMode(title: "Cash",paymentId: 1),WithdrawPaymentMode(title: "Cheque",paymentId: 2), WithdrawPaymentMode(title: "Member Account", paymentId: 3)];
+  // bool isWithdraw = true;
+  // bool isRequest = false;
+  // bool isWithdrawFunds = false;
+  List<WithdrawPaymentMode>modeOfPayment =[WithdrawPaymentMode(title: "Cash",paymentId: 1),WithdrawPaymentMode(title: "Cheque",paymentId: 2), WithdrawPaymentMode(title: "Transfer", paymentId: 3)];
   List<UserSavingAccounts>accounts= [];
   int selectedIndex = 0;
   int selectedMOPIndex = 0;
@@ -54,39 +54,39 @@ class _WithdrawFundsState extends State<WithdrawFunds> {
 
   TextEditingController amountController = TextEditingController();
   bool isTapped = false;
-@override
+  @override
   void initState() {
-  WidgetsBinding.instance.addPostFrameCallback((_){
-    if(tempMemberSavingAccounts.isEmpty) {
-      bloc.add(const GetMemberSavingAccounts());
-    }
-    else{
-      setState(() {
-        accounts= tempMemberSavingAccounts;
-        selectedOption= accounts[0];
-      });
-      for(var element in accounts){
-        if(selectedBGIndex<=3){
-          memberAcctWithBackground.add(
-              WithdrawalBackground(
-                  userSavingAccounts: element,
-                  backgroundImage: backgroundImages[selectedBGIndex]
-              ));
-        }else{
-          selectedBGIndex=0;
-          memberAcctWithBackground.add(
-              WithdrawalBackground(
-                  userSavingAccounts: element,
-                  backgroundImage: backgroundImages[selectedBGIndex]
-              ));
-        }
-        selectedBGIndex++;
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      if(tempMemberSavingAccounts.isEmpty) {
+        bloc.add(const GetMemberSavingAccounts());
       }
-      bloc.add(GetMemberAccountBalance(WithdrawAccountBalanceRequest(
-          accountNumber: selectedOption.accountNumber, accountName:selectedOption.accountProduct)));
-    }
+      else{
+        setState(() {
+          accounts= tempMemberSavingAccounts;
+          selectedOption= accounts[0];
+        });
+        for(var element in accounts){
+          if(selectedBGIndex<=3){
+            memberAcctWithBackground.add(
+                WithdrawalBackground(
+                    userSavingAccounts: element,
+                    backgroundImage: backgroundImages[selectedBGIndex]
+                ));
+          }else{
+            selectedBGIndex=0;
+            memberAcctWithBackground.add(
+                WithdrawalBackground(
+                    userSavingAccounts: element,
+                    backgroundImage: backgroundImages[selectedBGIndex]
+                ));
+          }
+          selectedBGIndex++;
+        }
+        bloc.add(GetMemberAccountBalance(WithdrawAccountBalanceRequest(
+            accountNumber: selectedOption.accountNumber, accountName:selectedOption.accountProduct)));
+      }
 
-  });
+    });
     super.initState();
   }
   @override
@@ -133,10 +133,10 @@ class _WithdrawFundsState extends State<WithdrawFunds> {
           });
           bloc.initial();
         }
-        if(state is FinanceRequestWithdrawalSent){
+        if(state is FinanceRetirementRequestSent){
           WidgetsBinding.instance.addPostFrameCallback((_){
-          AppUtils.showSuccessSnack(state.response.data, context);
-          Get.back(result: true);
+            AppUtils.showSuccessSnack(state.response.data, context);
+            Get.back(result: true);
           });
           bloc.initial();
         }
@@ -173,11 +173,16 @@ class _WithdrawFundsState extends State<WithdrawFunds> {
                     ),
                     child: CustomButton(
                       onTap: () {
-                        WithdrawalRequest withdrawalRequest = WithdrawalRequest(
-                            productAccountNumber: selectedOption.accountNumber,
-                            amount: double.parse(amountController.text.replaceAll(",", "")),
-                            modeOfPayment: selectedModeOfPayment.paymentId);
-                        bloc.add(RequestWithdrawEvent(withdrawalRequest));
+                        if(selectedModeOfPayment==null||selectedOption==null){
+                          AppUtils.showInfoSnack(UcpStrings.mustNotBeEmptyNull, context);
+                        }else{
+                          WithdrawalRequest withdrawalRequest = WithdrawalRequest(
+                              productAccountNumber: selectedOption.accountNumber,
+                              amount: selectedAccoutBalanceInfo.accountBalance,
+                              modeOfPayment: selectedModeOfPayment.paymentId);
+                          bloc.add(RequestRetirementEvent(withdrawalRequest));
+                        }
+
                       },
                       borderRadius: 30.r,
                       buttonColor: AppColor.ucpBlue500,
@@ -198,7 +203,7 @@ class _WithdrawFundsState extends State<WithdrawFunds> {
                         children: [
                           Column(
                             children: [
-                              Gap(90.h),
+                              Gap(170.h),
                               Container(
                                 height: 230.h,
                                 decoration: BoxDecoration(
@@ -304,7 +309,7 @@ class _WithdrawFundsState extends State<WithdrawFunds> {
                                               ),
                                             ],
                                           ),
-                                       Spacer(),
+                                          Spacer(),
                                           Text(
                                             selectedAccoutBalanceInfo!.accountBalance.isNegative
                                                 ? "- ${NumberFormat.currency(symbol: 'NGN', decimalDigits: 0).format(double.parse(selectedAccoutBalanceInfo!.accountBalance.toString().replaceAll("-", "")))}"
@@ -336,100 +341,100 @@ class _WithdrawFundsState extends State<WithdrawFunds> {
                                       Gap(20.h),
                                       height16,
                                       SizedBox(
-                                        height: 400.h,
-                                        width: MediaQuery.of(context).size.width,
-                                        child:Padding(
-                                          padding:  EdgeInsets.symmetric(horizontal: 16.w),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(UcpStrings.enterDesiredAmountToWithdraw,
-                                              style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 14.sp,
-                                                color: AppColor.ucpBlack700
-                                              ),),
-                                              height8,
-                                              CustomizedTextField(
-                                                fillColor: AppColor.ucpWhite50,
-                                                keyboardType: TextInputType.number,
-                                                inputFormat: [ThousandSeparatorFormatter()],
-                                                prefixWidget: Padding(
-                                                  padding:  EdgeInsets.symmetric(horizontal: 8.w),
-                                                  child: Text("NGN",style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
-                                                      fontWeight: FontWeight.w500, fontSize: 14.sp,color: AppColor.ucpBlack800),),
-                                                ),
-                                                onTap: (){
-                                                  setState(() {
-                                                    isTapped=true;
-                                                  });
-                                                },
-                                                isTouched: isTapped,
-                                                isConfirmPasswordMatch: false,
-                                                textEditingController: amountController,
-                                              ),
-                                              Text(UcpStrings.selectPaymentMode,
-                                                style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 14.sp,
-                                                    color: AppColor.ucpBlack800
-                                                ),),
-                                              height8,
-                                              SizedBox(
-                                                height: 200.h,
-                                                child: ListView(
-
-                                                    children: modeOfPayment
-                                                        .mapIndexed((element, index) =>
-                                                        GestureDetector(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              selectedModeOfPayment = element;
-                                                              selectedMOPIndex = index;
-                                                            });
-                                                          },
-                                                          child: Container(
-                                                              height: element.title.length > 30
-                                                                  ? 70.h
-                                                                  : 48.h,
-                                                              margin: EdgeInsets.only(
+                                          height: 400.h,
+                                          width: MediaQuery.of(context).size.width,
+                                          child:Padding(
+                                            padding:  EdgeInsets.symmetric(horizontal: 16.w),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                // Text(UcpStrings.enterDesiredAmountToWithdraw,
+                                                //   style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                                                //       fontWeight: FontWeight.w500,
+                                                //       fontSize: 14.sp,
+                                                //       color: AppColor.ucpBlack700
+                                                //   ),),
+                                                // height8,
+                                                // CustomizedTextField(
+                                                //   fillColor: AppColor.ucpWhite50,
+                                                //   keyboardType: TextInputType.number,
+                                                //   inputFormat: [ThousandSeparatorFormatter()],
+                                                //   prefixWidget: Padding(
+                                                //     padding:  EdgeInsets.symmetric(horizontal: 8.w),
+                                                //     child: Text("NGN",style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                                                //         fontWeight: FontWeight.w500, fontSize: 14.sp,color: AppColor.ucpBlack800),),
+                                                //   ),
+                                                //   onTap: (){
+                                                //     setState(() {
+                                                //       isTapped=true;
+                                                //     });
+                                                //   },
+                                                //   isTouched: isTapped,
+                                                //   isConfirmPasswordMatch: false,
+                                                //   textEditingController: amountController,
+                                                // ),
+                                                Text(UcpStrings.selectPaymentMode,
+                                                  style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                                                      fontWeight: FontWeight.w500,
+                                                      fontSize: 14.sp,
+                                                      color: AppColor.ucpBlack800
+                                                  ),),
+                                                height8,
+                                                SizedBox(
+                                                  height: 200.h,
+                                                  child: ListView(
+                                                    physics: NeverScrollableScrollPhysics(),
+                                                      children: modeOfPayment
+                                                          .mapIndexed((element, index) =>
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              setState(() {
+                                                                selectedModeOfPayment = element;
+                                                                selectedMOPIndex = index;
+                                                              });
+                                                            },
+                                                            child: Container(
+                                                                height: element.title.length > 30
+                                                                    ? 70.h
+                                                                    : 48.h,
+                                                                margin: EdgeInsets.only(
                                                                   bottom: 14.h, ),
-                                                              padding:
-                                                              EdgeInsets.symmetric(horizontal: 12.h),
-                                                              decoration: BoxDecoration(
-                                                                  color: (index == selectedMOPIndex)
-                                                                      ? AppColor.ucpBlue25
-                                                                      : AppColor.ucpWhite500,
-                                                                  borderRadius:
-                                                                  BorderRadius.circular(12.r),
-                                                                  border: Border.all(
+                                                                padding:
+                                                                EdgeInsets.symmetric(horizontal: 12.h),
+                                                                decoration: BoxDecoration(
                                                                     color: (index == selectedMOPIndex)
-                                                                        ? AppColor.ucpBlue500
+                                                                        ? AppColor.ucpBlue25
                                                                         : AppColor.ucpWhite500,
-                                                                  )),
-                                                              child: BottomsheetRadioButtonRightSide(
-                                                                radioText: element.title,
-                                                                isMoreThanOne:
-                                                                element.title.length > 30,
-                                                                isDmSans: false,
-                                                                isSelected: index == selectedMOPIndex,
-                                                                onTap: () {
-                                                                  setState(() {
-                                                                    selectedMOPIndex = index;
-                                                                  });
-                                                                },
-                                                                textHeight: element.title.length > 30
-                                                                    ? 24.h
-                                                                    : 16.h,
-                                                              )),
-                                                        )
-                                                    )
-                                                        .toList()),
-                                              ),
-                                            ],
-                                          ),
-                                        )
+                                                                    borderRadius:
+                                                                    BorderRadius.circular(12.r),
+                                                                    border: Border.all(
+                                                                      color: (index == selectedMOPIndex)
+                                                                          ? AppColor.ucpBlue500
+                                                                          : AppColor.ucpWhite500,
+                                                                    )),
+                                                                child: BottomsheetRadioButtonRightSide(
+                                                                  radioText: element.title,
+                                                                  isMoreThanOne:
+                                                                  element.title.length > 30,
+                                                                  isDmSans: false,
+                                                                  isSelected: index == selectedMOPIndex,
+                                                                  onTap: () {
+                                                                    setState(() {
+                                                                      selectedMOPIndex = index;
+                                                                    });
+                                                                  },
+                                                                  textHeight: element.title.length > 30
+                                                                      ? 24.h
+                                                                      : 16.h,
+                                                                )),
+                                                          )
+                                                      )
+                                                          .toList()),
+                                                ),
+                                              ],
+                                            ),
+                                          )
                                       ),
                                     ],
                                   ),
@@ -437,18 +442,19 @@ class _WithdrawFundsState extends State<WithdrawFunds> {
                               )
                             ],
                           )
-                         // dashboard shortcuts
+                          // dashboard shortcuts
 
                         ],
                       ),
                     ),
                     UCPCustomAppBar(
-                        height: 70.h,
+                        height: 95.h,
                         appBarColor: AppColor.ucpWhite10.withOpacity(0.3),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Gap(25.h),
+                            Gap(30.h),
                             Row(
                               children: [
                                 GestureDetector(
@@ -487,13 +493,4 @@ class _WithdrawFundsState extends State<WithdrawFunds> {
       },
     );
   }
-}
-
-class WithdrawPaymentMode{
-  String title;
-  int paymentId;
-  WithdrawPaymentMode({
-   required this.title,
-   required this.paymentId
-});
 }

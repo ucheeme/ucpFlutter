@@ -73,10 +73,70 @@ class FinanceRepository extends DefaultRepository{
       return errorResponse!;
     }
   }
+  Future<Object> getRetirementHistory(PaginationRequest request) async {
+    var response = await postRequest(
+      null,
+      "${UCPUrls.getRetirementHistory}?PageSize=${request.pageSize}&PageNumber=${request.currentPage}",
+      true,
+      HttpMethods.get,
+    );
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        WithdrawTransaction res = withdrawTransactionFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+  Future<Object> getSavingHistory(PaginationRequest request) async {
+    var response = await postRequest(
+      null,
+      "${UCPUrls.getSavingHistory}?PageSize=${request.pageSize}&PageNumber=${request.currentPage}",
+      true,
+      HttpMethods.get,
+    );
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        WithdrawTransaction res = withdrawTransactionFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
   Future<Object> makeWithdrawRequest(WithdrawalRequest request) async {
     var response = await postRequest(
       request,
       UCPUrls.withdrawRequest,
+      true,
+      HttpMethods.post,
+    );
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        UcpDefaultResponse res = ucpDefaultResponseFromJson(json.encode(r));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+  Future<Object> requestRetirement(WithdrawalRequest request) async {
+    var response = await postRequest(
+      request,
+      UCPUrls.retirementRequest,
       true,
       HttpMethods.post,
     );

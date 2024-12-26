@@ -42,10 +42,29 @@ class FinanceMemberWithdrawalHistory extends FinanceState {
   @override
   List<Object> get props => [response];
 }
+class FinanceMemberSavingHistory extends FinanceState {
+  WithdrawTransaction response;
+  FinanceMemberSavingHistory(this.response);
+  @override
+  List<Object> get props => [response];
+}
 
 class FinanceRequestWithdrawalSent extends FinanceState {
   UcpDefaultResponse response;
   FinanceRequestWithdrawalSent(this.response);
+  @override
+  List<Object> get props => [response];
+}
+class FinanceRetirementRequestSent extends FinanceState {
+  UcpDefaultResponse response;
+  FinanceRetirementRequestSent(this.response);
+  @override
+  List<Object> get props => [response];
+}
+
+class FinanceMemberRetirementHistory extends FinanceState {
+  WithdrawTransaction response;
+  FinanceMemberRetirementHistory(this.response);
   @override
   List<Object> get props => [response];
 }
