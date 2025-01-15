@@ -103,7 +103,6 @@ ScrollController outflowScrollController = ScrollController();
 
               if (element.credit != null) {
                 if(inflowList.contains(element)==false){
-                  print("i am here: ${element.trandate} and ${element.narration} and ${element.debit} and ${element.credit}");
                   inflowList.add(element);
                 }
               }

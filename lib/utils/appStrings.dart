@@ -22,6 +22,8 @@ class UcpStrings{
  static const mustNotBeEmptyNull ="Please ensure all fields are filled and check boxes checked";
  static const enterMemberIdTxt ="Enter your Member ID";
  static const sCooperativeTxt ="Select cooperative";
+ static const sLoanProductTxt ="Select loan product";
+ static const loanDuration ="Enter loan duration";
  static const sMakePaymentTxt ="Add Funds";
  static const sBankTxt ="Select Bank";
  static const decriptionTxt ="Description";
@@ -41,6 +43,10 @@ class UcpStrings{
  static const phoneNumberTxt ="Phone number";
  static const proceedTxt ="Proceed";
  static const enterHomeAddressTxt ="Enter home address";
+ static const enterLoanAmount ="Enter loan amount";
+ static const netMonthPay="Enter Net Monthly pay";
+ static const frequency="Frequency";
+ static const enterReasonForLoan ="Enter reason for Loan";
  static const selectStateTxt ="Select state";
  static const cityTxt ="City";
  static const createPasswordTxt ="Create password";
@@ -91,6 +97,8 @@ class UcpStrings{
  static const sStateTxt ="Select State";
  static const orderSummary ="Order Summary";
  static const searchTxt ="Search";
+ static const startDate ="Start Date";
+ static const endDate ="End Date";
 
   static const cancelTxt = "Cancel";
   static const doneTxt = "Done";
@@ -152,11 +160,14 @@ class UcpStrings{
  static const selectMonth ="Filter duration";
  static const withdrawFunds ="Withdraw funds";
  static const cartSummary ="Cart summary";
+ static const orderRequestBreakDown ="Order request breakdown";
  static const profileTxt ="Profile";
  static const enterDesiredAmountToWithdraw ="Enter desired amount to withdraw";
  static const selectPaymentMode ="Select payment method";
  static const allAvailableItem ="All available items";
  static const payTxt="Pay";
+ static const totalAmount="Total amount";
+ static const orderStatus="Order status:";
  static const subTotalTxt="Subtotal";
  static const estimatedTotalTxt="Estimated total";
  static const financeTxt="Finances";
@@ -164,6 +175,7 @@ class UcpStrings{
  static const loanMTxt="Loan management";
  static const loanMSGTxt="Effectively manage loans.";
  static const savingTxt="Savings";
+ static const loanRequestBreakDownTxt="Loan request breakdown";
  static const savingMSGTxt="Manage your savings effectively and easily.";
  static const withdrawalMSGTxt="Easily withdraw your cash anytime.";
  static const retirementTxt="Retirement";
@@ -173,10 +185,23 @@ class UcpStrings{
  static const loanPrincipal="LOAN PRINCIPAL";
  static const loanInterest="LOAN INTEREST";
  static const charges="CHARGES";
+ static const allItemRequestTxt="All requests";
+ static const allFavoriteItemTxt="All favourite items";
+ static const loanRequestTxt="Loan requests";
+ static const applyForLoan="Apply for a loan";
+ static const loanHistory="Loan history";
+ static const guarantorApproval="Guarantor approval";
+ static const applyTxt="Apply";
+ static const loanTxt="Loan";
+ static const guarantorTxt="Guarantor";
+ static const nxtpaymentDue="Next payment due in ";
+ static const loanRepaymentBreakdown="Loan repayment breakdown";
+ static const loanapplicationForm="Loan application form";
  // static const sCooperativeTxt ="Select Cooperative";
 
 
  static const ucpLogo = "assets/images/logoWithoutText.png";
+ static const ucpLogOut = "assets/images/logout_icon.png";
  static const ucpArrowForward = "assets/images/arrow_forward.png";
  static const ucpEditProfileImage = "assets/images/edit_profilee.png";
  static const ucpWithdrawProfileImage = "assets/images/profileWithdraw.png";
@@ -221,6 +246,8 @@ class UcpStrings{
   static const monthsTxt="months";
 
   static const enterAmount="Enter Amount";
+
+
 
 }
 

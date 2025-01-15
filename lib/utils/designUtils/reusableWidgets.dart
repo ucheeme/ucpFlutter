@@ -3,8 +3,11 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:ucp/utils/appStrings.dart';
 
 import '../colorrs.dart';
@@ -203,7 +206,7 @@ class CustomizedTextField extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color:(isTouched==true) ? AppColor.ucpBlue300 : AppColor.ucpWhite10),
+                  borderSide: BorderSide(color:isTouched==true ? AppColor.ucpBlue300 : AppColor.ucpWhite10),
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 errorBorder: (error == null || error == "")
@@ -750,6 +753,106 @@ class UCPCustomAppBar extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             alignment: Alignment.center,
             child:child ,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ImageContainer extends StatelessWidget {
+  double height;
+  double width;
+  bool isNetworkImage;
+  String imageUrl;
+  ImageContainer({super.key, required this.height, required this.width,
+    this.isNetworkImage=false, required this.imageUrl});
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width, // Adjust container width
+      height: height, // Adjust container height
+      padding: EdgeInsets.only(top: 3.h, bottom: 5.h,left: 3.w),
+      decoration: BoxDecoration(
+       // border: Border.all(color: AppColor.ucpBlack50, width: 2), // Optional border
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(12.r),
+            bottomLeft: Radius.circular(12.r)), // Rounded cornersoverflow: BoxOverflow.hidden, // Ensures the image fits within the border
+      ),
+      child:isNetworkImage?
+      Image.network(imageUrl, fit: BoxFit.cover):
+      Image.asset(imageUrl, fit: BoxFit.cover,),
+    );
+  }
+}
+
+class LogOutScreen extends StatefulWidget {
+  const LogOutScreen({super.key});
+
+  @override
+  State<LogOutScreen> createState() => _LogOutScreenState();
+}
+
+class _LogOutScreenState extends State<LogOutScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body:Animate(
+        effects: [SlideEffect()],
+        child: Container(
+          margin: EdgeInsets.only(top: Get.height/2,left: 12.w,right: 12.w),
+          height: 232.h,
+          width: Get.width,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30.r),
+              color: AppColor.ucpBlue50
+          ),
+          child: Column(
+            children: [
+              Gap(24.h),
+              Text(
+                "Logout",
+                style: CreatoDisplayCustomTextStyle.kTxtBold.copyWith(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w400,
+                    color: AppColor.ucpBlack500
+                ),
+              ),
+              Gap(15.h),
+              Text(
+                "Are you sure you want to logout?",
+                style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w400,
+                    color:AppColor.ucpBlack500
+              ),
+              ),
+              Gap(22.h),
+              CustomButton(
+                height: 58.h,
+                onTap: (){
+                  // isLogOut = true.obs;
+                  Get.back(result: true);
+                },
+                width: 222.w,
+                buttonText: "Log me out",
+                buttonColor: AppColor.ucpBlue500,
+                textColor: AppColor.ucpWhite500,
+                borderRadius: 8.r,
+              ),
+              TextButton(onPressed: (){
+                Get.back(result: false);
+              },
+                  child: Text(
+                    "Cancel",
+                    style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                        color: AppColor.ucpBlue500,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w400
+                    ),
+                  ))
+            ],
           ),
         ),
       ),

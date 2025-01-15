@@ -11,6 +11,7 @@ import 'package:ucp/view/mainUi/mainScreen/finances/savings/savings.dart';
 import '../../../../utils/colorrs.dart';
 import '../home/withdraw.dart';
 import 'financeWidgets.dart';
+import 'loan/loanMainScreen.dart';
 
 class FinancesScreen extends StatefulWidget {
   const FinancesScreen({super.key});
@@ -82,7 +83,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
                   children: [
                     FinanceOptionDesign(
                       onTap: (){
-                        Get.to(SavingsScreen());
+                        Get.to(const SavingsScreen());
                       },
                       color: AppColor.ucpDanger25,
                       title: UcpStrings.savingTxt,
@@ -90,6 +91,9 @@ class _FinancesScreenState extends State<FinancesScreen> {
                       icon: UcpStrings.ucpSavingsImage,
                     ),
                     FinanceOptionDesign(
+                      onTap: (){
+                        Get.to( Loanmainscreen());
+                      },
                       color: AppColor.ucpBlue15,
                       title: UcpStrings.loanMTxt,
                       message: UcpStrings.loanMSGTxt,

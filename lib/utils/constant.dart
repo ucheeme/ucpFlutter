@@ -82,16 +82,15 @@ class CreatoDisplayCustomTextStyle{
   static TextStyle kTxtRegular = TextStyle(
     color: AppColor.ucpBlack800,
     fontSize: 12.sp,
-
+    letterSpacing: -0.35.sp,
     fontWeight: FontWeight.w400,
     fontFamily: 'Creato Display',
   );
 
   static TextStyle kTxtMedium = TextStyle(
     color:AppColor.ucpBlack800,
-   
     fontSize: 16.sp,
-
+    letterSpacing: -0.35.sp,
     fontWeight: FontWeight.w600,
     fontFamily: 'Creato Display Medium',
   );
@@ -99,14 +98,14 @@ class CreatoDisplayCustomTextStyle{
   static TextStyle kTxtLight = TextStyle(
     color: AppColor.ucpBlack800,
     fontSize: 18.sp,
-   
+    letterSpacing: -0.35.sp,
     fontWeight: FontWeight.w400,
     fontFamily: 'Creato Display Regular',
   );
   static TextStyle kTxtBold= TextStyle(
     color: AppColor.ucpBlack800,
     fontSize: 38.sp,
-
+    letterSpacing: -0.35.sp,
     fontWeight: FontWeight.w800,
     fontFamily: 'Creato Display Bold',
   );

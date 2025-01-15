@@ -17,7 +17,8 @@ import '../../../../utils/appStrings.dart';
 import '../../../../utils/colorrs.dart';
 import '../../../../utils/constant.dart';
 import '../../../../utils/designUtils/reusableWidgets.dart';
-
+List<ItemsOnCart>tempItemInCart=[];
+double subTotal=0;
 class CartSummary extends StatefulWidget {
   List<ItemsOnCart> allItemInCart;
    CartSummary({super.key,required this.allItemInCart});
@@ -28,15 +29,18 @@ class CartSummary extends StatefulWidget {
 
 class _CartSummaryState extends State<CartSummary> {
   List<ItemsOnCart> allItemInCart=[];
-  double subTotal=0;
+ // double subTotal=0;
+  int? selectedIndex;
   late ShopBloc bloc;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      subTotal=0;
       allItemInCart=widget.allItemInCart;
-      allItemInCart.forEach((element) {
+      // tempItemInCart.clear();
+      for (var element in allItemInCart) {
         subTotal = subTotal+(element.quantity*element.sellprice);
-      });
+      }
       setState(() {
         subTotal=subTotal;
       });
@@ -49,6 +53,20 @@ class _CartSummaryState extends State<CartSummary> {
     bloc=BlocProvider.of<ShopBloc>(context);
     return BlocBuilder<ShopBloc, ShopState>(
   builder: (context, state) {
+    if (state is ShopAllItemsInCartLoaded) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        allItemInCart.clear();
+        allItemInCart = state.shopItemsList;
+        tempItemInCart=state.shopItemsList;
+        // for (var element in allItemInCart) {
+        //   subTotal = subTotal+(element.quantity*element.sellprice);
+        // }
+        setState(() {
+          subTotal=subTotal;
+        });
+      });
+      bloc.initial();
+    }
     return Scaffold(
       backgroundColor:AppColor.ucpWhite10,
       extendBodyBehindAppBar: true,
@@ -129,7 +147,7 @@ class _CartSummaryState extends State<CartSummary> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Gap(80.h),
+                  Gap(120.h),
                   SizedBox(
                     height: 90.h * allItemInCart.length,
                     child: SingleChildScrollView(
@@ -139,9 +157,16 @@ class _CartSummaryState extends State<CartSummary> {
                         children: allItemInCart.mapIndexed((element,index)=>
                             Padding(
                               padding:  EdgeInsets.only(bottom: 8.h),
-                              child: CartSummaryListDesign(
-                                bloc: bloc,
-                                element: element,state: state,),
+                              child: GestureDetector(
+                                onTap: (){setState(() {
+                                  selectedIndex=index;
+                                });},
+                                child: CartSummaryListDesign(
+                                  index: index,
+                                  bloc: bloc,
+                                  selectedIndex: selectedIndex??0,
+                                  element: element,state: state,),
+                              ),
                             )
                         ).toList(),
                       ),
@@ -156,12 +181,12 @@ class _CartSummaryState extends State<CartSummary> {
                   ),),
                   Gap(12.h),
                   Container(
-                    height: 250.h,
+                    height: 50.h * allItemInCart.length,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16.r),
                         color: AppColor.ucpWhite500
                     ),
-                    child:ListView(children: allItemInCart.mapIndexed((element,index)=>
+                    child:Column(children: allItemInCart.mapIndexed((element,index)=>
                     SizedBox(
                       height: 40.h,
                       child: Padding(

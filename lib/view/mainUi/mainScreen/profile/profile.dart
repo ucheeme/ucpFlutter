@@ -18,6 +18,7 @@ import '../../../../utils/appStrings.dart';
 import '../../../../utils/apputils.dart';
 import '../../../../utils/colorrs.dart';
 import '../../../../utils/constant.dart';
+import '../../../../utils/designUtils/reusableFunctions.dart';
 import '../../../../utils/designUtils/reusableWidgets.dart';
 import '../../../errorPages/underConstruction.dart';
 MemberProfileData? tempMemberProfileData;
@@ -79,72 +80,76 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ListView(
                     children: [
                       Gap(90.h),
-                      SizedBox(
-                        height: 299.h, width: 343.w,
-                        child: Center(
-                          child: Stack(
-                            children: [
-                              Image.asset(UcpStrings.profileBaG,),
-                              Positioned(
-                                top: 40.h,
-                                bottom: 50.h,
-                                 left: 20,
-                                 right: 20,
+                      Padding(
+                        padding:  EdgeInsets.symmetric(horizontal: 16.w),
+                        child: SizedBox(
+                          height: 299.h,
+                          width: 343.w,
+                          child: Center(
+                            child: Stack(
+                              children: [
+                                Image.asset(UcpStrings.profileBaG,),
+                                Positioned(
+                                  top: 40.h,
+                                  bottom: 40.h,
+                                   left: 20,
+                                   right: 20,
 
-                                child: SizedBox(
-                                  height: 235.h,
-                                  width: 311.w,
-                                  child: Column(
-                                    children: [
-                                      SizedBox(
-                                        height: 85.h,
-                                        width: 85.w,
-                                        child: SuperProfilePicture(
-                                          label: "",
-                                          radius: 30,
-                                          image: AssetImage(
-                                            UcpStrings.tempImage,),
+                                  child: SizedBox(
+                                    height: 235.h,
+                                    width: 311.w,
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 85.h,
+                                          width: 85.w,
+                                          child: SuperProfilePicture(
+                                            label: "",
+                                            radius: 30,
+                                            image: AssetImage(
+                                              UcpStrings.tempImage,),
 
+                                          ),
                                         ),
-                                      ),
-                                      height14,
-                                      SizedBox(
-                                        height: 110.h,
-                                        width: 211.w,
-                                        child: Column(
-                                          children: [
-                                            Text("${memberProfileData?.firstName} ${memberProfileData?.lastName}",
-                                              style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
-                                              fontWeight: FontWeight.w500,
-                                                fontSize: 20.sp,
-                                                color: AppColor.ucpWhite500
-                                            )),
-                                            Text(memberProfileData!.email??"no email",
-                                              style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
-                                              fontWeight: FontWeight.w400,
-                                                fontSize: 14.sp,
-                                                color: AppColor.ucpWhite50
-                                            )),
-                                            Text(memberProfileData!.phone??"no phone number",
-                                              style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
-                                              fontWeight: FontWeight.w400,
-                                                fontSize: 14.sp,
-                                                color: AppColor.ucpWhite50
-                                            )),
-                                            Text(memberProfileData!.employeeId??"no phone number",
-                                              style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
-                                              fontWeight: FontWeight.w400,
-                                                fontSize: 14.sp,
-                                                color: AppColor.ucpWhite50
-                                            )),
-                                          ],
-                                        ),
-                                      )
-                                    ],
+                                        height14,
+                                        SizedBox(
+                                          height: 110.h,
+                                          width: 211.w,
+                                          child: Column(
+                                            children: [
+                                              Text("${memberProfileData?.firstName} ${memberProfileData?.lastName}",
+                                                style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                                                fontWeight: FontWeight.w500,
+                                                  fontSize: 20.sp,
+                                                  color: AppColor.ucpWhite500
+                                              )),
+                                              Text(memberProfileData!.email??"no email",
+                                                style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
+                                                fontWeight: FontWeight.w400,
+                                                  fontSize: 14.sp,
+                                                  color: AppColor.ucpWhite50
+                                              )),
+                                              Text(memberProfileData!.phone??"no phone number",
+                                                style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
+                                                fontWeight: FontWeight.w400,
+                                                  fontSize: 14.sp,
+                                                  color: AppColor.ucpWhite50
+                                              )),
+                                              Text(memberProfileData!.employeeId??"no phone number",
+                                                style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
+                                                fontWeight: FontWeight.w400,
+                                                  fontSize: 14.sp,
+                                                  color: AppColor.ucpWhite50
+                                              )),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              )
-                            ],
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -210,7 +215,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
     );
   }
-  cta(int index){
+  cta(int index) async {
   switch(index){
     case 0:
       Get.to( UnderMaintenanceScreen(),curve: Curves.easeIn);
@@ -239,8 +244,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       case 8:
       Get.to( UnderMaintenanceScreen(),curve: Curves.easeIn);
       break;
-      case 9:
-      Get.to( UnderMaintenanceScreen(),curve: Curves.easeIn);
+      case 9: {
+        bool response=  await showSlidingModalLogOut(context);
+        if (response) {
+          setState(() {});
+        }
+      }
+
       break;
   }
   }

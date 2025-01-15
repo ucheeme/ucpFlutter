@@ -83,3 +83,17 @@ class ShopItemUnMarkedAsFavorite extends ShopState{
   @override
   List<Object> get props => [response];
 }
+
+class ShopPurchasedItemsSummaryLoaded extends ShopState{
+  PurxhasedItemSummaryReport purchasedItemsSummary;
+  ShopPurchasedItemsSummaryLoaded(this.purchasedItemsSummary);
+  @override
+  List<Object> get props => [purchasedItemsSummary];
+}
+
+class ShopPurchasedItemRequestItemsLoaded extends ShopState{
+  ItemsInPurchasedSummary purchasedItemsSummary;
+  ShopPurchasedItemRequestItemsLoaded(this.purchasedItemsSummary);
+  @override
+  List<Object> get props => [purchasedItemsSummary];
+}

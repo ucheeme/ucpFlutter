@@ -68,3 +68,30 @@ class FinanceMemberRetirementHistory extends FinanceState {
   @override
   List<Object> get props => [response];
 }
+
+class AllMemberLoanApplicationsState extends FinanceState{
+  LoanRequestsList response;
+  AllMemberLoanApplicationsState(this.response);
+  @override
+  List<Object> get props => [response];
+}
+
+class AllLoanProductsState extends FinanceState{
+  List<LoanProductList> response;
+  AllLoanProductsState(this.response);
+  @override
+  List<Object> get props => [response];
+}
+class AllLoanFrequenciesState extends FinanceState{
+  List<LoanFrequencyList> response;
+  AllLoanFrequenciesState(this.response);
+  @override
+  List<Object> get props => [response];
+}
+
+class LoanRequestBreakdownState extends FinanceState{
+  List<LoanRequestBreakdownList> response;
+  LoanRequestBreakdownState(this.response);
+  @override
+  List<Object> get props => [response];
+}

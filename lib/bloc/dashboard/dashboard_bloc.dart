@@ -44,7 +44,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(DashboardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(DashboardError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -62,7 +62,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(DashboardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(DashboardError(AppUtils.defaultErrorResponse(msg:"An Error Occurred")));
     }
   }
   void handleGetUserAccountSummary()async{
@@ -78,7 +78,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(DashboardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(DashboardError(AppUtils.defaultErrorResponse(msg:"An Error Occurred")));
     }
   }
   void handleGetPaymentModes()async{
@@ -94,7 +94,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(DashboardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(DashboardError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleGetListOfBank()async{
@@ -110,7 +110,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(DashboardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(DashboardError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   void handleGetMemberSavingAccounts()async{
@@ -126,7 +126,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(DashboardError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(DashboardError(AppUtils.defaultErrorResponse(msg:"An Error Occurred")));
     }
   }
 

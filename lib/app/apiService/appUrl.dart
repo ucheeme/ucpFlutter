@@ -27,6 +27,14 @@ class UCPUrls{
   static const  markItemAsFavourite= "${baseUrl}Shop/add-favourite-item";
   static const  unmarkAsFavourite= "${baseUrl}Shop/delete-favourite-item";
   static const  getAllFavouriteItems= "${baseUrl}Shop/get-all-favourite-memmber-purchased-item";
+  static const  getAllPurchasedItemSummary= "${baseUrl}Shop/get-purchased-item-request-summary";
+  static const  getAllItemInPurchasedSummary= "${baseUrl}Shop/get-all-member-purchased-item";
   static const  getAllItemOnCart= "${baseUrl}Shop/get-cart-items";
+  static const  getAllLoanApplications= "${baseUrl}Loan/get-loan-application";
+  static const  getAllLoanProducts= "${baseUrl}Loan/get-loan-products";
+  static const  getLoanSchedule= "${baseUrl}Loan/get-loan-schedule";
+  static const  getAllLoanFrequencies= "${baseUrl}Common/get-loan-frequencies";
+  static const  getMemberLoanApplicationGuarators= "${baseUrl}Loan/get-member-loan-application-guarators";
+  static const  getAllGuarantors= "${baseUrl}Loan/get-loan-gaurators";
   static const  getMemberProfile= "${baseUrl}Profile/get-member-detail";
 }

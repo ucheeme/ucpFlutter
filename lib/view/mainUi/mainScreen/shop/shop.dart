@@ -91,7 +91,7 @@ class _ShopScreenState extends State<ShopScreen> {
 
         if (state is ShopItemAddedToCart) {
           WidgetsBinding.instance.addPostFrameCallback((_) {});
-          bloc.initial();
+         // bloc.initial();
         }
         if (state is ShopAllFavoriteItemsLoaded) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -144,6 +144,7 @@ class _ShopScreenState extends State<ShopScreen> {
         if (state is ShopAllItemsInCartLoaded) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             allItemInCart = state.shopItemsList;
+            tempItemInCart= state.shopItemsList;
           });
           bloc.initial();
         }
@@ -174,9 +175,7 @@ class _ShopScreenState extends State<ShopScreen> {
               backgroundColor: AppColor.ucpWhite10,
               body: Stack(
                 children: [
-                  SingleChildScrollView(
-                    child: displayScreen(state),
-                  ),
+                  displayScreen(state),
                   UCPCustomAppBar(
                       height: MediaQuery.of(context).size.height*0.23,
                       appBarColor: AppColor.ucpWhite10.withOpacity(0.3),
@@ -327,7 +326,7 @@ class _ShopScreenState extends State<ShopScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  UcpStrings.allAvailableItem,
+                                 isShop? UcpStrings.allAvailableItem : isRequest? UcpStrings.allItemRequestTxt : UcpStrings.allFavoriteItemTxt,
                                   style: CreatoDisplayCustomTextStyle.kTxtBold
                                       .copyWith(
                                           fontSize: 14.sp,
@@ -337,7 +336,7 @@ class _ShopScreenState extends State<ShopScreen> {
                                 ),
                                 GestureDetector(
                                   onTap: (){
-                                    Get.to(CartSummary(allItemInCart:allItemInCart));
+                                    Get.to(CartSummary(allItemInCart:tempItemInCart));
                                   },
                                   child: Container(
                                     height: 40.h,
@@ -383,17 +382,21 @@ class _ShopScreenState extends State<ShopScreen> {
 
   Widget displayScreen(state) {
     if (isShop) {
-      return ShopScreenListView(
-        bloc: bloc,
-        shopItemsList: allFavoriteItem2,
-        state: state,
+      return SingleChildScrollView(
+        child: ShopScreenListView(
+          bloc: bloc,
+          shopItemsList: allFavoriteItem2,
+          state: state,
+        ),
       );
     } else if (isRequest) {
-      return Shoprequestscreen();
+      return Shoprequestscreen(bloc: bloc,);
     } else {
-      return ShopFavoriteItemScreen(
-        allFavoriteItems: allFavoriteItem2.where((element) => element.isFavourite==true).toList(),
-        bloc: bloc,
+      return SingleChildScrollView(
+        child: ShopFavoriteItemScreen(
+          allFavoriteItems: allFavoriteItem2.where((element) => element.isFavourite==true).toList(),
+          bloc: bloc,
+        ),
       );
     }
   }

@@ -2,8 +2,12 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:ucp/data/model/request/withdrawalRequest.dart';
+import 'package:ucp/data/model/response/loanProductResponse.dart';
+import 'package:ucp/data/model/response/loanRequestBreakDown.dart';
 
 import '../../data/model/response/defaultResponse.dart';
+import '../../data/model/response/loanApplicationResponse.dart';
+import '../../data/model/response/loanFrequencyResponse.dart';
 import '../../data/model/response/memberSavingAccount.dart';
 import '../../data/model/response/withdrawBalanceInfo.dart';
 import '../../data/model/response/withdrawTransactionHistory.dart';
@@ -28,6 +32,10 @@ class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
     on<RequestRetirementEvent>((event,emit){handleRequestRetirementEvent(event);});
     on<GetRetirementHistory>((event,emit){handleGetRetirementHistory(event);});
     on<GetMemberSavingHistoryEvent>((event,emit){handleGetMemberSavingHistoryEvent(event);});
+    on<GetAllLoanApplicationEvent>((event,emit){handleGetAllLoanApplicationEvent(event);});
+    on<GetAllLoanProductsEvent>((event,emit){handleGetAllLoanProductsEvent();});
+    on<GetAllLoanFrequenciesEvent>((event,emit){handleGetAllLoanFrequenciesEvent();});
+    on<LoanRequestBreakdownEvent>((event,emit){handleLoanRequestBreakdownEvent(event);});
   }
   void handleGetMemberSavingAccounts()async{
     emit(FinanceIsLoading());
@@ -42,7 +50,7 @@ class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(FinanceError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(FinanceError(AppUtils.defaultErrorResponse(msg:"Something went wrong")));
     }
   }
   void handleGetMemberAccountBalance(event)async{
@@ -58,7 +66,7 @@ class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(FinanceError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(FinanceError(AppUtils.defaultErrorResponse(msg:"Something went wrong")));
     }
   }
   void handleGetWithdrawalHistoryEvent(event)async{
@@ -74,7 +82,7 @@ class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(FinanceError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(FinanceError(AppUtils.defaultErrorResponse(msg: "Something went wrong")));
     }
   }
   void handleGetRetirementHistory(event)async{
@@ -90,7 +98,7 @@ class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(FinanceError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(FinanceError(AppUtils.defaultErrorResponse(msg: "Something went wrong")));
     }
   }
   void handleGetMemberSavingHistoryEvent(event)async{
@@ -106,7 +114,23 @@ class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(FinanceError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(FinanceError(AppUtils.defaultErrorResponse(msg: "Something went wrong")));
+    }
+  }
+  void handleGetAllLoanApplicationEvent(event)async{
+    emit(FinanceIsLoading());
+    try{
+      final response = await financeRepository.getAllLoanRequest(event.request);
+      if (response is LoanRequestsList) {
+        emit(AllMemberLoanApplicationsState(response));
+        AppUtils.debug("success");
+      }else{
+        emit(FinanceError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(FinanceError(AppUtils.defaultErrorResponse(msg: "Something went wrong")));
     }
   }
   void handleRequestWithdrawEvent(event)async{
@@ -122,7 +146,7 @@ class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(FinanceError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(FinanceError(AppUtils.defaultErrorResponse(msg:"Something went wrong")));
     }
   }
   void handleRequestRetirementEvent(event)async{
@@ -138,10 +162,61 @@ class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(FinanceError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(FinanceError(AppUtils.defaultErrorResponse(msg: "Something went wrong")));
     }
   }
 
+  void handleGetAllLoanProductsEvent()async{
+    emit(FinanceIsLoading());
+    try{
+      final response = await financeRepository.getAllLoanProducts();
+      if (response is List<LoanProductList>) {
+        emit(AllLoanProductsState(response));
+        AppUtils.debug("success");
+      }else{
+        emit(FinanceError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(FinanceError(AppUtils.defaultErrorResponse(msg: "Something went wrong")));
+    }
+  }
+
+  void handleGetAllLoanFrequenciesEvent()async{
+    emit(FinanceIsLoading());
+    try{
+      final response = await financeRepository.getAllLoanFrequencies();
+      if (response is List<LoanFrequencyList>) {
+        emit(AllLoanFrequenciesState(response));
+        AppUtils.debug("success");
+      }else{
+        emit(FinanceError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(FinanceError(AppUtils.defaultErrorResponse(msg: "Something went wrong")));
+    }
+  }
+
+  void handleLoanRequestBreakdownEvent(event)async{
+    emit(FinanceIsLoading());
+    try{
+      final response = await financeRepository.loanRequestBreakDown(event.request);
+      if (response is List<LoanRequestBreakdownList>) {
+        emit(LoanRequestBreakdownState(response));
+        AppUtils.debug("success");
+      }else{
+        emit(FinanceError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      print(e);
+      emit(FinanceError(AppUtils.defaultErrorResponse(msg: "Something went wrong")));
+    }
+  }
 
   initial(){
     emit(FinanceInitial());

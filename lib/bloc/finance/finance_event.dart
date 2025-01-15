@@ -52,3 +52,31 @@ class RequestRetirementEvent extends FinanceEvent {
   // TODO: implement props
   List<Object?> get props => [];
 }
+
+class GetAllLoanApplicationEvent extends FinanceEvent{
+  PaginationRequest request;
+  GetAllLoanApplicationEvent(this.request);
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}
+class GetAllLoanProductsEvent extends FinanceEvent{
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}
+
+class GetAllLoanFrequenciesEvent extends FinanceEvent{
+ const GetAllLoanFrequenciesEvent();
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+} //GetAllLoanFrequencies
+
+class LoanRequestBreakdownEvent extends FinanceEvent{
+  LoanRequestBreakdownRequestBody request;
+  LoanRequestBreakdownEvent(this.request);
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}

@@ -25,7 +25,7 @@ List<ProfileDataValue> profileData =[
   ProfileDataValue(title:profileDataString[6], image:UcpStrings.ucpBankAcctProfileImage, isToggle: false),
   ProfileDataValue(title:profileDataString[7], image:UcpStrings.ucpSupportProfileImage, isToggle: false),
   ProfileDataValue(title:profileDataString[8], image:UcpStrings.ucpPushNotProfileImage, isToggle: true),
-  ProfileDataValue(title:profileDataString[9], image:UcpStrings.ucpLogo, isToggle: false),
+  ProfileDataValue(title:profileDataString[9], image:UcpStrings.ucpLogOut, isToggle: false),
 ];
 class ProfileListDesign extends StatefulWidget {
   ProfileDataValue profileDataValue;

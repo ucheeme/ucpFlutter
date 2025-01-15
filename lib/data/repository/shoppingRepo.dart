@@ -11,7 +11,9 @@ import '../model/request/markAsFavorite.dart';
 import '../model/request/removeFavItem.dart';
 import '../model/response/defaultResponse.dart';
 import '../model/response/favoriteItemsResponse.dart';
+import '../model/response/itemsInPurchaseSummary.dart';
 import '../model/response/itemsOnCart.dart';
+import '../model/response/purchasedItemSummartResponse.dart';
 import '../model/response/shopList.dart';
 
 class ShoppingRepository extends DefaultRepository{
@@ -77,7 +79,47 @@ class ShoppingRepository extends DefaultRepository{
       return errorResponse!;
     }
   }
-
+  Future<Object> getAllPurchasedItemSummary(PaginationRequest request) async {
+    var response = await postRequest(
+      null,
+      "${UCPUrls.getAllPurchasedItemSummary}?PageSize=${request.pageSize}&PageNumber=${request.currentPage}",
+      true,
+      HttpMethods.get,
+    );
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        PurxhasedItemSummaryReport res = purxhasedItemSummaryReportFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+  Future<Object> getAllItemInPurchasedSummary(PaginationRequest request) async {
+    var response = await postRequest(
+      null,
+      "${UCPUrls.getAllItemInPurchasedSummary}?PageSize=${request.pageSize}"
+          "&PageNumber=${request.currentPage}&OrderId=${request.addOns}",
+      true,
+      HttpMethods.get,
+    );
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        ItemsInPurchasedSummary res = itemsInPurchasedSummaryFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
   Future<Object> increaseItemCountOnCart(AddReduceItemQuantityOnCartRequest request) async {
     var response = await postRequest(
       request,

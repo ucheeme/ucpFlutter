@@ -34,6 +34,7 @@ class AppColor{
 
 
   //UCPBlackColor
+  static const Color ucpBlack25 =Color(0xff757575);
   static const Color ucpBlack50 =Color(0xffF2F2F2);
   static const Color ucpBlack100 =Color(0xffE6E6E6);
   static const Color ucpBlack200 =Color(0xffCCCCCC);

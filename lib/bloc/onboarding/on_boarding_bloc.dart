@@ -46,7 +46,7 @@ class OnBoardingBloc extends Bloc<OnBoardingEvent, OnBoardingState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   initial(){
@@ -66,7 +66,7 @@ class OnBoardingBloc extends Bloc<OnBoardingEvent, OnBoardingState> {
         AppUtils.debug("error");
       }    }catch(e,trace){
       print(trace);
-      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -82,7 +82,7 @@ class OnBoardingBloc extends Bloc<OnBoardingEvent, OnBoardingState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -98,7 +98,7 @@ class OnBoardingBloc extends Bloc<OnBoardingEvent, OnBoardingState> {
         AppUtils.debug("error");
       }    }catch(e,trace){
       print(trace);
-      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 
@@ -114,7 +114,7 @@ class OnBoardingBloc extends Bloc<OnBoardingEvent, OnBoardingState> {
         AppUtils.debug("error");
       }    }catch(e,trace){
       print(trace);
-      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg:"An Error Occurred")));
     }
   }
   void handleGetNextMemberIdEvent(event)async {
@@ -129,7 +129,7 @@ class OnBoardingBloc extends Bloc<OnBoardingEvent, OnBoardingState> {
         AppUtils.debug("error");
       }    }catch(e,trace){
       print(trace);
-      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(OnBoardingError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
 }

@@ -30,7 +30,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     }catch(e,trace){
       print(trace);
-      emit(ProfileError(AppUtils.defaultErrorResponse(msg: e.toString())));
+      emit(ProfileError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
   initial(){

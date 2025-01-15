@@ -56,3 +56,15 @@ class RemoveItemAsFavEvent extends ShopEvent {
   @override
   List<Object> get props => [];
 }
+class GetPurchasedItemRequestItemsEvent extends ShopEvent {
+  PaginationRequest request;
+  GetPurchasedItemRequestItemsEvent(this.request);
+  @override
+  List<Object> get props => [];
+}
+class GetAllItemInPurchasedSummaryEvent extends ShopEvent {
+  PaginationRequest request;
+  GetAllItemInPurchasedSummaryEvent(this.request);
+  @override
+  List<Object> get props => [];
+}

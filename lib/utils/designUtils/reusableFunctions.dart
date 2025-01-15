@@ -1,8 +1,11 @@
 import 'dart:convert';
 
+import 'package:date_time_format/date_time_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:ucp/utils/designUtils/reusableWidgets.dart';
+import 'package:ucp/view/bottomSheet/makeSavingsDraggableBottomSheet.dart';
 
 import '../colorrs.dart';
 
@@ -172,5 +175,50 @@ bool _compareKeys(Map<String, dynamic> map1, Map<String, dynamic> map2) {
   return true;
 }
 
-
+showSlidingModalLogOut(BuildContext context,) {
+  showDialog(
+    context: context,
+    // Makes the background transparent
+    builder: (BuildContext context) {
+      return LogOutScreen();
+    },
+  );
+}
 //1 cash 2 cheque 3 member bank account
+
+String getSuffix(int value) {
+  // Get the last digit of the value
+  int lastDigit = value % 10;
+
+  // Check if the value is a special case (11, 12, 13)
+  if (value % 100 >= 11 && value % 100 <= 13) {
+    return 'th';
+  }
+
+  // Determine the suffix based on the last digit
+  switch (lastDigit) {
+    case 1:
+      return 'st';
+    case 2:
+      return 'nd';
+    case 3:
+      return 'rd';
+    default:
+      return 'th';
+  }
+}
+
+String convertDate(String inputDate) {
+  try {
+    // Parse the input date string
+    DateTime parsedDate = DateFormat("MM/dd/yyyy HH:mm:ss").parse(inputDate);
+
+    // Format the date to the desired format
+    String formattedDate = DateFormat("MMM. dd, yyyy").format(parsedDate);
+
+    return formattedDate;
+  } catch (e) {
+    // Handle errors gracefully
+    return DateTime.now().format("MMM. dd, yyyy");
+  }
+}

@@ -8,6 +8,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:ucp/bloc/shop/shop_bloc.dart';
 import 'package:ucp/utils/appStrings.dart';
 import 'package:ucp/utils/constant.dart';
+import 'package:ucp/view/mainUi/mainScreen/shop/itemsInCart.dart';
 import 'package:ucp/view/mainUi/mainScreen/shop/shopFavorites.dart';
 
 import '../../../../app/customAnimations/animationManager.dart';
@@ -18,6 +19,7 @@ import '../../../../data/model/response/itemsOnCart.dart';
 import '../../../../data/model/response/shopList.dart';
 import '../../../../utils/apputils.dart';
 import '../../../../utils/colorrs.dart';
+import '../../../../utils/designUtils/reusableWidgets.dart';
 
 class ShopListItemDesign extends StatefulWidget {
   Function()? addToFavorite;
@@ -68,66 +70,50 @@ class _ShopListItemDesignState extends State<ShopListItemDesign> {
           ),
           child: Row(
             children: [
-              Container(
-                  height: 88.h,
-                  width: 112.w,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(12.r),
-                        bottomLeft: Radius.circular(12.r)),
+              Stack(
+                children: [
+                  Container(
+                    height: 88.h,
+                    width: 112.h,
+                    decoration: BoxDecoration(
+                     // color: ,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(12.r),
+                          bottomLeft: Radius.circular(12.r)), // Rounded cornersoverflow: BoxOverflow.hidden, // Ensures the image fits within the border
+                    ),
+                    child: ImageContainer(
+                     imageUrl:  UcpStrings.basketI,
+                      height: 88.h,
+                      width: 112.h,
+                    ),
                   ),
-                  child: Stack(
-                    children: [
-                      Container(
-                        height: 88.h,
-                        width: 112.w,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: AppColor.ucpBlack50),
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(12.r),
-                              bottomLeft: Radius.circular(12.r)),
-                        ),
+                  Positioned(
+                    child: BouncingWidget(
+                      duration: Duration(milliseconds: 100),
+                      child: GestureDetector(
+                        onTap: widget.addToFavorite,
                         child: Container(
-                            height: 88.h,
-                            width: 112.w,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: AppColor.ucpBlack50),
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(12.r),
-                                  bottomLeft: Radius.circular(12.r)),
-                            ),
-                            child: Image.asset(
-                              UcpStrings.basketI,
-                              // fit: BoxFit.fill,
-                            )),
-                      ),
-                      Positioned(
-                        child: BouncingWidget(
-                          duration: Duration(milliseconds: 100),
-                          child: GestureDetector(
-                            onTap: widget.addToFavorite,
-                            child: Container(
-                              height: 32.h,
-                              width: 32.w,
-                              padding: EdgeInsets.all(8.h),
-                              decoration: BoxDecoration(
-                                color: widget.isFavourite
-                                    ? AppColor.ucpOrange500
-                                    : AppColor.ucpOrange25,
-                                // color: Colors.red,
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(12.r),
-                                    bottomRight: Radius.circular(12.r)),
-                              ),
-                              child: widget.isFavourite
-                                  ? Image.asset(UcpStrings.favouriteI)
-                                  : Image.asset(UcpStrings.unFavouriteI),
-                            ),
+                          height: 32.h,
+                          width: 32.w,
+                          padding: EdgeInsets.all(8.h),
+                          decoration: BoxDecoration(
+                            color: widget.isFavourite
+                                ? AppColor.ucpOrange500
+                                : AppColor.ucpOrange25,
+                            // color: Colors.red,
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(12.r),
+                                bottomRight: Radius.circular(12.r)),
                           ),
+                          child: widget.isFavourite
+                              ? Image.asset(UcpStrings.favouriteI)
+                              : Image.asset(UcpStrings.unFavouriteI),
                         ),
-                      )
-                    ],
-                  )),
+                      ),
+                    ),
+                  )
+                ],
+              ),
               SizedBox(
                 height: 88.h,
                 width: 231.w,
@@ -218,12 +204,19 @@ class _ShopListItemDesignState extends State<ShopListItemDesign> {
     } else if (state is ShopItemAddedToCart&& widget.selectedIndex==widget.index) {
       return CartItemIncreaseDecreaseDesign(
         state: state,
+        selectedIndex: widget.selectedIndex,
+        index:widget.index,
+        itemQuantity:  widget.shopItem.quantity,
+        itemCode: widget.shopItem.itemCode,
+
         bloc: widget.bloc,
       );
-    } else {
+    } else if(state is ShopInitial){
       return GestureDetector(
           onTap:widget.addToCartAction,
           child: Image.asset(UcpStrings.addToCartIcon));
+    }else{
+      return SizedBox.shrink();
     }
   }
 }
@@ -267,8 +260,12 @@ class CartItemIncreaseDecreaseDesign extends StatefulWidget {
   ShopState state;
   ShopBloc bloc;
   int? itemQuantity;
+  int selectedIndex;
+  int index;
   CartItemIncreaseDecreaseDesign(
-      {super.key,required this.bloc,required,
+      {super.key,
+  required this.index,required this.selectedIndex,
+  required this.bloc,required,
   this.itemCode,this.itemQuantity, required this.state});
 
   @override
@@ -280,7 +277,9 @@ class _CartItemIncreaseDecreaseDesignState
     extends State<CartItemIncreaseDecreaseDesign> {
   int quantity = 0;
   int quantityHolder = 0;
+  int? selectedIndex;
   late ShopBloc bloc;
+  List<ItemsOnCart> allItemInCart=[];
 @override
   void initState() {
     quantity = widget.itemQuantity ?? 0;
@@ -303,12 +302,33 @@ class _CartItemIncreaseDecreaseDesignState
         if (state is ShopItemQuantityDecreased) {
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             quantityHolder = quantity;
+            selectedIndex=null;
+            tempItemInCart[widget.index].quantity=quantity;
+            subTotal=0;
+            for (var element in tempItemInCart) {
+              subTotal = subTotal+(element.quantity*element.sellprice);
+            }
+          });
+          bloc.initial();
+        }
+        if (state is ShopAllItemsInCartLoaded) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            // allItemInCart = state.shopItemsList;
+            // setState(() {
+            //
+            // })setState;
           });
           bloc.initial();
         }
         if (state is ShopItemQuantityIncreased) {
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             quantityHolder = quantity;
+            selectedIndex=null;
+            tempItemInCart[widget.index].quantity=quantity;
+            subTotal=0;
+            for (var element in tempItemInCart) {
+              subTotal = subTotal+(element.quantity*element.sellprice);
+            }
           });
           bloc.initial();
         }
@@ -322,6 +342,10 @@ class _CartItemIncreaseDecreaseDesignState
                   children: [
                     GestureDetector(
                         onTap: () {
+
+                          setState(() {
+                            selectedIndex = widget.index;
+                          });
                           if (quantity == 0) {
                             bloc.add(RemoveReduceItemQuantityFromCartEvent(
                                 AddReduceItemQuantityOnCartRequest(
@@ -348,7 +372,9 @@ class _CartItemIncreaseDecreaseDesignState
                             color: AppColor.ucpBlack500)),
                     GestureDetector(
                         onTap: () {
-
+                          setState(() {
+                            selectedIndex = widget.index;
+                          });
                           bloc.add(IncreaseItemQuantityOnCartEvent(
                               AddReduceItemQuantityOnCartRequest(
                                   itemCode: widget.itemCode!, quantity: 1)));
@@ -365,7 +391,7 @@ class _CartItemIncreaseDecreaseDesignState
               enabled: true,
               child: Visibility(
                 visible: state
-                    is ShopIsIncreasingDecreasingItemQuantityOnCartLoading,
+                    is ShopIsIncreasingDecreasingItemQuantityOnCartLoading && (selectedIndex == widget.index),
                 child: Container(
                   height: 38.h,
                   width: 93.w,
@@ -385,11 +411,17 @@ class _CartItemIncreaseDecreaseDesignState
 
 
 class CartSummaryListDesign extends StatefulWidget {
-  ItemsOnCart element;
+  dynamic element;
   ShopState state;
+  bool? isOrderRequest;
   ShopBloc bloc;
+  int selectedIndex;
+  int index;
   CartSummaryListDesign({super.key,
     required this.bloc,
+    required this.selectedIndex,
+    required this.index,
+    this.isOrderRequest,
     required this.element,required this.state});
 
   @override
@@ -449,7 +481,7 @@ class _CartSummaryListDesignState extends State<CartSummaryListDesign> {
                         Text(
                           NumberFormat.currency(
                               symbol: 'NGN', decimalDigits: 0)
-                              .format(widget.element.sellprice),
+                              .format(widget.isOrderRequest==null? widget.element.sellPrice : widget.element.unitPrice),
                           style: CreatoDisplayCustomTextStyle.kTxtMedium
                               .copyWith(
                               fontSize: 14.sp,
@@ -459,10 +491,16 @@ class _CartSummaryListDesignState extends State<CartSummaryListDesign> {
                       ],
                     ),
                   ),
-                  CartItemIncreaseDecreaseDesign(
-                    state: widget.state,
-                    bloc: widget.bloc,
-                    itemQuantity: widget.element.quantity,
+                  Visibility(
+                    visible: widget.isOrderRequest==null?true:false,
+                    child: CartItemIncreaseDecreaseDesign(
+                      state: widget.state,
+                      bloc: widget.bloc,
+                      selectedIndex: widget.selectedIndex,
+                      index: widget.index,
+                      itemCode:widget.isOrderRequest==null? widget.element.itemcode:null,
+                      itemQuantity: widget.element.quantity,
+                    ),
                   )
                 ],
               ),
@@ -484,3 +522,8 @@ class ItemRequestedGroupDesign extends StatelessWidget {
     return const Placeholder();
   }
 }
+
+
+// class ShopRequestData{
+//   List<>
+// }

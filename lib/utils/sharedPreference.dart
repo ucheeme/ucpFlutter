@@ -1,6 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ucp/data/model/request/saveToAccount.dart';
 import 'package:ucp/data/model/response/cooperativeList.dart';
+import 'package:ucp/data/model/response/loanFrequencyResponse.dart';
+import 'package:ucp/data/model/response/loanProductResponse.dart';
 import 'package:ucp/data/model/response/paymentModeResponse.dart';
 import 'package:ucp/data/model/response/transactionHistoryResponse.dart';
 import 'package:ucp/data/model/response/withdrawTransactionHistory.dart';
@@ -9,6 +11,7 @@ import '../data/model/response/dashboardResponse.dart';
 import '../data/model/response/listOfBankResponse.dart';
 import '../data/model/response/loginResponse.dart';
 import '../data/model/response/memberSavingAccount.dart';
+import '../data/model/response/purchasedItemSummartResponse.dart';
 
 class MySharedPreference {
   static SharedPreferences? _preferences;
@@ -91,8 +94,11 @@ List<UserSavingAccounts>tempMemberSavingAccounts= [];
 List<WithdrawTransactionHistory>tempWithdrawTransactionHistory= [];
 List<WithdrawTransactionHistory>tempMemberSavingHistory= [];
 List<WithdrawTransactionHistory>tempRetirementHistory = [];
+List<PurchasedSummary> purchasedSummaryListTemp = [];
 List<ListOfBank>tempBankList = [];
 List<UserSavingAccounts> tempSavingAccounts= [];
+List<LoanFrequencyList>tempLoanFrequencies=[];
+List<LoanProductList>tempLoanProducts=[];
 List<PaymentModes> tempPaymentModes= [];
 SaveToAccountRequest saveToAccountRequest = SaveToAccountRequest(
     amount:"",
