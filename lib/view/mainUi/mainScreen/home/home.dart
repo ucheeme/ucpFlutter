@@ -365,6 +365,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       )),
                                     ):
                                     ListView(
+                                      physics: NeverScrollableScrollPhysics(),
                                       padding: EdgeInsets.symmetric(horizontal:16.w),
                                       children: transactionList
                                           .mapIndexed(
@@ -411,7 +412,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     context: context,
                                     builder: (context) {
                                       return Container(
-                                          height: 220.h,
+                                          height: 300.h,
                                           color: AppColor.ucpWhite500,
                                           child: EnterAmountBottomSheet());
                                     });

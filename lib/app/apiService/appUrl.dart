@@ -33,8 +33,21 @@ class UCPUrls{
   static const  getAllLoanApplications= "${baseUrl}Loan/get-loan-application";
   static const  getAllLoanProducts= "${baseUrl}Loan/get-loan-products";
   static const  getLoanSchedule= "${baseUrl}Loan/get-loan-schedule";
+  static const  getLoanRefundSchedule= "${baseUrl}Loan/get-loan-schedule-for-refund";
+  static const  getLoanFrequencyForProduct= "${baseUrl}Loan/get-selected-loan-product-detail";
   static const  getAllLoanFrequencies= "${baseUrl}Common/get-loan-frequencies";
+  static const  getAllGurantors= "${baseUrl}Loan/get-loan-gaurators";
   static const  getMemberLoanApplicationGuarators= "${baseUrl}Loan/get-member-loan-application-guarators";
   static const  getAllGuarantors= "${baseUrl}Loan/get-loan-gaurators";
+  static const  getAllUserLoans= "${baseUrl}Loan/get-member-loan-account-numbers";
   static const  getMemberProfile= "${baseUrl}Profile/get-member-detail";
+  static const  updateProfileDetails= "${baseUrl}Profile/update-member-profile";
+  static const  changePassword= "${baseUrl}Profile/change-password";
+  static const  getAllMemberSavingAcct= "${baseUrl}Savings/get-member-savings-account-numbers";
+
+  static const applyForLoan="${baseUrl}Loan/apply-for-loan";
+
+  static const getAllLoanGuarantorsRequest="${baseUrl}Loan/get-member-loan-application-guarators";
+  static const guarantorRejectRequest="${baseUrl}Loan/guarantor-request-reject";
+  static const guarantorAcceptRequest="${baseUrl}Loan/guarantor-request-approved";
 }

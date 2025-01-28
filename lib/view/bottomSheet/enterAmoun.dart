@@ -27,8 +27,37 @@ TextEditingController amountController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomSheet:  Container(
+          height: 83.h,
+          width: double.infinity,
+          padding: EdgeInsets.all(16.w),
+          decoration: BoxDecoration(
+            color: AppColor.ucpBlue50,     //Color( 0xffEDF4FF),
+            // borderRadius: BorderRadius.only(
+            //   bottomRight: Radius.circular(15.r),
+            //   bottomLeft: Radius.circular(15.r),
+            // ),
+          ),
+          child: CustomButton(
+            onTap: () {
+              saveToAccountRequest?.amount = amountController.text.replaceAll(",", "");
+              Get.back();
+              _showUserAccountModal();
+            },
+            borderRadius: 30.r,
+            buttonColor: AppColor.ucpBlue500,
+            buttonText: UcpStrings.doneTxt,
+            height: 51.h,
+            textStyle: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+              fontWeight: FontWeight.w500,
+              fontSize: 16.sp,
+              color: AppColor.ucpWhite500,
+            ),
+            textColor: AppColor.ucpWhite500,
+          )
+      ),
         body: Container(
-            height: 220.h,
+            height: 300.h,
             decoration: BoxDecoration(
               color: AppColor.ucpWhite500,
               borderRadius: BorderRadius.only(
@@ -67,35 +96,7 @@ TextEditingController amountController = TextEditingController();
                   },
                 ),
               ),
-              Container(
-                  height: 83.h,
-                  width: double.infinity,
-                  padding: EdgeInsets.all(16.w),
-                  decoration: BoxDecoration(
-                    color: AppColor.ucpBlue50,     //Color( 0xffEDF4FF),
-                    borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(15.r),
-                      bottomLeft: Radius.circular(15.r),
-                    ),
-                  ),
-                  child: CustomButton(
-                    onTap: () {
-                      saveToAccountRequest?.amount = amountController.text.replaceAll(",", "");
-                      Get.back();
-                      _showUserAccountModal();
-                    },
-                    borderRadius: 30.r,
-                    buttonColor: AppColor.ucpBlue500,
-                    buttonText: UcpStrings.doneTxt,
-                    height: 51.h,
-                    textStyle: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16.sp,
-                      color: AppColor.ucpWhite500,
-                    ),
-                    textColor: AppColor.ucpWhite500,
-                  )
-              )
+
             ])));
   }
 

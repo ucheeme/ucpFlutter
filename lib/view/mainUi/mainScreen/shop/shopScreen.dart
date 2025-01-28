@@ -46,13 +46,14 @@ class _ShopScreenListViewState extends State<ShopScreenListView> {
   }
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Gap(160.h),
-        Container(
-            height: Get.height.h,
-
-            child:ListView(
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      child: Column(
+        children: [
+          Gap(160.h),
+          SizedBox(
+            height: 550.h,
+            child: ListView(
               children: shopItemsList.mapIndexed(
                       (element,index)=>Padding(
                     padding:  EdgeInsets.only(left: 14.w,right: 14.w,bottom: 10.h),
@@ -85,10 +86,10 @@ class _ShopScreenListViewState extends State<ShopScreenListView> {
                       }, isFavourite: element.isFavourite,
                     ),
                   )).toList(),
-            )
-
-        ),
-      ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

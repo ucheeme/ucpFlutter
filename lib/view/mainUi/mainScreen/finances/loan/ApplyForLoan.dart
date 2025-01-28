@@ -3,26 +3,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:ucp/bloc/finance/finance_bloc.dart';
+import 'package:ucp/bloc/finance/loanController.dart';
+import 'package:ucp/data/model/response/loanApplicationResponse.dart';
 import 'package:ucp/utils/appStrings.dart';
 import 'package:ucp/utils/constant.dart';
 import 'package:ucp/utils/sharedPreference.dart';
 import 'package:ucp/utils/ucpLoader.dart';
+import 'package:ucp/view/bottomSheet/guarantorDesign.dart';
 
 import '../../../../../data/model/response/cooperativeList.dart';
 import '../../../../../data/model/response/loanProductResponse.dart';
+import '../../../../../data/model/response/purchasedItemSummartResponse.dart';
+import '../../../../../data/repository/FinanceRepo.dart';
 import '../../../../../utils/apputils.dart';
 import '../../../../../utils/colorrs.dart';
 import '../../../../../utils/designUtils/reusableFunctions.dart';
 import '../../../../../utils/designUtils/reusableWidgets.dart';
 import '../../../../bottomSheet/cooperatives.dart';
-
+import 'loanRequestDetails.dart';
+bool isRequestsFromApply = false;
 class ApplyForLoan extends StatefulWidget {
-
-  ApplyForLoan({super.key,});
+LoanController controller;
+  ApplyForLoan({super.key,required this.controller});
 
   @override
   State<ApplyForLoan> createState() => _ApplyForLoanState();
@@ -34,19 +42,24 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      for (var element in tempLoanFrequencies) {
+        print("the frequency is ${element.freqName}");
+      }
+      if (tempLoanProducts.isEmpty) {
+        bloc.add(GetAllLoanProductsEvent());
+      }
+      if (tempLoanFrequencies.isEmpty) {
+        bloc.add(GetAllLoanFrequenciesEvent());
+      } else {
+        //  frequencyController.text = tempLoanFrequencies[0].freqName;
+      }
       String loanFrequency = "";
       String loanProduct = "";
     });
     super.initState();
   }
-  final loanAmountController = TextEditingController();
-  final reasonForLoanController = TextEditingController();
-  final loanProductController = TextEditingController();
-  final netMonthlyPayController = TextEditingController();
-  final loanDurationController = TextEditingController();
-  final frequencyController = TextEditingController();
-  String loanProduct ="";
-  String loanDuration="";
+
+
 
   Future<void> _showLoanProductSelectionModal() async {
     LoanProductList? response = await showCupertinoModalBottomSheet(
@@ -55,7 +68,7 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
       context: context,
       builder: (context) {
         return Container(
-          height: 485.h,
+          height: 500.h,
           color: AppColor.ucpWhite500,
           child: LoanProductsLisDesign(loanProductList: tempLoanProducts),
         );
@@ -64,17 +77,21 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
 
     if (response != null) {
       setState(() {
-        loanProductController.text = response.productName;
-     loanProduct = response.productCode;
+        widget.controller.loanProductController.text = response.productName;
+        widget.controller.loanProduct = response.productCode;
+
+        bloc.add(GetLoanFrequencyForProductEvent(widget.controller.loanProduct));
       });
+
       // bloc.validation.setCooperative(response);
     }
   }
 
 
+
   @override
   Widget build(BuildContext context) {
-    bloc=BlocProvider.of<FinanceBloc>(context);
+    bloc = BlocProvider.of<FinanceBloc>(context);
     return BlocBuilder<FinanceBloc, FinanceState>(
       builder: (context, state) {
         if (state is FinanceError) {
@@ -85,7 +102,58 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
           });
           bloc.initial();
         }
+        if (state is LoanFrequencyInterestState) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            widget.controller.interestController.text = "${state.response.interestRate}%";
+            widget.controller.loanFreq = state.response.frequency;
+            widget.controller.frequencyController.text = state.response.frequency;
+            widget.controller.loanInterest = state.response.interestRate;
 
+            // frequencyController.text=tempLoanFrequencies.where((e) =>
+            // e.freqCode==loanFreq).first.freqName;
+          });
+          bloc.initial();
+        }
+        if (state is AllLoanFrequenciesState) {
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            setState(() {
+              tempLoanFrequencies = state.response;
+            });
+          });
+          bloc.initial();
+        }
+        if (state is AllLoanProductsState) {
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            tempLoanProducts = state.response;
+          });
+          bloc.initial();
+        }
+
+        if(state is AllLoanGuarantorsState){
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            tempLoansGuarantors = state.response;
+            LoanRequests loanrequest = LoanRequests(
+                applicationNumber: "",
+                productName:    widget.controller.loanProductController.text,
+                loanAmount: double.parse(   widget.controller.loanAmountController.text.replaceAll(
+                    ",", "")),
+                duration: int.parse(   widget.controller.loanDurationController.text),
+                status:"Pending",
+                date: getOneMonthLater(DateTime.now()),
+                interestRate:    widget.controller.loanInterest,
+                frequency: getFrequencyName(widget.controller.loanFreq));
+            bool response=await Get.to(LoanRequestDetailScreen(
+              isRequestBreakdown: false,
+              bloc: bloc,
+              isLoanApplication: true,
+              loanRequests:loanrequest, controller: widget.controller,));
+            if(response){
+              widget.controller.clear();
+              bloc.add(DoneApplicationEvent());
+            }
+          });
+          bloc.initial();
+        }
         return UCPLoadingScreen(
           visible: state is FinanceIsLoading,
           loaderWidget: LoadingAnimationWidget.discreteCircle(
@@ -95,19 +163,21 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
           ),
           overlayColor: AppColor.ucpBlack400,
           transparency: 0.2,
-          child: Scaffold(
-            backgroundColor: AppColor.ucpWhite10,
-            body: ListView(
+          child: GestureDetector(
+           onTap:  () => FocusManager.instance.primaryFocus?.unfocus(),
+            child: Scaffold(
+              backgroundColor: AppColor.ucpWhite10,
+              body: ListView(
               children: [
                 Gap(110.h),
                 Padding(
-                  padding:  EdgeInsets.only(left: 16.w),
+                  padding: EdgeInsets.only(left: 16.w),
                   child: Text(
                     UcpStrings.loanapplicationForm,
                     style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
-                      color: AppColor.ucpBlack500
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w500,
+                        color: AppColor.ucpBlack500
                     ),
                   ),
                 ),
@@ -115,7 +185,10 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: SizedBox(
-                    height: MediaQuery.of(context).size.height,
+                    height: MediaQuery
+                        .of(context)
+                        .size
+                        .height + 42.h,
                     width: 343.w,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,10 +204,10 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
                         height12,
                         CustomizedTextField(
                           readOnly: true,
-                          textEditingController: loanProductController,
+                          textEditingController:    widget.controller.loanProductController,
                           hintTxt: UcpStrings.sLoanProductTxt,
                           keyboardType: TextInputType.name,
-                           isTouched: loanProductController.text.isNotEmpty,
+                          isTouched:    widget.controller.loanProductController.text.isNotEmpty,
                           surffixWidget: Padding(
                             padding: EdgeInsets.only(right: 8.w),
                             child: const Icon(Ionicons.chevron_down),
@@ -153,6 +226,7 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
                         height12,
                         CustomizedTextField(
                           prefixWidget: Visibility(
+                              visible:    widget.controller.loanAmountController.text.isNotEmpty,
                               child: Padding(
                                 padding: EdgeInsets.only(
                                     left: 8.w, right: 8.w),
@@ -170,9 +244,9 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
                           isConfirmPasswordMatch: false,
                           keyboardType: TextInputType.number,
                           hintTxt: UcpStrings.enterLoanAmount,
-                          isTouched: loanAmountController.text.isNotEmpty,
-                          textEditingController: loanAmountController,
-                          onChanged:(value){
+                          isTouched:    widget.controller.loanAmountController.text.isNotEmpty,
+                          textEditingController:    widget.controller.loanAmountController,
+                          onChanged: (value) {
                             setState(() {});
                           },
                           error: "",
@@ -188,11 +262,11 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
                         height12,
                         CustomizedTextField(
                           readOnly: false,
-                          textEditingController: loanDurationController,
+                          textEditingController:    widget.controller.loanDurationController,
                           hintTxt: UcpStrings.loanDuration,
                           keyboardType: TextInputType.name,
-                          isTouched: loanDurationController.text.isNotEmpty,
-                         // onTap: () => _showLoanProductSelectionModal(),
+                          isTouched:    widget.controller.loanDurationController.text.isNotEmpty,
+                          // onTap: () => _showLoanProductSelectionModal(),
                         ),
                         Text(
                           UcpStrings.netMonthPay,
@@ -205,7 +279,7 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
                         height12,
                         CustomizedTextField(
                           prefixWidget: Visibility(
-                            visible:netMonthlyPayController.text.isNotEmpty,
+                              visible:    widget.controller.netMonthlyPayController.text.isNotEmpty,
                               child: Padding(
                                 padding: EdgeInsets.only(
                                     left: 8.w, right: 8.w),
@@ -223,9 +297,9 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
                           isConfirmPasswordMatch: false,
                           keyboardType: TextInputType.number,
                           hintTxt: UcpStrings.netMonthPay,
-                          isTouched: netMonthlyPayController.text.isNotEmpty,
-                          textEditingController: netMonthlyPayController,
-                          onChanged:(value){
+                          isTouched:    widget.controller.netMonthlyPayController.text.isNotEmpty,
+                          textEditingController:    widget.controller.netMonthlyPayController,
+                          onChanged: (value) {
                             setState(() {});
                           },
                           error: "",
@@ -239,70 +313,93 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
                               color: AppColor.ucpBlack600),
                         ),
                         height12,
+                        Container(
+                          height: 51.h,
+                          width: 343.w,
+                          padding: EdgeInsets.only(left: 10.w),
+                          alignment: Alignment.centerLeft,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.r),
+                            color: AppColor.ucpWhite10,
+                            border: Border.all(color:    widget.controller.loanFreq.isNotEmpty?AppColor.ucpBlue300:AppColor.ucpWhite10),
+                          ),
+                          child: Text(   widget.controller.loanFreq.isNotEmpty?getFrequencyName(   widget.controller.loanFreq):"Frequency",
+                            textDirection: TextDirection.ltr,
+                            textAlign: TextAlign.left,
+                            style: CreatoDisplayCustomTextStyle.kTxtMedium
+                                .copyWith(
+                                fontSize: 14.sp,
+                                color:AppColor.ucpBlack400,
+                                fontWeight: FontWeight.w500,),
+                                                  ),
+                        ),
+                        height12,
+                        Text(
+                          UcpStrings.loanInterestForProduct,
+                          style: CreatoDisplayCustomTextStyle.kTxtMedium
+                              .copyWith(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColor.ucpBlack600),
+                        ),
+                        height12,
                         CustomizedTextField(
-                          prefixWidget: Visibility(
-                              visible:frequencyController.text.isNotEmpty,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    left: 8.w, right: 8.w),
-                                child: Text(
-                                  "NGN",
-                                  style: CreatoDisplayCustomTextStyle
-                                      .kTxtBold
-                                      .copyWith(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 12.sp,
-                                      color: AppColor.ucpBlack500),
-                                ),
-                              )),
-                          inputFormat: [ThousandSeparatorFormatter(),],
+                          readOnly: true,
                           isConfirmPasswordMatch: false,
                           keyboardType: TextInputType.number,
-                          hintTxt: UcpStrings.frequency,
-                          isTouched: frequencyController.text.isNotEmpty,
-                          textEditingController: frequencyController,
-                          onChanged:(value){
+                          hintTxt: UcpStrings.loanInterestForProduct,
+                          isTouched:    widget.controller.frequencyController.text.isNotEmpty,
+                          textEditingController:    widget.controller.interestController,
+                          onChanged: (value) {
                             setState(() {});
                           },
                           error: "",
                         ),
-
+                        Text(
+                          UcpStrings.reasonForLoan,
+                          style: CreatoDisplayCustomTextStyle.kTxtMedium
+                              .copyWith(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w500,
+                              color: AppColor.ucpBlack600),
+                        ),
+                        height12,
+                        MultilineTextInput(
+                          maxLines: 3,
+                          hintText: 'Type your text here...',
+                          hintStyle: TextStyle(fontSize: 16),
+                          textStyle: TextStyle(fontSize: 16),
+                          controller:    widget.controller.reasonForLoanController,
+                          onChanged: (text) {},
+                        ),
                       ],
                     ),
                   ),
                 ),
-                Container(
-                    height: 83.h,
-                    width: double.infinity,
-                    padding: EdgeInsets.all(16.w),
-                    decoration: BoxDecoration(
-                      color: AppColor.ucpBlue50,     //Color( 0xffEDF4FF),
-                      borderRadius: BorderRadius.only(
-                        bottomRight: Radius.circular(15.r),
-                        bottomLeft: Radius.circular(15.r),
-                      ),
-                    ),
-                    child: CustomButton(
-                      onTap: () {
-                        // Get.back(result: selectedCooperative);
-                      },
-                      borderRadius: 30.r,
-                      buttonColor: AppColor.ucpBlue500,
-                      buttonText: UcpStrings.doneTxt,
-                      height: 51.h,
-                      textStyle: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16.sp,
-                        color: AppColor.ucpWhite500,
-                      ),
-                      textColor: AppColor.ucpWhite500,
-                    )
-                )
               ],
+                            ),
             ),
           ),
         );
       },
     );
   }
+
+  String getFrequencyName(String freq) {
+    print("the frequency is $freq");
+    for (var element in tempLoanFrequencies) {
+      if (element.freqCode == freq) {
+        return element.freqName!;
+      }
+    }
+    return "";
+  }
+}
+
+DateTime getOneMonthLater(DateTime inputDate) {
+  return DateTime(
+    inputDate.year,
+    inputDate.month + 1,
+    inputDate.day,
+  );
 }

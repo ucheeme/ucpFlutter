@@ -21,6 +21,9 @@ import '../../../../utils/constant.dart';
 import '../../../../utils/designUtils/reusableFunctions.dart';
 import '../../../../utils/designUtils/reusableWidgets.dart';
 import '../../../errorPages/underConstruction.dart';
+import 'EditProfile.dart';
+import 'changePassword.dart';
+import 'contributions.dart';
 MemberProfileData? tempMemberProfileData;
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -35,16 +38,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
 @override
   void initState() {
   WidgetsBinding.instance.addPostFrameCallback((_){
-    if(tempMemberProfileData!=null){
-      memberProfileData = tempMemberProfileData!;
-    }else{
+    // if(tempMemberProfileData!=null){
+    //   setState(() {
+    //     memberProfileData = tempMemberProfileData!;
+    //   });
+    // }else{
       bloc.add(GetMemberProfileEvent());
-    }
+  //  }
 
   });
     super.initState();
   }
-
+bool isBiometric = false;
+bool isPushNotification = false;
   @override
   Widget build(BuildContext context) {
     bloc = BlocProvider.of<ProfileBloc>(context);
@@ -79,77 +85,66 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   ListView(
                     children: [
-                      Gap(90.h),
+                      Gap(100.h),
                       Padding(
                         padding:  EdgeInsets.symmetric(horizontal: 16.w),
-                        child: SizedBox(
-                          height: 299.h,
+                        child: Container(
+                          height: 274.h,
                           width: 343.w,
-                          child: Center(
-                            child: Stack(
-                              children: [
-                                Image.asset(UcpStrings.profileBaG,),
-                                Positioned(
-                                  top: 40.h,
-                                  bottom: 40.h,
-                                   left: 20,
-                                   right: 20,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(25.r),
+                              image: DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: AssetImage(UcpStrings.profileBaG))
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: 100.h,
 
-                                  child: SizedBox(
-                                    height: 235.h,
-                                    width: 311.w,
-                                    child: Column(
-                                      children: [
-                                        SizedBox(
-                                          height: 85.h,
-                                          width: 85.w,
-                                          child: SuperProfilePicture(
-                                            label: "",
-                                            radius: 30,
-                                            image: AssetImage(
-                                              UcpStrings.tempImage,),
-
-                                          ),
-                                        ),
-                                        height14,
-                                        SizedBox(
-                                          height: 110.h,
-                                          width: 211.w,
-                                          child: Column(
-                                            children: [
-                                              Text("${memberProfileData?.firstName} ${memberProfileData?.lastName}",
-                                                style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
-                                                fontWeight: FontWeight.w500,
-                                                  fontSize: 20.sp,
-                                                  color: AppColor.ucpWhite500
-                                              )),
-                                              Text(memberProfileData!.email??"no email",
-                                                style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
-                                                fontWeight: FontWeight.w400,
-                                                  fontSize: 14.sp,
-                                                  color: AppColor.ucpWhite50
-                                              )),
-                                              Text(memberProfileData!.phone??"no phone number",
-                                                style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
-                                                fontWeight: FontWeight.w400,
-                                                  fontSize: 14.sp,
-                                                  color: AppColor.ucpWhite50
-                                              )),
-                                              Text(memberProfileData!.employeeId??"no phone number",
-                                                style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
-                                                fontWeight: FontWeight.w400,
-                                                  fontSize: 14.sp,
-                                                  color: AppColor.ucpWhite50
-                                              )),
-                                            ],
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle
+                                ),
+                                child:  NetworkImageWithFallback(
+                                  imageUrl: memberProfileData.profileImage??"",
+                                  fallbackImage: UcpStrings.tempImage,
                                 )
-                              ],
-                            ),
+                              ),
+                              height14,
+                              SizedBox(
+                                height: 112.h,
+                                width: 211.w,
+                                child: Column(
+                                  children: [
+                                    Text("${memberProfileData.firstName} ${memberProfileData.lastName}",
+                                        style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 20.sp,
+                                            color: AppColor.ucpWhite500
+                                        )),
+                                    Text(memberProfileData!.email??"no email",
+                                        style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 14.sp,
+                                            color: AppColor.ucpWhite50
+                                        )),
+                                    Text(memberProfileData!.phone??"no phone number",
+                                        style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 14.sp,
+                                            color: AppColor.ucpWhite50
+                                        )),
+                                    Text(memberProfileData!.employeeId??"no phone number",
+                                        style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 14.sp,
+                                            color: AppColor.ucpWhite50
+                                        )),
+                                  ],
+                                ),
+                              )
+                            ],
                           ),
                         ),
                       ),
@@ -170,10 +165,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               onTap:()=>cta(index),
                               child: Container(
                                 color: Colors.transparent,
+                                width: 343.w,
                                 child: Column(
                                   children: [
                                     height16,
-                                    ProfileListDesign(profileDataValue: element),
+                                    ProfileListDesign(
+                                      onTap: (){
+                                        if(element.isToggle){
+                                          setState(() {
+                                            if(index==3){
+                                              isBiometric=!isBiometric;
+                                            }else if(index==8){
+                                              isPushNotification=!isPushNotification;
+                                            }
+                                          });
+                                        }
+
+                                      },
+                                      profileDataValue: element,
+                                      isToggle:chooseOpinion(index),),
                                     height16,
                                     Visibility(
                                         visible: index!=profileData.length-1,
@@ -184,7 +194,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             )).toList()
                           ),
                         ),
-                      )
+                      ),
+                      SizedBox(height: 100.h,),
                     ],
                   ),
                   UCPCustomAppBar(
@@ -215,10 +226,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
     );
   }
+  bool chooseOpinion(int index){
+    if(index==3){
+      return isBiometric;
+    }else if(index==8){
+      return isPushNotification;
+    }else{
+      return false;
+    }
+  }
   cta(int index) async {
   switch(index){
     case 0:
-      Get.to( UnderMaintenanceScreen(),curve: Curves.easeIn);
+      Get.to( EditProfileScreen(),curve: Curves.easeIn);
       break;
     case 1:
       Get.to(WithdrawScreen(),curve: Curves.easeIn);
@@ -226,14 +246,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     case 2:
       Get.to( UnderMaintenanceScreen(),curve: Curves.easeIn);
       break;
-    case 3:
-      Get.to( UnderMaintenanceScreen(),curve: Curves.easeIn);
+    case 3: null;
       break;
     case 4:
-      Get.to( UnderMaintenanceScreen(),curve: Curves.easeIn);
+      Get.to( ChangePasswordScreen(),curve: Curves.easeIn);
       break;
     case 5:
-      Get.to( UnderMaintenanceScreen(),curve: Curves.easeIn);
+      Get.to( ContributionScreen(),curve: Curves.easeIn);
       break;
       case 6:
       Get.to( UnderMaintenanceScreen(),curve: Curves.easeIn);
@@ -241,8 +260,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       case 7:
       Get.to( UnderMaintenanceScreen(),curve: Curves.easeIn);
       break;
-      case 8:
-      Get.to( UnderMaintenanceScreen(),curve: Curves.easeIn);
+      case 8:null;
       break;
       case 9: {
         bool response=  await showSlidingModalLogOut(context);

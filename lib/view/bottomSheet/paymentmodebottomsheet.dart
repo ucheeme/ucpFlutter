@@ -18,7 +18,8 @@ import '../../utils/constant.dart';
 import '../../utils/designUtils/reusableWidgets.dart';
 
 class PaymentModeBottomSheet extends StatefulWidget {
-  const PaymentModeBottomSheet({super.key});
+  bool isSaving;
+   PaymentModeBottomSheet({super.key,this.isSaving = false});
 
   @override
   State<PaymentModeBottomSheet> createState() => _PaymentModeBottomSheetState();
@@ -47,6 +48,7 @@ class _PaymentModeBottomSheetState extends State<PaymentModeBottomSheet> {
       if(tempSavingAccounts.isNotEmpty){
         setState(() {
           paymentModes = tempPaymentModes;
+          selectedPaymentMode = paymentModes[0];
         });
       }else{
         bloc.add(const GetMemberSavingAccounts());
@@ -63,6 +65,7 @@ class _PaymentModeBottomSheetState extends State<PaymentModeBottomSheet> {
           WidgetsBinding.instance.addPostFrameCallback((_){
             tempPaymentModes = state.response;
             paymentModes = state.response;
+            selectedPaymentMode = paymentModes[0];
           });
           //savingAccounts = state.response;
           bloc.initial();
@@ -228,9 +231,14 @@ class _PaymentModeBottomSheetState extends State<PaymentModeBottomSheet> {
                             ),
                             child: CustomButton(
                               onTap: () {
-                                saveToAccountRequest?.modeOfpayment=
-                                    selectedPaymentMode!.modeOfPayId.toString();
-                                _showUserAccountModal(this.context);
+                                if(widget.isSaving){
+                                  saveToAccountRequest?.modeOfpayment=
+                                      selectedPaymentMode!.modeOfPayId.toString();
+                                  _showUserAccountModal(this.context);
+                                }else{
+                                  Get.back(result: selectedPaymentMode!.modeOfPayId.toString());
+                                }
+
                               },
                               borderRadius: 30.r,
                               buttonColor: AppColor.ucpBlue500,
@@ -271,7 +279,7 @@ class _PaymentModeBottomSheetState extends State<PaymentModeBottomSheet> {
         maxChildSize: 1.0,
         minChildSize: 0.3,
         builder: (context, scrollController) {
-          return MakeDeposit(scrollController: scrollController,);
+          return MakeDeposit(scrollController: scrollController, title: '',);
         },
       ),
     );

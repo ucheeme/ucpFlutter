@@ -230,14 +230,17 @@ class CustomizedTextField extends StatelessWidget {
                     fontSize: 13.sp)),
           ),
           Gap(4.h),
-          Text(
-            error ?? "",
-            style: CustomTextStyle.kTxtMedium.copyWith(
-                color: (isConfirmPasswordMatch != null &&
-                        isConfirmPasswordMatch == false)
-                    ? AppColor.ucpDanger150
-                    : AppColor.ucpSuccess150,
-                fontSize: 10.sp),
+          SizedBox(
+            width: double.infinity,
+            child: Text(
+              error ?? "",
+              textAlign: TextAlign.end,
+              style: CustomTextStyle.kTxtMedium.copyWith(
+                  color: error!=null
+                      ? AppColor.ucpDanger150
+                      : AppColor.ucpSuccess150,
+                  fontSize: 10.sp),
+            ),
           ),
         ],
       ),
@@ -589,6 +592,7 @@ class BottomsheetRadioButtonRightSide extends StatefulWidget {
   final String radioText;
   bool isDmSans;
   double textHeight;
+  double? height;
   bool isMoreThanOne;
 
   BottomsheetRadioButtonRightSide({
@@ -597,6 +601,7 @@ class BottomsheetRadioButtonRightSide extends StatefulWidget {
     required this.isMoreThanOne,
     required this.radioText,
     required this.isDmSans,
+    this.height,
     required this.isSelected,
     this.onTap,
   });
@@ -615,6 +620,7 @@ class _BottomsheetRadioButtonRightSideState
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         SizedBox(
+          height:widget.height ,
          width: 300.w,
           child: Text(widget.radioText,
               maxLines: widget.isMoreThanOne ? 3 : 1,
@@ -774,14 +780,16 @@ class ImageContainer extends StatelessWidget {
       height: height, // Adjust container height
       padding: EdgeInsets.only(top: 3.h, bottom: 5.h,left: 3.w),
       decoration: BoxDecoration(
+        image: DecorationImage(image: isNetworkImage?
+        NetworkImage(imageUrl):AssetImage(imageUrl), fit: BoxFit.cover, colorFilter: ColorFilter.mode(AppColor.ucpWhite500, BlendMode.colorBurn),), // Use your image),
        // border: Border.all(color: AppColor.ucpBlack50, width: 2), // Optional border
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(12.r),
             bottomLeft: Radius.circular(12.r)), // Rounded cornersoverflow: BoxOverflow.hidden, // Ensures the image fits within the border
       ),
-      child:isNetworkImage?
-      Image.network(imageUrl, fit: BoxFit.cover):
-      Image.asset(imageUrl, fit: BoxFit.cover,),
+      // child:isNetworkImage?
+      // Image.network(imageUrl, fit: BoxFit.cover):
+      // Image.asset(imageUrl, fit: BoxFit.cover,),
     );
   }
 }
@@ -856,6 +864,24 @@ class _LogOutScreenState extends State<LogOutScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class NetworkImageWithFallback extends StatelessWidget {
+  final String imageUrl;
+  final String fallbackImage;
+
+  NetworkImageWithFallback({required this.imageUrl, required this.fallbackImage});
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.network(
+      imageUrl,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) {
+        return Image.asset(fallbackImage, fit: BoxFit.cover);
+      },
     );
   }
 }

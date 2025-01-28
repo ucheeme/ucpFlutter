@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -27,6 +28,13 @@ import '../flavour/locatot.dart';
 import '../providerService.dart';
 
 void mainCommon(AppFlavorConfig config) async{
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    // Log errors to the console
+    if (kDebugMode) {
+      print(details.toString());
+    }
+  };
   WidgetsFlutterBinding.ensureInitialized();
   statusBarTheme();
   await MySharedPreference.init();

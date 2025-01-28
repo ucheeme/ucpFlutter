@@ -15,13 +15,15 @@ import 'package:ucp/utils/sharedPreference.dart';
 import 'package:ucp/view/bottomSheet/listOfBank.dart';
 
 import '../../utils/appStrings.dart';
+import '../../utils/cameraOption.dart';
 import '../../utils/constant.dart';
 import '../../utils/designUtils/reusableFunctions.dart';
 import '../../utils/designUtils/reusableWidgets.dart';
 
 class MakeDeposit extends StatefulWidget {
   ScrollController? scrollController;
-   MakeDeposit({super.key, this.scrollController});
+  String title = "Make Deposit";
+   MakeDeposit({super.key, this.scrollController, required this.title});
 
   @override
   State<MakeDeposit> createState() => _MakeDepositState();
@@ -64,10 +66,36 @@ class _MakeDepositState extends State<MakeDeposit> {
         }
         return GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: SingleChildScrollView(
-            controller: widget.scrollController,
-            physics: NeverScrollableScrollPhysics(),
-            child: SizedBox(
+          child: Scaffold(
+            backgroundColor: AppColor.ucpWhite10,
+            bottomSheet:   Container(
+                height: 83.h,
+                width: double.infinity,
+                padding: EdgeInsets.all(16.w),
+                decoration: BoxDecoration(
+                  color: AppColor.ucpBlue50,     //Color( 0xffEDF4FF),
+                  // borderRadius: BorderRadius.only(
+                  //   bottomRight: Radius.circular(15.r),
+                  //   bottomLeft: Radius.circular(15.r),
+                  // ),
+                ),
+                child: CustomButton(
+                  onTap: () {
+                    //
+                  },
+                  borderRadius: 30.r,
+                  buttonColor: AppColor.ucpBlue500,
+                  buttonText: UcpStrings.doneTxt,
+                  height: 51.h,
+                  textStyle: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16.sp,
+                    color: AppColor.ucpWhite500,
+                  ),
+                  textColor: AppColor.ucpWhite500,
+                )
+            ),
+            body: SizedBox(
               height: MediaQuery.of(context).size.height,
               child: ListView(
                 controller: widget.scrollController,
@@ -90,10 +118,10 @@ class _MakeDepositState extends State<MakeDeposit> {
                       alignment: Alignment.centerLeft,
                       child: Row(
                         children: [
-                          GestureDetector(
-                              onTap: ()=>Get.back(),
-                              child: Icon(Icons.arrow_back ,size: 28.h, color: AppColor.ucpBlack500)),
-                          Gap(10.w),
+                          // GestureDetector(
+                          //     onTap: ()=>Get.back(),
+                          //     child: Icon(Icons.arrow_back ,size: 28.h, color: AppColor.ucpBlack500)),
+                          // Gap(10.w),
                           Text(
                             UcpStrings.sMakePaymentTxt,
                             style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
@@ -218,11 +246,22 @@ class _MakeDepositState extends State<MakeDeposit> {
                                 child: Icon(Icons.upload_file,size: 24.h,color: AppColor.ucpBlue500,),
                               ),
                               onTap: () async {
-                                DateTime?response= await selectDate(datePaidController, context: context);
-                                if (response != null) {
+                                List<dynamic>response= await showCupertinoModalBottomSheet(
+                                    topRadius:
+                                    Radius.circular(20.r),
+                                    context: context,
+                                    backgroundColor:AppColor.ucpWhite500,
+                                    shape:RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(topRight: Radius.circular(24.r),topLeft: Radius.circular(24.r)),
+                                    ),
+                                    builder: (context) => SizedBox(
+                                        height: 313.h,
+                                        child: CameraOption())
+                                );
+                                if(response[1]!=null){
+                                  print("This is image ${response[1]}");
                                   setState(() {
-                                    datePaidController.text = response.format("Y-m-d");
-                                    saveToAccountRequest?.paidDate = response.format("Y-m-d");
+                                    fileNameController.text = response[0].toString();
                                   });
                                 }
                               },
@@ -246,7 +285,7 @@ class _MakeDepositState extends State<MakeDeposit> {
                   Padding(
                     padding:  EdgeInsets.symmetric(horizontal: 16.w),
                     child: MultilineTextInput(
-                      maxLines: 8,
+                      maxLines: 2,
                       hintText: 'Type your text here...',
                       hintStyle: TextStyle(fontSize: 16),
                       textStyle: TextStyle(fontSize: 16),
@@ -256,34 +295,8 @@ class _MakeDepositState extends State<MakeDeposit> {
                       },
                     ),
                   ),
-                  height30,
-                  Container(
-                      height: 83.h,
-                      width: double.infinity,
-                      padding: EdgeInsets.all(16.w),
-                      decoration: BoxDecoration(
-                        color: AppColor.ucpBlue50,     //Color( 0xffEDF4FF),
-                        borderRadius: BorderRadius.only(
-                          bottomRight: Radius.circular(15.r),
-                          bottomLeft: Radius.circular(15.r),
-                        ),
-                      ),
-                      child: CustomButton(
-                        onTap: () {
-                       //
-                        },
-                        borderRadius: 30.r,
-                        buttonColor: AppColor.ucpBlue500,
-                        buttonText: UcpStrings.doneTxt,
-                        height: 51.h,
-                        textStyle: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16.sp,
-                          color: AppColor.ucpWhite500,
-                        ),
-                        textColor: AppColor.ucpWhite500,
-                      )
-                  )
+                 SizedBox(height: 100.h,)
+
                 ],
               ),
             ),

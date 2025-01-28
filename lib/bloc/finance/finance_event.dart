@@ -80,3 +80,71 @@ class LoanRequestBreakdownEvent extends FinanceEvent{
   // TODO: implement props
   List<Object?> get props => [];
 }
+
+class GetLoanFrequencyForProductEvent extends FinanceEvent{
+  String request;
+  GetLoanFrequencyForProductEvent(this.request);
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}
+
+class GetAllGuarantorsEvent extends FinanceEvent{
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}
+
+class ApplyForLoanEvent extends FinanceEvent{
+  LoanApplicationRequest request;
+  ApplyForLoanEvent(this.request);
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}
+
+class DoneApplicationEvent extends FinanceEvent{
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}
+
+class GetAllUserLoansEvent extends FinanceEvent {
+  PaginationRequest request;
+  GetAllUserLoansEvent(this.request);
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}
+
+class GetLoanScheduleBreakdownEvent extends FinanceEvent{
+  String request;
+  GetLoanScheduleBreakdownEvent(this.request);
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}
+
+class GetAllLoanGuarantorsRequestEvent extends FinanceEvent{
+  PaginationRequest request;
+  GetAllLoanGuarantorsRequestEvent(this.request);
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}
+
+class GuarantorAcceptRequestEvent extends FinanceEvent{
+  GuarantorRequestDecision request;
+  GuarantorAcceptRequestEvent(this.request);
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}
+
+class GuarantorRejectRequestEvent extends FinanceEvent{
+  GuarantorRequestDecision request;
+  GuarantorRejectRequestEvent(this.request);
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}

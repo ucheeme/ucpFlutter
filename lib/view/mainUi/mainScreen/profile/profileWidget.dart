@@ -29,7 +29,11 @@ List<ProfileDataValue> profileData =[
 ];
 class ProfileListDesign extends StatefulWidget {
   ProfileDataValue profileDataValue;
-   ProfileListDesign({super.key,required this.profileDataValue});
+  bool isToggle = false;
+  Function()? onTap;
+   ProfileListDesign({super.key,required this.profileDataValue,
+     this.onTap,
+     required this.isToggle});
 
   @override
   State<ProfileListDesign> createState() => _ProfileListDesignState();
@@ -38,42 +42,44 @@ class ProfileListDesign extends StatefulWidget {
 class _ProfileListDesignState extends State<ProfileListDesign> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      // height: 40.h,
-      width: 303.w,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(
+    return GestureDetector(
+      onTap:widget.onTap ,
+      child: SizedBox(
+        // height: 40.h,
+        width: 303.w,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
 
-              child: Row(
-                children: [
-                  Image.asset(widget.profileDataValue.image,height: 40.h,width: 40.w,),
-                 Gap(8.w),
-                  Text(widget.profileDataValue.title,
-                      style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 14.sp,
-                          color: AppColor.ucpBlack500
-                      )),
-                ],
-              )),
-          widget.profileDataValue.isToggle?
-              CustomToggleSwitch(value: false):
-          SizedBox(
-            height: 20.h,
-            width: 20.w,
-            child: ColoredBox(
-              color: Colors.transparent,
-              child: Image.asset(
-                UcpStrings.ucpArrowForward,
-                height: 20.h,
-                width: 20.w,
+                child: Row(
+                  children: [
+                    Image.asset(widget.profileDataValue.image,height: 40.h,width: 40.w,),
+                   Gap(8.w),
+                    Text(widget.profileDataValue.title,
+                        style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 14.sp,
+                            color: AppColor.ucpBlack500
+                        )),
+                  ],
+                )),
+            widget.profileDataValue.isToggle?
+                 CustomToggleSwitch(value: widget.isToggle):
+            SizedBox(
+              height: 20.h,
+              width: 20.w,
+              child: ColoredBox(
+                color: Colors.transparent,
+                child: Image.asset(
+                  UcpStrings.ucpArrowForward,
+                  height: 20.h,
+                  width: 20.w,
+                ),
               ),
             ),
-          ),
-
-        ],
+          ],
+        ),
       ),
     );
   }

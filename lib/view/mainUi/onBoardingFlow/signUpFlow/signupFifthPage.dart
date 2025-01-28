@@ -33,6 +33,13 @@ class _SignUpfifthPageState extends State<SignUpfifthPage> {
   OnboardingValidation controller = OnboardingValidation();
   TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  @override
+  void initState() {
+   WidgetsBinding.instance.addPostFrameCallback((_) {
+
+   });
+    super.initState();
+  }
   bool allConditionMet = false;
   isValidString(String input) {
     final symbolPattern = RegExp(r'[!@#$%^&*(),.?":{}|<>]');

@@ -95,3 +95,62 @@ class LoanRequestBreakdownState extends FinanceState{
   @override
   List<Object> get props => [response];
 }
+class LoanFrequencyInterestState extends FinanceState{
+  LoanProductDetail response;
+  LoanFrequencyInterestState(this.response);
+  @override
+  List<Object> get props => [response];
+}
+
+class AllLoanGuarantorsState extends FinanceState{
+  List<LoanGuantorsList> response;
+  AllLoanGuarantorsState(this.response);
+  @override
+  List<Object> get props => [response];
+}
+
+class LoanApplicationState extends FinanceState{
+  UcpDefaultResponse response;
+  LoanApplicationState(this.response);
+  @override
+  List<Object> get props => [response];
+}
+class LoanApplicationCompletedState extends FinanceState{
+
+  @override
+  List<Object> get props => [];
+}
+
+class AllUserLoansState extends FinanceState{
+  UserLoansResponse response;
+  AllUserLoansState(this.response);
+  @override
+  List<Object> get props => [response];
+}
+
+class LoanRefundScheduleBreakdownState extends FinanceState{
+  List<LoanScheduleForRefundResponse> response;
+  LoanRefundScheduleBreakdownState(this.response);
+  @override
+  List<Object> get props => [response];
+}
+class LoanGuarantorRequestState extends FinanceState{
+  GuarantorRequestList response;
+  LoanGuarantorRequestState(this.response);
+  @override
+  List<Object> get props => [response];
+}
+
+class FinanceGuarantorAccepted extends FinanceState{
+  UcpDefaultResponse response;
+  FinanceGuarantorAccepted(this.response);
+  @override
+  List<Object> get props => [response];
+}
+
+class FinanceGuarantorRejected extends FinanceState{
+  UcpDefaultResponse response;
+  FinanceGuarantorRejected(this.response);
+  @override
+  List<Object> get props => [response];
+}

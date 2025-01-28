@@ -41,7 +41,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
                 top: 100.h,
                 left: 15.w,
                 child: SizedBox(
-                  height: 100.h,
+                  height: 103.h,
                   width: 237.w,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

@@ -17,6 +17,7 @@ import '../../../../utils/appStrings.dart';
 import '../../../../utils/colorrs.dart';
 import '../../../../utils/constant.dart';
 import '../../../../utils/designUtils/reusableWidgets.dart';
+import '../../../errorPages/noNotification.dart';
 List<ItemsOnCart>tempItemInCart=[];
 double subTotal=0;
 class CartSummary extends StatefulWidget {
@@ -37,6 +38,7 @@ class _CartSummaryState extends State<CartSummary> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       subTotal=0;
       allItemInCart=widget.allItemInCart;
+      print("This is ${allItemInCart.length}");
       // tempItemInCart.clear();
       for (var element in allItemInCart) {
         subTotal = subTotal+(element.quantity*element.sellprice);
@@ -76,10 +78,10 @@ class _CartSummaryState extends State<CartSummary> {
           padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
             color: AppColor.ucpBlue50,     //Color( 0xffEDF4FF),
-            borderRadius: BorderRadius.only(
-              bottomRight: Radius.circular(15.r),
-              bottomLeft: Radius.circular(15.r),
-            ),
+            // borderRadius: BorderRadius.only(
+            //   bottomRight: Radius.circular(15.r),
+            //   bottomLeft: Radius.circular(15.r),
+            // ),
           ),
           child: CustomButton(
             child: Padding(
@@ -148,6 +150,8 @@ class _CartSummaryState extends State<CartSummary> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Gap(120.h),
+                  allItemInCart.isEmpty?
+                  EmptyNotificationsScreen(emptyHeader: UcpStrings.emptyCartTxt,emptyMessage: UcpStrings.emptyMessageTxt,press: () { bloc.add(GetAllItemOnCartEvent()); },):
                   SizedBox(
                     height: 90.h * allItemInCart.length,
                     child: SingleChildScrollView(
@@ -164,6 +168,8 @@ class _CartSummaryState extends State<CartSummary> {
                                 child: CartSummaryListDesign(
                                   index: index,
                                   bloc: bloc,
+                                  // isOrderRequest: true,
+                                  amount: double.parse(element.sellprice.toString()),
                                   selectedIndex: selectedIndex??0,
                                   element: element,state: state,),
                               ),

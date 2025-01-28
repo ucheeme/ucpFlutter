@@ -26,3 +26,24 @@ class ProfileLoaded extends ProfileState {
   @override
   List<Object> get props => [data];
 }
+
+class ProfileUpdated extends ProfileState {
+  ProfileUpdateResponse data;
+  ProfileUpdated( this.data);
+  @override
+  List<Object> get props => [data];
+}
+
+class PasswordChanged extends ProfileState {
+  ProfileUpdateResponse data;
+  PasswordChanged(this.data);
+  @override
+  List<Object> get props => [];
+}
+
+class MemberSavingAccountsLoaded extends ProfileState {
+  List<MemberSavingAccounts> data;
+  MemberSavingAccountsLoaded(this.data);
+  @override
+  List<Object> get props => [data];
+}

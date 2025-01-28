@@ -22,7 +22,9 @@ class UcpStrings{
  static const mustNotBeEmptyNull ="Please ensure all fields are filled and check boxes checked";
  static const enterMemberIdTxt ="Enter your Member ID";
  static const sCooperativeTxt ="Select cooperative";
+ static const sSavingAcctTxt ="Select Account";
  static const sLoanProductTxt ="Select loan product";
+ static const sLoanGuarantorTxt ="Select guarantor";
  static const loanDuration ="Enter loan duration";
  static const sMakePaymentTxt ="Add Funds";
  static const sBankTxt ="Select Bank";
@@ -38,14 +40,20 @@ class UcpStrings{
  static const alreadyHaveAnAcctTxt ="Already have an account? ";
  static const goBackTxt ="Go back ";
  static const fNameTxt ="First name";
+ static const fullNameTxt ="Full name";
+ static const homeAddressTxt ="Home Address";
+ static const memberIdTxt ="Member ID";
  static const lNameTxt ="Last name";
  static const eMailTxt ="E-mail address";
  static const phoneNumberTxt ="Phone number";
  static const proceedTxt ="Proceed";
+ static const makeChangesTxt ="Make changes";
  static const enterHomeAddressTxt ="Enter home address";
  static const enterLoanAmount ="Enter loan amount";
  static const netMonthPay="Enter Net Monthly pay";
  static const frequency="Frequency";
+ static const loanInterestForProduct="Loan Interest";
+ static const reasonForLoan="Enter reason for loan";
  static const enterReasonForLoan ="Enter reason for Loan";
  static const selectStateTxt ="Select state";
  static const cityTxt ="City";
@@ -75,7 +83,7 @@ class UcpStrings{
  static const congratulationTxt ="Congratulations!";
  static const uHaveSuccessfullyCreatedUrAcctTxt ="You have successfully created your account. Amazing experience is waiting on you...";
  static const setUpPinTxt ="Setup pin";
- static const emptyCoopTxt ="No Available Cooperative";
+ static const emptyCoopTxt ="None Avaliable";
  static const noAvaliableTxt ="No Available";
  static const amountTxt =" 2000";
  static const enterFNTxt =" Enter First Name";
@@ -89,6 +97,8 @@ class UcpStrings{
  static const genDaTxt ="Gender";
  static const enterUNameTxt ="Enter Username";
  static const enterpasswordTxt ="Enter Password";
+ static const enterNewpasswordTxt ="Enter new password";
+ static const confirmNewpasswordTxt ="Confirm new password";
  static const enterCpasswordTxt ="Enter Confirm Password";
  static const countryTxt ="Country";
  static const stateTxt ="State";
@@ -102,6 +112,7 @@ class UcpStrings{
 
   static const cancelTxt = "Cancel";
   static const doneTxt = "Done";
+  static const saveChangesTxt = "Save changes";
 
   static const memberName = "Uche Emeka";
 
@@ -125,6 +136,7 @@ class UcpStrings{
 
   static const enterPasswordTxt ="Enter password";
   static const passwordTxt ="Password";
+  static const enterCurrentpasswordTxt ="Enter current password";
   static const rememberMTxt ="Remember me?";
   static const forgotPasswordTxt ="Forgot Password?";
 
@@ -162,6 +174,8 @@ class UcpStrings{
  static const cartSummary ="Cart summary";
  static const orderRequestBreakDown ="Order request breakdown";
  static const profileTxt ="Profile";
+ static const editprofileTxt ="Edit profile";
+ static const changePasswordTxt ="Change password";
  static const enterDesiredAmountToWithdraw ="Enter desired amount to withdraw";
  static const selectPaymentMode ="Select payment method";
  static const allAvailableItem ="All available items";
@@ -171,6 +185,7 @@ class UcpStrings{
  static const subTotalTxt="Subtotal";
  static const estimatedTotalTxt="Estimated total";
  static const financeTxt="Finances";
+ static const contributionTxt="Contributions";
  static const financeSTxt="Quick access to your funds, Tips for effective growth.";
  static const loanMTxt="Loan management";
  static const loanMSGTxt="Effectively manage loans.";
@@ -196,11 +211,14 @@ class UcpStrings{
  static const guarantorTxt="Guarantor";
  static const nxtpaymentDue="Next payment due in ";
  static const loanRepaymentBreakdown="Loan repayment breakdown";
+ static const fetchingData="Fetching data, Please wait...";
  static const loanapplicationForm="Loan application form";
+ static const changePhotoTxt="Change profile picture";
  // static const sCooperativeTxt ="Select Cooperative";
 
 
  static const ucpLogo = "assets/images/logoWithoutText.png";
+ static const ucpAddImage = "assets/images/addPhotoIcon.png";
  static const ucpLogOut = "assets/images/logout_icon.png";
  static const ucpArrowForward = "assets/images/arrow_forward.png";
  static const ucpEditProfileImage = "assets/images/edit_profilee.png";
@@ -217,6 +235,7 @@ class UcpStrings{
  static const ucpRetirementImage = "assets/images/retirement_finance.png";
  static const ucpRetirementProfileImage = "assets/images/profileRetirement.png";
  static const financeIcon = "assets/images/finance_icon.png";
+ static const contributionBg = "assets/images/contributionBackG.png";
  static const addToCartIcon = "assets/images/storefront_cart_icon.png";
  static const reduceInventoryIcon = "assets/images/reduce_inventory_count.png";
  static const increaseInventoryIcon = "assets/images/increase_inventory_count.png";
@@ -236,6 +255,10 @@ class UcpStrings{
  static const ucpDebitImage="assets/images/expenses_icon.png";
  static const ucpNotificationImage="assets/images/notifications_bell.png";
  static const ucpShoppingCart="assets/images/shopping_cart.png";
+ static const ucpLottieSuccess1="assets/animationgif/success2.json";
+ static const ucpLottieVoteMade="assets/animationgif/voted.json";
+ static const ucpLottieStampSeal="assets/animationgif/stamped.json";
+ static const ucpLottieEmailSent="assets/animationgif/emailSent.json";
  static const ucpBackArrow= "assets/images/arrow-left.png";
  static const ucpMemberAccount1= "assets/images/memberBg1.png";
  static const ucpMemberAccount2= "assets/images/memberBg2.png";
@@ -247,9 +270,21 @@ class UcpStrings{
 
   static const enterAmount="Enter Amount";
 
+  static String fillAllFields="Fill all fields";
+
+  static var next="Next";
+
+  static var emptyCartTxt="Your cart is empty";
+
+  static String contributionATxt="Contribution amount";
+  static String savingAcctTxt="Select member saving account";
+  static String reOccurringTxt="Recurring contribution period";
+  static String contributionDate="Recurring contribution period";
+  static String contributionSubHeading="Review and adjust your contribution frequency and total amount to align with your current goals and finances.";
+
 
 
 }
 
 List<String> profileDataString =["Edit profile","Withdraw","Retirement","Biometrics",
- "Change password","Contributions","Bank account","Bank account","Bank account","Logout",];
+ "Change password","Contributions","Bank account","Support","Push notifications","Logout",];

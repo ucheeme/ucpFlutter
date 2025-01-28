@@ -385,19 +385,24 @@ class _CartItemIncreaseDecreaseDesignState
                         child: Image.asset(UcpStrings.increaseInventoryIcon)),
                   ],
                 )),
-            Shimmer.fromColors(
-              baseColor: AppColor.ucpBlue25,
-              highlightColor: AppColor.ucpOrange500.withOpacity(0.5),
-              enabled: true,
-              child: Visibility(
-                visible: state
-                    is ShopIsIncreasingDecreasingItemQuantityOnCartLoading && (selectedIndex == widget.index),
-                child: Container(
-                  height: 38.h,
-                  width: 93.w,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30.r),
-                    color: AppColor.ucpBlue25.withOpacity(0.7),
+            Positioned(
+              bottom: 0.h,
+              top: 0.h,
+              child: Shimmer.fromColors(
+                baseColor: AppColor.ucpBlue25,
+                highlightColor: AppColor.ucpOrange500.withOpacity(0.5),
+                enabled: true,
+                child: Visibility(
+                  visible:
+                  state is ShopIsIncreasingDecreasingItemQuantityOnCartLoading &&
+                      (selectedIndex == widget.index),
+                  child: Container(
+                    height: 38.h,
+                    width: 93.w,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30.r),
+                      color: AppColor.ucpBlue25.withOpacity(0.7),
+                    ),
                   ),
                 ),
               ),
@@ -417,11 +422,13 @@ class CartSummaryListDesign extends StatefulWidget {
   ShopBloc bloc;
   int selectedIndex;
   int index;
+  double amount;
   CartSummaryListDesign({super.key,
     required this.bloc,
     required this.selectedIndex,
     required this.index,
     this.isOrderRequest,
+    required this.amount,
     required this.element,required this.state});
 
   @override
@@ -434,6 +441,7 @@ class _CartSummaryListDesignState extends State<CartSummaryListDesign> {
     return Container(
       height: 70.h,
       // width: 330.w,
+      padding: EdgeInsets.only(right: 8.w),
       decoration: BoxDecoration(
         color: AppColor.ucpWhite500,
         borderRadius: BorderRadius.circular(12.r),
@@ -442,54 +450,51 @@ class _CartSummaryListDesignState extends State<CartSummaryListDesign> {
         ),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
               height:70.h,
               width: 90.w,
               decoration: BoxDecoration(
+                image: DecorationImage(image: AssetImage(UcpStrings.basketI), fit: BoxFit.cover),
                 border: Border.all(color: AppColor.ucpBlack50),
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(12.r),
                     bottomLeft: Radius.circular(12.r)),
               ),
-              child: Image.asset(
-                UcpStrings.basketI,
-                // fit: BoxFit.fill,
-              )),
+          ),
+          Gap(3.w),
           SizedBox(
             height: 70.h,
-            // width:25.w,
+            width:240.w,
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 10.h),
+              padding: EdgeInsets.symmetric(vertical: 5.h),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SizedBox(
-                    width: 150.w,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          widget.element.itemName,
-                          style: CreatoDisplayCustomTextStyle.kTxtMedium
-                              .copyWith(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xff000000)),
-                        ),
-                        Text(
-                          NumberFormat.currency(
-                              symbol: 'NGN', decimalDigits: 0)
-                              .format(widget.isOrderRequest==null? widget.element.sellPrice : widget.element.unitPrice),
-                          style: CreatoDisplayCustomTextStyle.kTxtMedium
-                              .copyWith(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xff000000)),
-                        )
-                      ],
-                    ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.element.itemName,
+                        style: CreatoDisplayCustomTextStyle.kTxtMedium
+                            .copyWith(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xff000000)),
+                      ),
+                      Text(
+                        NumberFormat.currency(
+                            symbol: 'NGN', decimalDigits: 0)
+                            .format(widget.amount),
+                        style: CreatoDisplayCustomTextStyle.kTxtMedium
+                            .copyWith(
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xff000000)),
+                      )
+                    ],
                   ),
                   Visibility(
                     visible: widget.isOrderRequest==null?true:false,

@@ -14,7 +14,7 @@ class LoanRequestBreakdownList {
   dynamic interest;
   dynamic total;
   dynamic balance;
-  int instalDue;
+  dynamic instalDue;
 
   LoanRequestBreakdownList({
     required this.date,

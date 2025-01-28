@@ -17,6 +17,24 @@ class CustomValidator {
     return null;
   }
 
+  String? validateFullName(String? name) {
+    // Trim and split the name into words
+    RegExp pattern =RegExp(r"\s+");
+    List<String>? words = name?.trim().split(pattern);
+    if (name == null || name.isEmpty) return "";
+    // Check if there are exactly 3 words2333
+    if (words?.length != 3) {
+      return "Invalid format! use this format 'FirstName MiddleName LastName'.";
+    }
+    // if(pattern.hasMatch(name)){
+    //   return "Name cannot have a digit";
+    // }
+    // Capitalize each word correctly
+    String? formattedName = words?.map((word) => word[0].toUpperCase() + word.substring(1).toLowerCase()).join(" ");
+
+    return null; // Return formatted name if valid
+  }
+
   String? validateusername(String? value) {
     RegExp pattern = RegExp(r'\d');
 

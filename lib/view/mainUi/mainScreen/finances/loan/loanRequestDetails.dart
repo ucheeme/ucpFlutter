@@ -8,15 +8,22 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:lottie/lottie.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:ucp/bloc/finance/finance_bloc.dart';
+import 'package:ucp/data/model/request/loanApplicationRequest.dart';
 import 'package:ucp/data/model/response/loanRequestBreakDown.dart';
 import 'package:ucp/data/repository/FinanceRepo.dart';
 import 'package:ucp/utils/appExtentions.dart';
 import 'package:ucp/utils/sharedPreference.dart';
 import 'package:ucp/utils/ucpLoader.dart';
+import 'package:ucp/view/bottomSheet/SuccessNotification.dart';
 import 'package:ucp/view/mainUi/mainScreen/finances/loan/repaymentWidget.dart';
 
+import '../../../../../bloc/finance/loanController.dart';
+import '../../../../../data/model/response/allGuarantors.dart';
 import '../../../../../data/model/response/loanApplicationResponse.dart';
+import '../../../../../data/model/response/loanProductResponse.dart';
 import '../../../../../utils/appStrings.dart';
 import '../../../../../utils/apputils.dart';
 import '../../../../../utils/colorrs.dart';
@@ -25,12 +32,21 @@ import '../../../../../utils/designUtils/animatedArc.dart';
 import '../../../../../utils/designUtils/animatedPieChart.dart';
 import '../../../../../utils/designUtils/reusableFunctions.dart';
 import '../../../../../utils/designUtils/reusableWidgets.dart';
+import '../../../../bottomSheet/guarantorDesign.dart';
 
 class LoanRequestDetailScreen extends StatefulWidget {
   FinanceBloc bloc;
   LoanRequests loanRequests;
   bool isRequestBreakdown;
-   LoanRequestDetailScreen({super.key,required this.isRequestBreakdown,required this.bloc,required this.loanRequests});
+  bool? isLoanApplication;
+  Widget? bottomSheet;
+  LoanController controller;
+   LoanRequestDetailScreen({super.key,
+     required this.isRequestBreakdown,
+     required this.controller,
+     this.bottomSheet,
+     this.isLoanApplication,
+     required this.bloc,required this.loanRequests});
 
   @override
   State<LoanRequestDetailScreen> createState() =>
@@ -40,8 +56,8 @@ class LoanRequestDetailScreen extends StatefulWidget {
 class _LoanRequestDetailScreenState extends State<LoanRequestDetailScreen> {
   late FinanceBloc bloc;
   List<LoanRequestBreakdownList> loanBreakdownList = [
-    LoanRequestBreakdownList(date: "02/15/2025 11:15:13", principal: 0.0, interest: 0.0, total: 0.0, balance: 0.0, instalDue: 0),
-    LoanRequestBreakdownList(date: "02/15/2025 11:15:13", principal: 0.0, interest: 0.0, total: 0.0, balance: 0.0, instalDue: 0),
+   // LoanRequestBreakdownList(date: "02/15/2025 11:15:13", principal: 0.0, interest: 0.0, total: 0.0, balance: 0.0, instalDue: 0),
+   // LoanRequestBreakdownList(date: "02/15/2025 11:15:13", principal: 0.0, interest: 0.0, total: 0.0, balance: 0.0, instalDue: 0),
   ];
   @override
   void initState() {
@@ -74,6 +90,53 @@ class _LoanRequestDetailScreenState extends State<LoanRequestDetailScreen> {
     });
     super.initState();
   }
+
+  Future<void> _showGuarantorSelectionModal() async {
+
+    List<LoanGuantorsList>? response = await   showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColor.ucpWhite500,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.6,
+        maxChildSize: 1.0,
+        minChildSize: 0.3,
+        builder: (context, scrollController) {
+          return  Container(
+            height: 485.h,
+            color: AppColor.ucpWhite500,
+            child: GuantorListDesign(allGuantors: tempLoansGuarantors,
+              scrollController: scrollController,),
+          );
+        },
+      ),
+    );
+
+    if (response != null) {
+      setState(() {
+      bloc.add(ApplyForLoanEvent(
+        LoanApplicationRequest(
+          loanAmount: widget.loanRequests.loanAmount,
+          frequency: widget.controller.loanFreq,
+          loanProduct: widget.controller.loanProduct,
+          tenor: widget.loanRequests.duration.toString(),
+            narration: widget.loanRequests.productName,
+            netMonthlyPay:double.parse(widget.controller.netMonthlyPayController.text.replaceAll(",", "")) ,
+            gaurators: response.map((e) => e.employeeId).toList()
+        )
+      ));
+       // bloc.add();
+        // bloc.add(GetLoanFrequencyForProductEvent(widget.controller.loanProduct));
+      });
+
+      // bloc.validation.setCooperative(response);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<FinanceBloc, FinanceState>(
@@ -93,6 +156,27 @@ class _LoanRequestDetailScreenState extends State<LoanRequestDetailScreen> {
           });
           bloc.initial();
         }
+        if(state is LoanApplicationState){
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            showCupertinoModalBottomSheet(
+              topRadius: Radius.circular(15.r),
+              backgroundColor: AppColor.ucpWhite500,
+              context: context,
+              builder: (context) {
+                return Container(
+                  height: 400.h,
+                  color: AppColor.ucpWhite500,
+                  child: LoadLottie(lottiePath: UcpStrings.ucpLottieStampSeal,
+                  bottomText: state.response.message,
+             ),
+                );
+              },
+            ).then((value){
+            Get.back(result: true);
+            });
+          });
+          bloc.initial();
+        }
         return UCPLoadingScreen(
           visible: state is FinanceIsLoading,
           loaderWidget: LoadingAnimationWidget.discreteCircle(
@@ -104,6 +188,29 @@ class _LoanRequestDetailScreenState extends State<LoanRequestDetailScreen> {
           transparency: 0.2,
           child: Scaffold(
             backgroundColor: AppColor.ucpWhite10,
+            extendBodyBehindAppBar: true,
+            extendBody: true,
+            bottomSheet:Visibility(
+              visible: widget.isLoanApplication??false,
+              child: UCPCustomAppBar(
+                height: 93.h,
+                appBarColor: AppColor.ucpBlue300.withOpacity(0.2),
+                child: CustomButton(
+                  onTap: () {
+                     _showGuarantorSelectionModal();
+                  },
+                  borderRadius: 30.r,
+                  buttonColor: AppColor.ucpBlue500,
+                  buttonText: UcpStrings.applyForLoan,
+                  height: 51.h,
+                  textStyle: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16.sp,
+                    color: AppColor.ucpWhite500,
+                  ),
+                  textColor: AppColor.ucpWhite500,
+                ),),
+            ),
             body: Stack(
               children: [
                 SizedBox(
@@ -222,13 +329,23 @@ class _LoanRequestDetailScreenState extends State<LoanRequestDetailScreen> {
                                   ),
                                 )),
                             Gap(10.h),
+
                             SizedBox(
                               height: 81.h,
-                              child: Column(
+                              child:
+                              loanBreakdownList.isEmpty?
+                                  Center(child:   Text(UcpStrings.fetchingData,
+                                      style: CreatoDisplayCustomTextStyle.kTxtMedium
+                                          .copyWith(
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColor.ucpBlack500)),)
+                                  :
+                              Column(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   SizedBox(
-                                    height: 46.h,
+                                    height: 48.5.h,
                                     child: Column(
                                       children: [
                                         Row(
@@ -309,14 +426,21 @@ class _LoanRequestDetailScreenState extends State<LoanRequestDetailScreen> {
                               color: AppColor.ucpBlack500)),
                       height14,
                       Container(
-                        height:loanBreakdownList.length*80.h,
+                        height: loanBreakdownList.isEmpty?100.h:loanBreakdownList.length*80.h,
                         width: 343.w,
                         padding: EdgeInsets.symmetric(vertical: 20.h),
                         decoration: BoxDecoration(
                             color: AppColor.ucpWhite500,
                             borderRadius:BorderRadius.circular(16.r)
                         ),
-                        child: Column(
+                        child:  loanBreakdownList.isEmpty?
+                        Center(child:   Text(UcpStrings.fetchingData,
+                            style: CreatoDisplayCustomTextStyle.kTxtMedium
+                                .copyWith(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                                color: AppColor.ucpBlack500)),)
+                            :Column(
                           children: loanBreakdownList.mapIndexed((element, index)
                           => Padding(
                             padding:  EdgeInsets.only(left: 10.w,right: 10.w),

@@ -23,6 +23,46 @@ class _GenderOptionsState extends State<GenderOptions> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.ucpWhite00,
+      bottomSheet:   GestureDetector(
+        onTap: () {
+
+          setState(() {
+            isSelectedMale = false;
+            isSelectedFemale=true;
+          });
+          Get.back(result: UcpStrings.femaleTxt,);
+        },
+        child: Container(
+            height: 48.h,
+            margin: EdgeInsets.only(
+                bottom: 14.h, left: 15.w, right: 15.w),
+            padding:
+            EdgeInsets.symmetric(horizontal: 12.h),
+            decoration: BoxDecoration(
+                color: (isSelectedFemale)
+                    ? AppColor.ucpBlue25
+                    : AppColor.ucpWhite500,
+                borderRadius:
+                BorderRadius.circular(12.r),
+                border: Border.all(
+                  color: (isSelectedFemale)
+                      ? AppColor.ucpBlue500
+                      : AppColor.ucpWhite500,
+                )),
+            child: BottomsheetRadioButtonRightSide(
+              radioText:UcpStrings.femaleTxt,
+              isMoreThanOne:false,
+              isDmSans: false,
+              isSelected:  isSelectedFemale,
+              onTap: () {
+                setState(() {
+                  isSelectedMale = false;
+                  isSelectedFemale=true;
+                });
+              },
+              textHeight: 16.h,
+            )),
+      ),
       body: Column(
         children: [
           Container(
@@ -114,46 +154,7 @@ class _GenderOptionsState extends State<GenderOptions> {
           //   ),
           // ),
           height20,
-          GestureDetector(
-            onTap: () {
 
-              setState(() {
-                isSelectedMale = false;
-                isSelectedFemale=true;
-              });
-              Get.back(result: UcpStrings.femaleTxt,);
-            },
-            child: Container(
-                height: 48.h,
-                margin: EdgeInsets.only(
-                    bottom: 14.h, left: 15.w, right: 15.w),
-                padding:
-                EdgeInsets.symmetric(horizontal: 12.h),
-                decoration: BoxDecoration(
-                    color: (isSelectedFemale)
-                        ? AppColor.ucpBlue25
-                        : AppColor.ucpWhite500,
-                    borderRadius:
-                    BorderRadius.circular(12.r),
-                    border: Border.all(
-                      color: (isSelectedFemale)
-                          ? AppColor.ucpBlue500
-                          : AppColor.ucpWhite500,
-                    )),
-                child: BottomsheetRadioButtonRightSide(
-                  radioText:UcpStrings.femaleTxt,
-                  isMoreThanOne:false,
-                  isDmSans: false,
-                  isSelected:  isSelectedFemale,
-                  onTap: () {
-                    setState(() {
-                      isSelectedMale = false;
-                      isSelectedFemale=true;
-                    });
-                  },
-                  textHeight: 16.h,
-                )),
-          ),
 
 
         ],

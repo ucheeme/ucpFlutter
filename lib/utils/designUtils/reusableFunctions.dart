@@ -146,7 +146,7 @@ Future<DateTime?> selectDate(TextEditingController controller, {
   DateTime? response = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
+      firstDate: DateTime(1900),
       lastDate: DateTime(2100)
   );
  return response;
@@ -219,6 +219,11 @@ String convertDate(String inputDate) {
     return formattedDate;
   } catch (e) {
     // Handle errors gracefully
-    return DateTime.now().format("MMM. dd, yyyy");
+    return DateTime.now().format("F d, Y");
   }
+}
+
+Uint8List convertBase64Image(String base64String) {
+  Uint8List imageBytes = base64Decode(base64String);
+  return imageBytes;
 }

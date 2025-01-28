@@ -15,10 +15,10 @@ class _CustomToggleSwitchState extends State<CustomToggleSwitch> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 50.w,
+      width: 40.w,
       height: 30.h,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
               color: AppColor.ucpBlack500.withOpacity(0.20)
@@ -30,7 +30,7 @@ class _CustomToggleSwitchState extends State<CustomToggleSwitch> {
             offset: const Offset(0.0, 0.0), // shadow direction: bottom right
           )
         ],
-        color: widget.value ?AppColor.ucpBlue100: AppColor.ucpBlue500,
+        color: widget.value ?AppColor.ucpBlue500: AppColor.ucpBlue100,
       ),
       child: AnimatedAlign(
         duration: const Duration(milliseconds: 200),
@@ -41,7 +41,7 @@ class _CustomToggleSwitchState extends State<CustomToggleSwitch> {
           margin: EdgeInsets.all(7.r),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: widget.value ? AppColor.ucpWhite500:AppColor.ucpBlue100,
+            color: widget.value ? AppColor.ucpWhite500:AppColor.ucpBlue200,
           ),
         ),
       ),

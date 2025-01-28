@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:dio/adapter.dart';
 import 'package:get/get.dart' as gettt;
-import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:ucp/data/model/response/defaultResponse.dart';
 
 import '../../utils/apputils.dart';
@@ -65,7 +65,8 @@ class ApiService {
       {bool? isAdmin = false,
       bool requireAccess = true,
         HttpMethods method =  HttpMethods.post,
-        required String baseUrl}) async {
+        required String baseUrl}) async
+  {
     try {
       final result = await InternetAddress.lookup('example.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
@@ -190,7 +191,9 @@ class ApiService {
     }
   }
 
-  static Future<Object> uploadDoc(dynamic requestBody , String url, {String? docType}) async {
+  static Future<Object> uploadDoc(dynamic requestBody , String url, {String? docType,
+    String documentCategory="",}) async
+  {
     try {
       var request = http.MultipartRequest(
         'POST', Uri.parse(url),
@@ -250,7 +253,8 @@ class ApiService {
     }on FormatException{
       return  UnExpectedError();
 
-    }catch (e){
+    }
+    catch (e){
       return NetWorkFailure();
     }
   }
@@ -261,4 +265,103 @@ class ApiService {
     return (bytes != null ? base64Encode(bytes) : null);
   }
 
+  static Future<Object> uploadFile({
+    required String url,                        // API endpoint
+    String? filePath,                           // File path (optional)
+    String? fileFieldName,                      // Field name for the file (optional)
+    required bool requireAccess,                // Flag for authorization
+    Map<String, dynamic> formFields = const {}, // Dynamic form fields
+  }) async {
+    try {
+      // Prepare form data
+      Map<String, dynamic> formDataMap = {...formFields};
+
+      // If filePath is provided, include file in form data
+      if (filePath != null && fileFieldName != null) {
+        File file = File(filePath);
+
+        // // Ensure the file exists
+        // if (!await file.exists()) {
+        //   return Failure(400, "File does not exist.");
+        // }
+
+        // Ensure the filename ends with .png
+        String fileName = file.path.split('/').last;
+        if (!fileName.endsWith(".png")) {
+          fileName = "${fileName.split('.').first}.png"; // Change extension to .png
+        }
+
+        formDataMap[fileFieldName] = await MultipartFile.fromFile(
+          file.path,
+          filename: fileName,
+          contentType: MediaType("image", "png"),
+        );
+      }
+
+      // Convert to FormData
+      FormData formData = FormData.fromMap(formDataMap);
+
+      // Make API call
+      Response response = await dio.post(
+        url,
+        data: formData,
+        options: Options(
+          headers: requireAccess
+              ? {
+            HttpHeaders.userAgentHeader: 'dio',
+            "Content-Type": "multipart/form-data",
+            'Accept': 'application/json',
+            'accept': 'text/plain',
+            'Authorization': 'Bearer $accessToken',
+          }
+              : {
+            HttpHeaders.userAgentHeader: 'dio',
+            "Content-Type": "multipart/form-data",
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Accept': 'application/json',
+            'accept': 'text/plain',
+            'Connection': "keep-alive",
+          },
+        ),
+      );
+
+      AppUtils.debug("/**** REST call response starts ****/");
+      AppUtils.debug("Status code: ${response.statusCode}");
+      AppUtils.debug("Response: ${response.data}");
+
+      // Handle success response
+      if (ApiResponseCodes.success == response.statusCode) {
+        return Success(response.statusCode!, response.data);
+      }
+
+      // Handle error or internal server error response
+      if (ApiResponseCodes.error == response.statusCode ||
+          ApiResponseCodes.internalServerError == response.statusCode) {
+        return Failure(
+          response.statusCode ?? 400,
+          ucpDefaultResponseFromJson(response.data), // Deserialize error response
+        );
+      }
+
+      // Handle authorization error response
+      if (ApiResponseCodes.authorizationError == response.statusCode) {
+        return ForbiddenAccess();
+      }
+
+      // Fallback for any other error
+      return Failure(response.statusCode ?? 400, "An unknown error occurred.");
+    } on HttpException {
+      return NetWorkFailure();
+    } on FormatException {
+      return UnExpectedError();
+    } catch (e) {
+      // Handle unexpected exceptions
+      print("Upload Failed: $e");
+      return Failure(500, "An unexpected error occurred.");
+    }
+  }
+
+
 }
+
+

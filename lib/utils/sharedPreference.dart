@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ucp/data/model/request/saveToAccount.dart';
+import 'package:ucp/data/model/response/allGuarantors.dart';
 import 'package:ucp/data/model/response/cooperativeList.dart';
 import 'package:ucp/data/model/response/loanFrequencyResponse.dart';
 import 'package:ucp/data/model/response/loanProductResponse.dart';
@@ -98,6 +99,7 @@ List<PurchasedSummary> purchasedSummaryListTemp = [];
 List<ListOfBank>tempBankList = [];
 List<UserSavingAccounts> tempSavingAccounts= [];
 List<LoanFrequencyList>tempLoanFrequencies=[];
+List<LoanGuantorsList>tempLoansGuarantors=[];
 List<LoanProductList>tempLoanProducts=[];
 List<PaymentModes> tempPaymentModes= [];
 SaveToAccountRequest saveToAccountRequest = SaveToAccountRequest(

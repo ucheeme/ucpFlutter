@@ -7,8 +7,10 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:ucp/bloc/finance/finance_bloc.dart';
+import 'package:ucp/bloc/finance/loanController.dart';
 import 'package:ucp/data/repository/FinanceRepo.dart';
 import 'package:ucp/utils/sharedPreference.dart';
+import 'package:ucp/view/errorPages/noNotification.dart';
 
 import '../../../../../data/model/response/loanApplicationResponse.dart';
 import '../../../../../utils/appStrings.dart';
@@ -21,7 +23,8 @@ import 'loanRequestDetails.dart';
 import 'loanWidgetScreen.dart';
 
 class LoanRequestsScreen extends StatefulWidget {
-  const LoanRequestsScreen({super.key});
+  LoanController controller;
+   LoanRequestsScreen({super.key, required this.controller});
 
   @override
   State<LoanRequestsScreen> createState() => _LoanRequestsScreenState();
@@ -89,11 +92,11 @@ class _LoanRequestsScreenState extends State<LoanRequestsScreen> {
       overlayColor: AppColor.ucpBlack400,
       transparency: 0.2,
       child:Scaffold(
-        backgroundColor: AppColor.ucpWhite50,
+        backgroundColor: AppColor.ucpWhite10,
         body: allLoanRequests.isNotEmpty?
         ListView(
           children: [
-            Gap(110.h),
+            Gap(90.h),
             NotificationListener<ScrollNotification>(
               onNotification: (scrollInfo) {
                 if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
@@ -122,6 +125,7 @@ class _LoanRequestsScreenState extends State<LoanRequestsScreen> {
                         Get.to(LoanRequestDetailScreen(
                           isRequestBreakdown: false,
                           bloc: bloc,
+                          controller: widget.controller,
                           loanRequests:allLoanRequests[index],)
                         );
                       },
@@ -137,12 +141,12 @@ class _LoanRequestsScreenState extends State<LoanRequestsScreen> {
             ),
           ],
         ):
+            EmptyNotificationsScreen(press: (){
+              bloc.add(GetAllLoanApplicationEvent(PaginationRequest(currentPage: currentPage,pageSize: pageSize)));
+            },
+            emptyMessage: "NO LOAN APPLICATIONS YET",
+            )
 
-        Center(child: Text("No data found",style: CreatoDisplayCustomTextStyle.kTxtBold.copyWith(
-            fontSize: 20.sp,
-            fontWeight: FontWeight.w500,
-            color: AppColor.ucpBlack500
-        ),),),
       ),
     );
   },

@@ -8,3 +8,22 @@ class GetMemberProfileEvent extends ProfileEvent {
   @override
   List<Object> get props => [];
 }
+
+class UpdateProfileEvent extends ProfileEvent {
+  final UpdateProfileRequest request;
+  const UpdateProfileEvent(this.request);
+  @override
+  List<Object> get props => [request];
+}
+
+class ChangePasswordEvent extends ProfileEvent {
+  final ChangePasswordRequest request;
+  const ChangePasswordEvent(this.request);
+  @override
+  List<Object> get props => [request];
+}
+class GetMemberSavingAccountsEvent extends ProfileEvent {
+  const GetMemberSavingAccountsEvent();
+  @override
+  List<Object> get props => [];
+}

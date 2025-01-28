@@ -9,7 +9,14 @@ class AnimatePieChart extends StatefulWidget {
   Map<String, double> dataMap;
   List<Color> colorList;
   double total;
-  AnimatePieChart({super.key,required this.total, required this.dataMap, required this.colorList});
+  Color? color;
+  Color? colorBackground;
+  AnimatePieChart({super.key,
+    required this.total,
+    this.color,
+    this.colorBackground,
+    required this.dataMap,
+    required this.colorList});
 
   @override
   State<AnimatePieChart> createState() => _AnimatePieChartState();
@@ -20,6 +27,18 @@ class _AnimatePieChartState extends State<AnimatePieChart> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        Container(
+          // height:40.h,
+          // width: 40.w,
+          // padding: EdgeInsets.all(1),
+          clipBehavior: Clip.hardEdge,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: widget.color??AppColor.ucpBlack50,
+            border: Border.all(color: widget.colorBackground??AppColor.ucpWhite600,),
+          ),
+
+        ),
         PieChart(
           degreeOptions: DegreeOptions(),
           totalValue: widget.total,
@@ -39,18 +58,6 @@ class _AnimatePieChartState extends State<AnimatePieChart> {
               legendPosition: LegendPosition.bottom,
               showLegendsInRow: false),
         ),
-        Container(
-          // height:40.h,
-          // width: 40.w,
-           // padding: EdgeInsets.all(1),
-          clipBehavior: Clip.hardEdge,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: AppColor.ucpWhite600,),
-          ),
-
-        ),
-
       ]
     );
   }

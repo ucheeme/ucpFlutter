@@ -58,7 +58,7 @@ class _LoginFlowState extends State<LoginFlow> {
       context: context,
       builder: (context) {
         return Container(
-          height: 485.h,
+          height: 495.h,
           color: AppColor.ucpWhite500,
           child: CooperativeListDesign(cooperativeList: allCooperatives),
         );
@@ -138,233 +138,238 @@ class _LoginFlowState extends State<LoginFlow> {
                 body: Padding(
                   padding:
                   EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        height30,
-                        GestureDetector(
-                          onTap: () {
-                            Get.back();
-                          },
-                          child: SizedBox(
-                            height: 30.h,
-                            width: 30.w,
-                            child: ColoredBox(
-                              color: Colors.transparent,
-                              child: Image.asset(
-                                "assets/images/arrow-left.png",
-                                height: 24.h,
-                                width: 24.w,
-                              ),
-                            ),
-                          ),
-                        ),
-                        height16,
-                        Image.asset(UcpStrings.ucpLogo,
-                          height: 35.h,
-                        ),
-                        height30,
-                        Column(
+                  child: ListView(
+                   // crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      height30,
+                      SizedBox(
+                        child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              UcpStrings.logInTxt,
-                              style: CreatoDisplayCustomTextStyle.kTxtMedium
-                                  .copyWith(
-                                  fontSize: 24.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColor.ucpBlack500),
+                            GestureDetector(
+                              onTap: () {
+                                Get.back();
+                              },
+                              child: SizedBox(
+                                height: 30.h,
+                                width: 30.w,
+                                child: ColoredBox(
+                                  color: Colors.transparent,
+                                  child: Image.asset(
+                                    "assets/images/arrow-left.png",
+                                    height: 24.h,
+                                    width: 24.w,
+                                  ),
+                                ),
+                              ),
                             ),
-                            Text(
-                              UcpStrings.accessYourAccountTxt,
-                              style: CreatoDisplayCustomTextStyle.kTxtRegular
-                                  .copyWith(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColor.ucpBlack700),
+                            height16,
+                            Image.asset(UcpStrings.ucpLogo,
+                              height: 35.h,
                             ),
                           ],
                         ),
-                        height40,
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.55,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                UcpStrings.sCooperativeTxt,
-                                style: CreatoDisplayCustomTextStyle.kTxtMedium
-                                    .copyWith(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColor.ucpBlack600),
-                              ),
-                              height12,
-                              StreamBuilder<Object>(
-                                stream: bloc.validation.cooperative,
+                      ),
+                      height30,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            UcpStrings.logInTxt,
+                            style: CreatoDisplayCustomTextStyle.kTxtMedium
+                                .copyWith(
+                                fontSize: 24.sp,
+                                fontWeight: FontWeight.w500,
+                                color: AppColor.ucpBlack500),
+                          ),
+                          Text(
+                            UcpStrings.accessYourAccountTxt,
+                            style: CreatoDisplayCustomTextStyle.kTxtRegular
+                                .copyWith(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w400,
+                                color: AppColor.ucpBlack700),
+                          ),
+                        ],
+                      ),
+                      height40,
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.55,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              UcpStrings.sCooperativeTxt,
+                              style: CreatoDisplayCustomTextStyle.kTxtMedium
+                                  .copyWith(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColor.ucpBlack600),
+                            ),
+                            height12,
+                            StreamBuilder<Object>(
+                              stream: bloc.validation.cooperative,
+                              builder: (context, snapshot) {
+                                return CustomizedTextField(
+                                  readOnly: true,
+                                  textEditingController: sCollectiveController,
+                                  hintTxt: UcpStrings.sCooperativeTxt,
+                                  keyboardType: TextInputType.name,
+                                  surffixWidget: Padding(
+                                    padding: EdgeInsets.only(right: 8.w),
+                                    child: const Icon(Ionicons.chevron_down),
+                                  ),
+                                  onTap: () => _showCooperativeSelectionModal(),
+                                );
+                              }
+                            ),
+                            // height20,
+                            Text(
+                              UcpStrings.userNameTxt,
+                              style: CreatoDisplayCustomTextStyle.kTxtMedium
+                                  .copyWith(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColor.ucpBlack600),
+                            ),
+                            height12,
+                            StreamBuilder<Object>(
+                                stream: bloc.validation.userName,
                                 builder: (context, snapshot) {
                                   return CustomizedTextField(
-                                    readOnly: true,
-                                    textEditingController: sCollectiveController,
-                                    hintTxt: UcpStrings.sCooperativeTxt,
-                                    keyboardType: TextInputType.name,
-                                    surffixWidget: Padding(
-                                      padding: EdgeInsets.only(right: 8.w),
-                                      child: const Icon(Ionicons.chevron_down),
-                                    ),
-                                    onTap: () => _showCooperativeSelectionModal(),
+                                    isConfirmPasswordMatch: false,
+                                    hintTxt: UcpStrings.enterUNameTxt,
+                                    keyboardType: TextInputType.text,
+                                    textEditingController: userNameController,
+                                    onChanged:
+                                    bloc.validation.setUserName,
+                                    error: snapshot.error?.toString(),
                                   );
-                                }
-                              ),
-                              // height20,
-                              Text(
-                                UcpStrings.userNameTxt,
-                                style: CreatoDisplayCustomTextStyle.kTxtMedium
-                                    .copyWith(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColor.ucpBlack600),
-                              ),
-                              height12,
-                              StreamBuilder<Object>(
-                                  stream: bloc.validation.userName,
-                                  builder: (context, snapshot) {
-                                    return CustomizedTextField(
-                                      isConfirmPasswordMatch: false,
-                                      hintTxt: UcpStrings.enterUNameTxt,
-                                      keyboardType: TextInputType.text,
-                                      //textEditingController: userNameController,
-                                      onChanged:
-                                      bloc.validation.setUserName,
-                                      error: snapshot.error?.toString(),
-                                    );
-                                  }),
-                              Text(
-                                UcpStrings.passwordTxt,
-                                style: CreatoDisplayCustomTextStyle.kTxtMedium
-                                    .copyWith(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColor.ucpBlack600),
-                              ),
-                              height12,
-                              StreamBuilder<Object>(
-                                  stream: bloc.validation.password,
-                                  builder: (context, snapshot) {
-                                    return CustomizedTextField(
-                                      isPasswordVisible: true,
-                                      obsec:  bloc.validation.isPasswordVisible,
-                                      surffixWidget: GestureDetector(
-                                        onTap: (){
-                                          setState(() {
-                                           bloc.validation.isConfirmPasswordSelected= false;
-                                           bloc.validation.isPasswordSelected=true;
-                                           bloc.validation.isPasswordVisible=!bloc.validation.isPasswordVisible;
-                                          });
-                                        },
-                                        child:Padding(
-                                          padding:  EdgeInsets.only(right: 16.w),
-                                          child: bloc.validation.isPasswordVisible? Image.asset(
-                                            "assets/images/eye_close.png",
-                                            height: 24.h,
-                                            width: 24.h,
-                                          ):Image.asset(
-                                            "assets/images/fi_eye.png",
-                                            height: 24.h,
-                                            width: 24.h,
-                                          ),
+                                }),
+                            Text(
+                              UcpStrings.passwordTxt,
+                              style: CreatoDisplayCustomTextStyle.kTxtMedium
+                                  .copyWith(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColor.ucpBlack600),
+                            ),
+                            height12,
+                            StreamBuilder<Object>(
+                                stream: bloc.validation.password,
+                                builder: (context, snapshot) {
+                                  return CustomizedTextField(
+                                    isPasswordVisible: true,
+                                    obsec:  bloc.validation.isPasswordVisible,
+                                    surffixWidget: GestureDetector(
+                                      onTap: (){
+                                        setState(() {
+                                         bloc.validation.isConfirmPasswordSelected= false;
+                                         bloc.validation.isPasswordSelected=true;
+                                         bloc.validation.isPasswordVisible=!bloc.validation.isPasswordVisible;
+                                        });
+                                      },
+                                      child:Padding(
+                                        padding:  EdgeInsets.only(right: 16.w),
+                                        child: bloc.validation.isPasswordVisible? Image.asset(
+                                          "assets/images/eye_close.png",
+                                          height: 24.h,
+                                          width: 24.h,
+                                        ):Image.asset(
+                                          "assets/images/fi_eye.png",
+                                          height: 24.h,
+                                          width: 24.h,
                                         ),
                                       ),
-                                      isConfirmPasswordMatch: false,
-                                      textEditingController: passwordController,
-                                      error: snapshot.error?.toString(),
-                                      hintTxt:UcpStrings.enterPasswordTxt,
-                                      keyboardType: TextInputType.name,
-                                      onChanged: bloc.validation.setPassword,
-                                    );
-                                  }
-                              ),
-                              height12,
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  SizedBox(
-                                    height: 20.h,
-                                    width: 165.w,
-                                    child: RememberMeCheckbox(
-                                      onChanged: (value) {
-                                       // print("This is the value:$value");
-                                        setState(() {
-                                         rememberMe = !rememberMe;
-                                        });
-                                        bloc.validation.rememberMe = rememberMe;
-                                      },
-                                      value:true ,),
-                                  ),
-                                  Text(UcpStrings.forgotPasswordTxt,
-                                    style: CreatoDisplayCustomTextStyle.kTxtMedium
-                                        .copyWith(
-                                        decoration: TextDecoration.underline,
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColor.ucpBlue500),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                                    ),
+                                    isConfirmPasswordMatch: false,
+                                    textEditingController: passwordController,
+                                    error: snapshot.error?.toString(),
+                                    hintTxt:UcpStrings.enterPasswordTxt,
+                                    keyboardType: TextInputType.name,
+                                    onChanged: bloc.validation.setPassword,
+                                  );
+                                }
+                            ),
+                            height12,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  height: 20.h,
+                                  width: 165.w,
+                                  child: RememberMeCheckbox(
+                                    onChanged: (value) {
+                                     // print("This is the value:$value");
+                                      setState(() {
+                                       rememberMe = !rememberMe;
+                                      });
+                                      bloc.validation.rememberMe = rememberMe;
+                                    },
+                                    value:true ,),
+                                ),
+                                Text(UcpStrings.forgotPasswordTxt,
+                                  style: CreatoDisplayCustomTextStyle.kTxtMedium
+                                      .copyWith(
+                                      decoration: TextDecoration.underline,
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColor.ucpBlue500),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
+                      ),
 
-                        height30,
-                        CustomButton(
-                          onTap: () {
-                          // bloc.validation.loginRequest();
-                            bloc.add(SendLoginOtpEvent(bloc.validation.loginOtpRequest()));
-                         //  bloc.add(LoginEvent( bloc.validation.loginRequest()));
-                            //  null;
-                          },
-                          height: 51.h,
-                          buttonText: UcpStrings.continueTxt,
-                          borderRadius: 60.r,
-                          buttonColor: AppColor.ucpBlue500,
-                          textColor: AppColor.ucpWhite500,
-                        ),
-                        Gap(100.h),
-                        SizedBox(
-                          height: 30.h,
-                          width: double.infinity,
-                          child:Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                UcpStrings.dontHaveAnAccountTxt,
+                      height30,
+                      CustomButton(
+                        onTap: () {
+                        // bloc.validation.loginRequest();
+                          bloc.add(SendLoginOtpEvent(bloc.validation.loginOtpRequest()));
+                       //  bloc.add(LoginEvent( bloc.validation.loginRequest()));
+                          //  null;
+                        },
+                        height: 51.h,
+                        buttonText: UcpStrings.continueTxt,
+                        borderRadius: 60.r,
+                        buttonColor: AppColor.ucpBlue500,
+                        textColor: AppColor.ucpWhite500,
+                      ),
+                      Gap(100.h),
+                      SizedBox(
+                        height: 30.h,
+                        width: double.infinity,
+                        child:Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              UcpStrings.dontHaveAnAccountTxt,
+                              style: CreatoDisplayCustomTextStyle.kTxtRegular
+                                  .copyWith(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColor.ucpBlack700),
+                            ),
+                            Gap(4.w),
+                            GestureDetector(
+                              onTap: () {
+                                Get.toNamed(Pages.signup);
+                                },
+                              child: Text(
+                                UcpStrings.signUpTxt,
                                 style: CreatoDisplayCustomTextStyle.kTxtRegular
                                     .copyWith(
                                     fontSize: 16.sp,
+                                    decoration: TextDecoration.underline,
                                     fontWeight: FontWeight.w400,
-                                    color: AppColor.ucpBlack700),
+                                    color: AppColor.ucpBlack500),
                               ),
-                              Gap(4.w),
-                              GestureDetector(
-                                onTap: () {
-                                  Get.toNamed(Pages.signup);
-                                  },
-                                child: Text(
-                                  UcpStrings.signUpTxt,
-                                  style: CreatoDisplayCustomTextStyle.kTxtRegular
-                                      .copyWith(
-                                      fontSize: 16.sp,
-                                      decoration: TextDecoration.underline,
-                                      fontWeight: FontWeight.w400,
-                                      color: AppColor.ucpBlack500),
-                                ),
-                              ),
-                            ],
-                          ) ,
-                        )
-                      ],
-                    ),
+                            ),
+                          ],
+                        ) ,
+                      )
+                    ],
                   ),
                 )),
           ),

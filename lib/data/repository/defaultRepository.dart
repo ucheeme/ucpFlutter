@@ -97,15 +97,20 @@ class DefaultRepository {
     }
   }
 
-  Future<Object> postRequestImage(
-      dynamic request, String url, bool requiresToken, HttpMethods method) async {
-    var response = await ApiService.uploadDoc(request, url);
+  Future<Object> postRequestImage({
+      String filePath="", String url="", bool requiresToken=true,String imageFieldName="", Map<String, dynamic> formFields = const {},}) async {
+    var response = await ApiService.uploadFile(url: url, filePath: filePath,
+        fileFieldName:imageFieldName, requireAccess: requiresToken,formFields:formFields );
     print("Response: $response");
 
     if (response is Success) {
+      String result = jsonEncode(response.response);
       try {
-        return ucpDefaultResponseFromJson(response.response as String);
-      } catch (e) {
+
+        return ucpDefaultResponseFromJson(result);
+      } catch (e,trace) {
+        print(e);
+        print(trace);
         return response.response; // Return raw response for unknown formats
       }
     } else {

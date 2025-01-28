@@ -314,7 +314,7 @@ class _OtpscreenState extends State<Otpscreen>with TickerProviderStateMixin {
         stream:  widget.bloc.validation.otpValue,
         builder: (context, snapshot) {
           return PinCodeTextField(
-            //  controller: otpController,
+             controller:TextEditingController(),
             // focusNode: _pinCodeFocusNode,
               onTap: (){
                 setState(() {

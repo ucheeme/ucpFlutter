@@ -16,6 +16,10 @@
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>ucp</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>This app will need to access your file when necessary</string>
+    <key>NSCameraUsageDescription</key>
+    <string>UCP will use your camera</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

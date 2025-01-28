@@ -14,64 +14,91 @@ class Repaymentwidget extends StatefulWidget {
   LoanRequestBreakdownList data;
   double total;
   int index;
-   Repaymentwidget({super.key,required this.data,required this.total,required this.index});
+
+  Repaymentwidget(
+      {super.key,
+      required this.data,
+      required this.total,
+      required this.index});
 
   @override
   State<Repaymentwidget> createState() => _RepaymentwidgetState();
 }
 
 class _RepaymentwidgetState extends State<Repaymentwidget> {
-
   @override
   Widget build(BuildContext context) {
-
     return Container(
       width: 319.w,
       //margin: EdgeInsets.symmetric(vertical: 20.h,horizontal: 12.w),
       child: Row(
         children: [
-      SizedBox(
-        height: 46.h,
-        width: 46.w,
-        child: AnimatePieChart(
-          total:widget.total ,
-          dataMap: {"totalAmount":widget.total,
-          "amountToPay": (widget.data.total*widget.index),
-          },
-            colorList: [AppColor.ucpBlack50,AppColor.ucpWhite600,],
-        ),
-      ),
+          SizedBox(
+            height: 46.h,
+            width: 46.w,
+            child: AnimatePieChart(
+              total: widget.total,
+              dataMap: {
+                "totalAmount": widget.total,
+                "amountToPay": widget.data.total.runtimeType==int?(widget.data.principal*widget.index):
+                (widget.data.total * widget.index),
+              },
+              colorList: [
+                AppColor.ucpBlack50,
+                AppColor.ucpWhite600,
+              ],
+            ),
+          ),
           Gap(10.w),
           SizedBox(
-            height: 46.3.h,
+            height: 48.3.h,
             width: 259.w,
             child: Column(
               children: [
-                SizedBox(height:24.h,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("${widget.index}${getSuffix(widget.index)} loan payment",
-                      style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                          color: AppColor.ucpBlack500
-                      ),),
-                    Gap(16.w),
-                    Text(NumberFormat.currency(symbol: 'NGN', decimalDigits: 0).format(double.parse(widget.data.total.toString())),
-                      style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                          color: AppColor.ucpBlack500
-                      ),),
-                  ],
+                SizedBox(
+                  height: 24.h,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "${widget.index}${getSuffix(widget.index)} loan payment",
+                        style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
+                            color: AppColor.ucpBlack500),
+                      ),
+                      Gap(16.w),
+                      Text(
+                        NumberFormat.currency(symbol: 'NGN', decimalDigits: 0)
+                            .format(double.parse(widget.data.total.toString())),
+                        style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
+                            color: AppColor.ucpBlack500),
+                      ),
+                    ],
+                  ),
                 ),
-                    )
-                  ],
-                ),
+                SizedBox(
+                  height: 24.h,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Due on ${convertDate(widget.data.date)} ",
+                        style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w400,
+                            color: AppColor.ucpBlack600),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-          );
+          ),
+        ],
+      ),
+    );
   }
 }

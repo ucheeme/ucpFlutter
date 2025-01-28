@@ -49,6 +49,7 @@ class _MemberSavingAccountsBottomSheetsState extends State<MemberSavingAccountsB
       if(tempSavingAccounts.isNotEmpty){
         setState(() {
           savingAccounts = tempSavingAccounts;
+          selectedSavingAccount=savingAccounts[0];
         });
 
       }else{
@@ -66,6 +67,7 @@ class _MemberSavingAccountsBottomSheetsState extends State<MemberSavingAccountsB
       WidgetsBinding.instance.addPostFrameCallback((_){
         tempSavingAccounts = state.response;
           savingAccounts = state.response;
+        selectedSavingAccount=savingAccounts[0];
       });
       //savingAccounts = state.response;
       bloc.initial();
@@ -223,10 +225,10 @@ class _MemberSavingAccountsBottomSheetsState extends State<MemberSavingAccountsB
                             padding: EdgeInsets.all(16.w),
                             decoration: BoxDecoration(
                               color: AppColor.ucpBlue50,     //Color( 0xffEDF4FF),
-                              borderRadius: BorderRadius.only(
-                                bottomRight: Radius.circular(15.r),
-                                bottomLeft: Radius.circular(15.r),
-                              ),
+                              // borderRadius: BorderRadius.only(
+                              //   bottomRight: Radius.circular(15.r),
+                              //   bottomLeft: Radius.circular(15.r),
+                              // ),
                             ),
                             child: CustomButton(
                               onTap: () {
@@ -267,7 +269,7 @@ class _MemberSavingAccountsBottomSheetsState extends State<MemberSavingAccountsB
         return Container(
           height: 500.h,
           color: AppColor.ucpWhite500,
-          child:PaymentModeBottomSheet(),
+          child:PaymentModeBottomSheet(isSaving: true,),
         );
       },
     );
