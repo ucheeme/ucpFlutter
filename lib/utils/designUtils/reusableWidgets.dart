@@ -465,7 +465,7 @@ class _UCPWelcomeOptionState extends State<UCPWelcomeOption> {
 }
 
 class MultilineTextInput extends StatefulWidget {
-  final int maxLines;
+  final int? maxLines;
   final TextInputType inputType;
   final String? hintText;
   final TextStyle? hintStyle;
@@ -683,20 +683,16 @@ class _RememberMeCheckboxState extends State<RememberMeCheckbox> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Checkbox(
+            side: BorderSide(color: AppColor.ucpBlue500, width: 0.5.w),
             activeColor: AppColor.ucpBlue500,
             checkColor: AppColor.ucpWhite500,
             value: widget.value,
-            onChanged: (value) {
-              print("This is the value:$value");
-              setState(() {
-               // rememberMe = !rememberMe;
-              });
-            //  bloc.validation.rememberMe = rememberMe;
-            },
+            onChanged:widget.onChanged,
           ),
           Text(UcpStrings.rememberMTxt,
             style: CreatoDisplayCustomTextStyle.kTxtMedium

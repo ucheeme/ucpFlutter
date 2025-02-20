@@ -5,34 +5,36 @@
 import 'dart:convert';
 import 'dart:io';
 
-SaveToAccountRequest saveToAccountRequestFromJson(String str) => SaveToAccountRequest.fromJson(json.decode(str));
+PaymentRequest paymentRequestFromJson(String str) => PaymentRequest.fromJson(json.decode(str));
 
-String saveToAccountRequestToJson(SaveToAccountRequest data) => json.encode(data.toJson());
+String paymentRequestsToJson(PaymentRequest data) => json.encode(data.toJson());
 
-class SaveToAccountRequest {
+class PaymentRequest {
   String amount;
   String modeOfpayment;
   String description;
-  String accountNumber;
-  String bank;
-  String bankAccountNumber;
-  String bankTeller;
-  String paidDate;
-  File? uploadTeller;
+  String? accountNumber;
+  String? bank;
+  String? bankAccountNumber;
+  String? bankTeller;
+  String? paidDate;
+  String? contributionAcctNumber;
+  // File? uploadTeller;
 
-  SaveToAccountRequest({
+  PaymentRequest({
     required this.amount,
     required this.modeOfpayment,
     required this.description,
-    required this.accountNumber,
-    required this.bank,
-    required this.bankAccountNumber,
-    required this.bankTeller,
-    required this.paidDate,
-    required this.uploadTeller,
+     this.accountNumber,
+     this.bank,
+     this.bankAccountNumber,
+     this.bankTeller,
+     this.paidDate,
+    this.contributionAcctNumber,
+    // required this.uploadTeller,
   });
 
-  factory SaveToAccountRequest.fromJson(Map<String, dynamic> json) => SaveToAccountRequest(
+  factory PaymentRequest.fromJson(Map<String, dynamic> json) => PaymentRequest(
     amount: json["amount"],
     modeOfpayment: json["modeOfpayment"],
     description: json["description"],
@@ -41,7 +43,8 @@ class SaveToAccountRequest {
     bankAccountNumber: json["bankAccountNumber"],
     bankTeller: json["bankTeller"],
     paidDate: json["paidDate"],
-    uploadTeller: json["uploadTeller"],
+    contributionAcctNumber: json["contributionAccountNumber"],
+    // uploadTeller: json["uploadTeller"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -53,6 +56,7 @@ class SaveToAccountRequest {
     "bankAccountNumber": bankAccountNumber,
     "bankTeller": bankTeller,
     "paidDate": paidDate,
-    "uploadTeller": uploadTeller?.path,
+    "contributionAccountNumber": contributionAcctNumber,
+    // "uploadTeller": uploadTeller?.path,
   };
 }

@@ -61,3 +61,10 @@ class UcpBanks extends DashboardState{
   @override
   List<Object> get props => [response];
 }
+
+class PaymentSuccessState extends DashboardState{
+  PaymentSuccessfulResponse response;
+  PaymentSuccessState(this.response);
+  @override
+  List<Object> get props => [];
+}

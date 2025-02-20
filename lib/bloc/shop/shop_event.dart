@@ -68,3 +68,10 @@ class GetAllItemInPurchasedSummaryEvent extends ShopEvent {
   @override
   List<Object> get props => [];
 }
+
+class PayForItemInCartEvent extends ShopEvent {
+  PaymentRequest request;
+  PayForItemInCartEvent(this.request);
+  @override
+  List<Object> get props => [];
+}

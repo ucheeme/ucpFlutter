@@ -27,8 +27,15 @@ import '../../bottomNav.dart';
 import '../../otpScreen.dart';
 import '../signUpFlow/signUpSecondPage.dart';
 DashboardResponse? dashboardResponse;
+Future<bool>? enableBioMeteric;
+String isBioMetric ="isBioMetric";
+String isUserName ="isUserName";
+String isPassword ="isPassword";
+String isSelectedCooperative ="isSelectedCooperative";
 class LoginFlow extends StatefulWidget {
-  const LoginFlow({super.key});
+  bool? isTokenExpired;
+
+   LoginFlow({super.key,isTokenExpired});
 
   @override
   State<LoginFlow> createState() => _LoginFlowState();
@@ -48,6 +55,9 @@ class _LoginFlowState extends State<LoginFlow> {
       if(allCooperatives.isEmpty){
         bloc.add(GetAllCooperativesEvent());
       }
+      if(widget.isTokenExpired==true){
+        AppUtils.showInfoSnack("Token Expired, Please login again", context);
+      }
     });
     super.initState();
   }
@@ -57,10 +67,13 @@ class _LoginFlowState extends State<LoginFlow> {
       backgroundColor: AppColor.ucpWhite500,
       context: context,
       builder: (context) {
-        return Container(
-          height: 495.h,
-          color: AppColor.ucpWhite500,
-          child: CooperativeListDesign(cooperativeList: allCooperatives),
+        return Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Container(
+            height: 495.h,
+            color: AppColor.ucpWhite500,
+            child: CooperativeListDesign(cooperativeList: allCooperatives),
+          ),
         );
       },
     );
@@ -106,19 +119,21 @@ class _LoginFlowState extends State<LoginFlow> {
           });
           bloc.initial();
         }
-        // if(state is LoginSuccess){
-        //   WidgetsBinding.instance.addPostFrameCallback((_) async {
-        //     memberLoginDetails=state.response.memberLoginDetails;
-        //     accessToken = state.response.token;
-        //     refreshAccessToken = state.response.refreshToken;
-        //   //  Get.offAll(MyBottomNav(), predicate: (route) => false);
-        //   });
-        // }
+        if(state is LoginSuccess){
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            memberLoginDetails=state.response.memberLoginDetails;
+            accessToken = state.response.token;
+            refreshAccessToken = state.response.refreshToken;
 
-        if (state is OnBoardingError)
+            Get.offAll(MyBottomNav(), predicate: (route) => false);
+          });
+          bloc.initial();
+        }
+        if (state is OnBoardingError) {
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             _handleOnBoardingErrorState(state);
           });
+        };
         return GestureDetector(
           onTap: () {
             FocusScope.of(context).unfocus();
@@ -284,7 +299,7 @@ class _LoginFlowState extends State<LoginFlow> {
                                     ),
                                     isConfirmPasswordMatch: false,
                                     textEditingController: passwordController,
-                                    error: snapshot.error?.toString(),
+                                    //error: snapshot.error?.toString(),
                                     hintTxt:UcpStrings.enterPasswordTxt,
                                     keyboardType: TextInputType.name,
                                     onChanged: bloc.validation.setPassword,
@@ -306,7 +321,7 @@ class _LoginFlowState extends State<LoginFlow> {
                                       });
                                       bloc.validation.rememberMe = rememberMe;
                                     },
-                                    value:true ,),
+                                    value:rememberMe ,),
                                 ),
                                 Text(UcpStrings.forgotPasswordTxt,
                                   style: CreatoDisplayCustomTextStyle.kTxtMedium
@@ -326,8 +341,8 @@ class _LoginFlowState extends State<LoginFlow> {
                       CustomButton(
                         onTap: () {
                         // bloc.validation.loginRequest();
-                          bloc.add(SendLoginOtpEvent(bloc.validation.loginOtpRequest()));
-                       //  bloc.add(LoginEvent( bloc.validation.loginRequest()));
+                        //  bloc.add(SendLoginOtpEvent(bloc.validation.loginOtpRequest()));
+                          bloc.add(LoginEvent( bloc.validation.loginRequest()));
                           //  null;
                         },
                         height: 51.h,

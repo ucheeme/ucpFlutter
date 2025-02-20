@@ -76,6 +76,7 @@ class _MemberSavingAccountsBottomSheetsState extends State<MemberSavingAccountsB
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         backgroundColor: AppColor.ucpWhite500,
+        resizeToAvoidBottomInset: false,
         body: SingleChildScrollView(
           physics: NeverScrollableScrollPhysics(),
           child: Column(

@@ -7,6 +7,7 @@ import 'package:ucp/data/model/response/loanProductResponse.dart';
 import 'package:ucp/data/model/response/paymentModeResponse.dart';
 import 'package:ucp/data/model/response/transactionHistoryResponse.dart';
 import 'package:ucp/data/model/response/withdrawTransactionHistory.dart';
+import 'package:ucp/view/mainUi/onBoardingFlow/loginFlow/loginD.dart';
 
 import '../data/model/response/dashboardResponse.dart';
 import '../data/model/response/listOfBankResponse.dart';
@@ -55,20 +56,31 @@ class MySharedPreference {
   static String getUserId() {
     return _preferences?.getString('userId') ?? "";
   }
-  static bool getCreateAccountStep(String key)  {
-    return _preferences?.getBool(key) ?? false;
+
+  static getBiometricStatus() {
+    return _preferences?.getBool(isBioMetric) ?? false;
   }
-  static saveCreateAccountStep({String key="",bool value=false}){
-    _preferences?.setBool(key, value);
+
+ static enableBiometric(bool value) {
+    _preferences?.setBool(isBioMetric, value);
   }
-  static saveUserId({String key="userId",String value=""}){
+  static setAnythingString({String key="",String value=""}){
     _preferences?.setString(key, value);
   }
 
-
-  static setVisitingFlag() async {
-    return _preferences?.setBool("alreadyvisited", true);
+  static getAnythingString(String key) {
+    return _preferences?.getString(key) ?? "";
   }
+
+  static setAnythingNumber({String key="",int value=0}){
+    _preferences?.setInt(key, value);
+  }
+
+  static getAnythingNumber(String key) {
+    return _preferences?.getInt(key) ?? 0;
+  }
+
+
   static setIsProfileUpdate(bool value) async {
     return _preferences?.setBool("isNewAccount", value);
   }
@@ -102,9 +114,8 @@ List<LoanFrequencyList>tempLoanFrequencies=[];
 List<LoanGuantorsList>tempLoansGuarantors=[];
 List<LoanProductList>tempLoanProducts=[];
 List<PaymentModes> tempPaymentModes= [];
-SaveToAccountRequest saveToAccountRequest = SaveToAccountRequest(
+PaymentRequest saveToAccountRequest = PaymentRequest(
     amount:"",
     modeOfpayment: "",
     description: "", accountNumber: "", bank: "",
-    bankAccountNumber: "", bankTeller: "", paidDate: "",
-    uploadTeller: null);
+    bankAccountNumber: "", bankTeller: "", paidDate: DateTime.now().toIso8601String(),);

@@ -15,6 +15,7 @@ class AppColor{
   static const Color ucpBlue50 =Color(0xffE6F0FF);
   static const Color ucpBlue25 =Color(0xffEDF4FF);
   static const Color ucpBlue15 =Color(0xffF0F5FF);
+  static const Color ucpBlue10 =Color(0xff0452C81A);
 
 
   //UCPLight-BlueColor

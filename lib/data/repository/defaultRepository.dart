@@ -98,7 +98,8 @@ class DefaultRepository {
   }
 
   Future<Object> postRequestImage({
-      String filePath="", String url="", bool requiresToken=true,String imageFieldName="", Map<String, dynamic> formFields = const {},}) async {
+      String? filePath, String url="", bool requiresToken=true,String imageFieldName="", Map<String, dynamic> formFields = const {},})
+  async {
     var response = await ApiService.uploadFile(url: url, filePath: filePath,
         fileFieldName:imageFieldName, requireAccess: requiresToken,formFields:formFields );
     print("Response: $response");
@@ -111,11 +112,48 @@ class DefaultRepository {
       } catch (e,trace) {
         print(e);
         print(trace);
+        print("Developer Error Detail: $trace");
         return response.response; // Return raw response for unknown formats
       }
     } else {
+
       handleErrorResponse(response);
       return errorResponse!;
     }
   }
+
+  Future<Object> postRequestImage2({
+    String? filePath,String? filePath2,
+    String url="", bool requiresToken=true,
+    String imageFieldName="",String imageFieldName2="",
+    Map<String, dynamic> formFields = const {},})
+  async {
+    var response = await ApiService.upLoad2DiffFiles(
+        url: url,
+        contestantPhotoPath: filePath,
+        manifestoPlanDocPath: filePath2,
+        photofileFieldName:imageFieldName,
+        manifestofileFieldName:imageFieldName2,
+        requireAccess: requiresToken,
+        formFields:formFields );
+    print("Response: $response");
+
+    if (response is Success) {
+      String result = jsonEncode(response.response);
+      try {
+
+        return ucpDefaultResponseFromJson(result);
+      } catch (e,trace) {
+        print(e);
+        print(trace);
+        print("Developer Error Detail: $trace");
+        return response.response; // Return raw response for unknown formats
+      }
+    } else {
+
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+
 }

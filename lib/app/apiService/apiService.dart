@@ -1,8 +1,10 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'package:dio/adapter.dart';
+import 'package:dio/io.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' as gettt;
+import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'package:http_parser/http_parser.dart';
@@ -12,6 +14,7 @@ import '../../utils/apputils.dart';
 import '../../utils/designUtils/reusableFunctions.dart';
 import '../../utils/sharedPreference.dart';
 import '../../view/errorPages/apierror.dart';
+import '../../view/mainUi/onBoardingFlow/loginFlow/loginD.dart';
 import 'apiResponseCodes.dart';
 import 'apiStatus.dart';
 enum HttpMethods { post, put, patch, get, delete }
@@ -61,133 +64,148 @@ class ApiService {
     };
   }
 
-  static Future<Object> makeApiCall(request,url,
-      {bool? isAdmin = false,
-      bool requireAccess = true,
-        HttpMethods method =  HttpMethods.post,
-        required String baseUrl}) async
-  {
+  static Future<Object> makeApiCall(
+      request,
+      String url, {
+        bool? isAdmin = false,
+        bool requireAccess = true,
+        HttpMethods method = HttpMethods.post,
+        required String baseUrl,
+      }) async {
     try {
+      // Check internet connection
       final result = await InternetAddress.lookup('example.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        print('connected');
+      if (result.isEmpty || result[0].rawAddress.isEmpty) {
+        print('Network error');
+        gettt.Get.to(NoconnectionScreen(press: () => gettt.Get.back()));
+        return NetWorkFailure();
       }
-    } on SocketException catch (_) {
-      print('network error');
-      gettt.Get.to(NoconnectionScreen(press: () { gettt.Get.back(); },));
-      return  NetWorkFailure();
-    }
-    initiateDio(requireAccess,  baseUrl);
-    try {
+      print('Connected');
+
+      // Initialize Dio
+      initiateDio(requireAccess, baseUrl);
+
       var body = request != null ? json.encode(request.toJson()) : null;
       Response<String>? response;
+
+      // API Request based on method
       switch (method) {
         case HttpMethods.post:
-          response =  await dio.post(url, data: body);
-          AppUtils.debug("method: post");
+          response = await dio.post(url, data: body);
           break;
         case HttpMethods.put:
-          response =  await dio.put(url, data: body);
-          AppUtils.debug("method: put");
+          response = await dio.put(url, data: body);
           break;
         case HttpMethods.patch:
-          response =  await dio.patch(url, data: body);
-          AppUtils.debug("method: patch");
+          response = await dio.patch(url, data: body);
           break;
         case HttpMethods.get:
-          AppUtils.debug("trying a get request");
-          if (request == null){
-            response =  await dio.get(url);
-          }else {
-            print("req to send ${request.toJson}");
-            response = await dio.get(url, queryParameters: request.toJson());
-          }
-          AppUtils.debug("method: get");
+          response = request == null
+              ? await dio.get(url)
+              : await dio.get(url, queryParameters: request.toJson());
           break;
         case HttpMethods.delete:
-          response =  await dio.delete(url, data: body);
-          AppUtils.debug("method: delete");
+          response = await dio.delete(url, data: body);
           break;
       }
-      if (response.statusCode != null) {
-        AppUtils.debug("status code: ${response.statusCode}");
-        AppUtils.debug("body: $body");
-        if (response.statusCode == ApiResponseCodes.success ||
-            response.statusCode == ApiResponseCodes.create_success ) {
-          return Success(response.statusCode!,response.data as String);
-        }
-        if (399 <= (response.statusCode ?? 400) && (response.statusCode ?? 400) <= 500) {
 
-          if (response.data is Map<String, dynamic>) {
-            print("response yessss: ${response.data}");
-            try {
-              // The expected structure of UcpDefaultResponse as a map
-              final expectedStructure = UcpDefaultResponse(
-                isSuccessful: false,
-                message: '',
-                errors: [],
-                statusCode: response.statusCode ?? 400,
-                data: null,
-              ).toJson();
+      // Handle API Response
+      return _handleResponse(response);
+    } on DioError catch (e) {
+      print("Dio Error: ${e.message}");
+      gettt.Get.to(NoconnectionScreen(press: () {}));
+      return NetWorkFailure();
+    }
+  }
 
-              // Compare JSON structures
-              final isSameStructure = compareJsonStructure(response.data, expectedStructure);
+  // Function to handle API responses
+  static Object _handleResponse(Response<String>? response) {
+    if (response?.statusCode == null) return UnExpectedError();
 
-              if (!isSameStructure) {
-                // If structure is different, format the response data into UcpDefaultResponse
-                final formattedResponse = UcpDefaultResponse(
-                  isSuccessful: false,
-                  message: "Error response from server",
-                  errors: [],
-                  statusCode: response.statusCode ?? 400,
-                  data: null,
-                );
+    final int statusCode = response!.statusCode!;
+    print("API Response Status Code: $statusCode");
 
-                print("Interesting: Response formatted to default structure");
-                return Failure(response.statusCode ?? 400, formattedResponse);
-              } else {
-                // If structure matches, return the parsed UcpDefaultResponse
-                print("Not interesting: Returning parsed UcpDefaultResponse");
-                final apiResponse = ucpDefaultResponseFromJson(response.data as String);
-                return Failure(response.statusCode ?? 400, apiResponse);
-              }
-            } catch (e) {
-              // Handle errors during processing
-              print("Error: $e");
-              return Failure(response.statusCode ?? 400, UcpDefaultResponse(
-                isSuccessful: false,
-                message: "An error occurred while processing the response.",
-                errors: [e.toString()],
-                statusCode: response.statusCode ?? 400,
-                data: null,
-              ));
-            }
-          } else {
-            return Failure(response.statusCode ?? 400, UcpDefaultResponse(
+    // ✅ **Handle Unauthorized Access (401)**
+    if (statusCode == ApiResponseCodes.authorizationError) {
+      print("Unauthorized: Redirecting to LoginScreen...");
+      Get.offAll(LoginFlow(isTokenExpired: true,), predicate: (route) => false); // Clears previous navigation stac
+      return ForbiddenAccess();
+    }
+
+    // ✅ **Handle Success Response**
+    if (statusCode == ApiResponseCodes.success || statusCode == ApiResponseCodes.create_success) {
+      return Success(statusCode, response.data as String);
+    }
+
+    // ✅ **Handle Client & Server Errors (4xx, 5xx)**
+    if (statusCode >= 400 && statusCode <= 500) {
+      if (response.data is Map<String, dynamic>) {
+        print("Processing Error Response: ${response.data}");
+        try {
+          final expectedStructure = UcpDefaultResponse(
+            isSuccessful: false,
+            message: '',
+            errors: [],
+            statusCode: statusCode,
+            data: null,
+          ).toJson();
+
+          final isSameStructure = compareJsonStructure(response.data, expectedStructure);
+
+          return isSameStructure
+              ? Failure(statusCode, ucpDefaultResponseFromJson(response.data as String))
+              : Failure(
+            statusCode,
+            UcpDefaultResponse(
               isSuccessful: false,
-              message: jsonDecode(response.data as String)['message']??jsonDecode(response.data as String)["errorMessage"],
-              errors: [response.data.toString()],
-              statusCode: response.statusCode ?? 400,
+              message: "Error response from server",
+              errors: [],
+              statusCode: statusCode,
               data: null,
-            ));
-          }
+            ),
+          );
+        } catch (e) {
+          print("Error Processing Response: $e");
+          return Failure(statusCode, UcpDefaultResponse(
+            isSuccessful: false,
+            message: "An error occurred while processing the response.",
+            errors: [e.toString()],
+            statusCode: statusCode,
+            data: null,
+          )
+          );
         }
-
-
-        if (ApiResponseCodes.authorizationError == response.statusCode){
-          return ForbiddenAccess();
-        }
-        else{
-          return  Failure(response.statusCode!,"Error Occurred");
-        }
-      }else{
-        return  UnExpectedError();
+      } else {
+        return Failure(
+          statusCode,
+          UcpDefaultResponse(
+            isSuccessful: false,
+            message: _extractErrorMessage(response.data as String),
+            errors: [response.data.toString()],
+            statusCode: statusCode,
+            data: null,
+          ),
+        );
       }
-    } on DioError catch (e){
-      AppUtils.debug(e.message);
-      AppUtils.debug("Dio Error");
-      gettt.Get.to(NoconnectionScreen(press: () {  },));
-      return  NetWorkFailure();
+    }
+
+    // Default case (Unhandled)
+    return Failure(statusCode, UcpDefaultResponse(
+      isSuccessful: false,
+      message: "Unhandled status code: $statusCode",
+      errors: [],
+      statusCode: statusCode,
+      data: null,
+    ));
+  }
+
+  // Helper function to extract error message safely
+  static String _extractErrorMessage(String data) {
+    try {
+      final decoded = jsonDecode(data);
+      return decoded['message'] ?? decoded["errorMessage"] ?? "Unknown error occurred";
+    } catch (e) {
+      return "Error parsing response";
     }
   }
 
@@ -242,7 +260,8 @@ class ApiService {
         return  Failure(res.statusCode,(ucpDefaultResponseFromJson( response)));
       }
       if (ApiResponseCodes.authorizationError == res.statusCode){
-        return ForbiddenAccess();
+        gettt.Get.offAll(LoginFlow());
+        return LoginFlow();
       }
       else{
         return  Failure(res.statusCode!,"Error Occurred");
@@ -271,7 +290,8 @@ class ApiService {
     String? fileFieldName,                      // Field name for the file (optional)
     required bool requireAccess,                // Flag for authorization
     Map<String, dynamic> formFields = const {}, // Dynamic form fields
-  }) async {
+  }) async
+  {
     try {
       // Prepare form data
       Map<String, dynamic> formDataMap = {...formFields};
@@ -327,6 +347,7 @@ class ApiService {
 
       AppUtils.debug("/**** REST call response starts ****/");
       AppUtils.debug("Status code: ${response.statusCode}");
+      AppUtils.debug("Request Body: $formFields");
       AppUtils.debug("Response: ${response.data}");
 
       // Handle success response
@@ -339,13 +360,17 @@ class ApiService {
           ApiResponseCodes.internalServerError == response.statusCode) {
         return Failure(
           response.statusCode ?? 400,
-          ucpDefaultResponseFromJson(response.data), // Deserialize error response
+          ucpDefaultResponseFromJson(jsonEncode(response.data)), // Deserialize error response
         );
       }
 
       // Handle authorization error response
-      if (ApiResponseCodes.authorizationError == response.statusCode) {
-        return ForbiddenAccess();
+      if (ApiResponseCodes.authorizationError == response.statusCode){
+        gettt.Get.offAll(LoginFlow());
+        return LoginFlow();
+      }
+      else{
+        return  Failure(response.statusCode!,"Error Occurred");
       }
 
       // Fallback for any other error
@@ -354,14 +379,129 @@ class ApiService {
       return NetWorkFailure();
     } on FormatException {
       return UnExpectedError();
-    } catch (e) {
+    } catch (e,trace) {
       // Handle unexpected exceptions
       print("Upload Failed: $e");
+      print("Upload Failed track: $trace");
       return Failure(500, "An unexpected error occurred.");
     }
   }
 
+static upLoad2DiffFiles({
+  required String url,                        // API endpoint
+  String? contestantPhotoPath,
+  String? manifestoPlanDocPath,// File path (optional)
+  String? photofileFieldName,                    // Field name for the file (optional)
+  String? manifestofileFieldName,                    // Field name for the file (optional)
+  required bool requireAccess,                // Flag for authorization
+  Map<String, dynamic> formFields = const {}, // Dynamic form fields
+}) async
+{
+  try {
+    // Prepare form data
+    Map<String, dynamic> formDataMap = {...formFields};
 
+    // If filePath is provided, include file in form data
+    if (contestantPhotoPath != null && photofileFieldName != null && manifestoPlanDocPath != null && manifestofileFieldName != null) {
+      File file = File(contestantPhotoPath);
+      File file2 = File(manifestoPlanDocPath);
+
+      // // Ensure the file exists
+      // if (!await file.exists()) {
+      //   return Failure(400, "File does not exist.");
+      // }
+
+      // Ensure the filename ends with .png
+      String fileName = file.path.split('/').last;
+      if (!fileName.endsWith(".png")) {
+        fileName = "${fileName.split('.').first}.png"; // Change extension to .png
+      }
+
+      String fileName2 = file2.path.split('/').last;
+      if (!fileName2.endsWith(".png")) {
+        fileName2 = "${fileName2.split('.').first}.png"; // Change extension to .png
+      }
+
+      formDataMap[photofileFieldName] = await MultipartFile.fromFile(
+        file.path,
+        filename: fileName,
+        contentType: MediaType("image", "png"),
+      );
+      formDataMap[manifestofileFieldName] = await MultipartFile.fromFile(
+        file2.path,
+        filename: fileName2,
+        contentType: MediaType("image", "png"),
+      );
+    }
+
+    // Convert to FormData
+    FormData formData = FormData.fromMap(formDataMap);
+
+    // Make API call
+    Response response = await dio.post(
+      url,
+      data: formData,
+      options: Options(
+        headers: requireAccess
+            ? {
+          HttpHeaders.userAgentHeader: 'dio',
+          "Content-Type": "multipart/form-data",
+          'Accept': 'application/json',
+          'accept': 'text/plain',
+          'Authorization': 'Bearer $accessToken',
+        }
+            : {
+          HttpHeaders.userAgentHeader: 'dio',
+          "Content-Type": "multipart/form-data",
+          'Accept-Language': 'en-US,en;q=0.5',
+          'Accept': 'application/json',
+          'accept': 'text/plain',
+          'Connection': "keep-alive",
+        },
+      ),
+    );
+
+    AppUtils.debug("/**** REST call response starts ****/");
+    AppUtils.debug("Status code: ${response.statusCode}");
+    AppUtils.debug("Request Body: $formFields");
+    AppUtils.debug("Response: ${response.data}");
+
+    // Handle success response
+    if (ApiResponseCodes.success == response.statusCode) {
+      return Success(response.statusCode!, response.data);
+    }
+
+    // Handle error or internal server error response
+    if (ApiResponseCodes.error == response.statusCode ||
+        ApiResponseCodes.internalServerError == response.statusCode) {
+      return Failure(
+        response.statusCode ?? 400,
+        ucpDefaultResponseFromJson(jsonEncode(response.data)), // Deserialize error response
+      );
+    }
+
+    // Handle authorization error response
+    if (ApiResponseCodes.authorizationError == response.statusCode){
+      gettt.Get.offAll(LoginFlow());
+      return LoginFlow();
+    }
+    else{
+      return  Failure(response.statusCode!,"Error Occurred");
+    }
+
+    // Fallback for any other error
+    return Failure(response.statusCode ?? 400, "An unknown error occurred.");
+  } on HttpException {
+    return NetWorkFailure();
+  } on FormatException {
+    return UnExpectedError();
+  } catch (e,trace) {
+    // Handle unexpected exceptions
+    print("Upload Failed: $e");
+    print("Upload Failed track: $trace");
+    return Failure(500, "An unexpected error occurred.");
+  }
+}
 }
 
 

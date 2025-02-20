@@ -36,7 +36,7 @@ class _MyBottomNavState extends State<MyBottomNav> {
     ShopScreen(),
     FinancesScreen(),
     // Screen displayed when the Floating Action Button is tapped
-    VoteScreen(),
+    ElectionMainScreen(),
     ProfileScreen()
   ];
   late List<CameraDescription> cameras;

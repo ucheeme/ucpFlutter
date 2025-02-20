@@ -21,6 +21,7 @@ import 'package:ucp/utils/ucpLoader.dart';
 import 'package:ucp/view/bottomSheet/enterAmoun.dart';
 import 'package:ucp/view/mainUi/mainScreen/home/transactionHistory.dart';
 import 'package:ucp/view/mainUi/mainScreen/home/withdraw.dart';
+import 'package:ucp/view/mainUi/mainScreen/profile/profile.dart';
 
 import '../../../../data/model/response/dashboardResponse.dart';
 import '../../../../data/model/response/transactionHistoryResponse.dart';
@@ -411,10 +412,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                     AppColor.ucpWhite500,
                                     context: context,
                                     builder: (context) {
-                                      return Container(
-                                          height: 300.h,
-                                          color: AppColor.ucpWhite500,
-                                          child: EnterAmountBottomSheet());
+                                      return Padding(
+                                        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                                        child: Container(
+                                            height: 250.h,
+                                            color: AppColor.ucpWhite500,
+                                            child: EnterAmountBottomSheet()),
+                                      );
                                     });
                                   },
                                     UcpStrings.addFundsTxt,
@@ -462,6 +466,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               width: 32.w,
                               decoration: BoxDecoration(
                                   shape: BoxShape.circle,
+                                  image: DecorationImage(image:tempMemberProfileData==null?AssetImage(UcpStrings.tempImage): NetworkImage(tempMemberProfileData!.profileImage??"")),
                                   border: Border.all(
                                       color: AppColor.ucpOrange200)),
                             ),
@@ -477,27 +482,28 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                       ),
-                      Container(
-                        height: 32.h,
-                        width: 32.w,
-                        decoration: BoxDecoration(
-                            color: AppColor.ucpWhite500,
-                            shape: BoxShape.circle),
-                        child: Center(
-                          child: badges.Badge(
-                            badgeContent: Text(
-                              '3',
-                              style: CreatoDisplayCustomTextStyle
-                                  .kTxtMedium
-                                  .copyWith(
-                                  fontSize: 10.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColor.ucpWhite500),
-                            ),
+                      Center(
+                        child: badges.Badge(
+                          badgeContent: Text(
+                            '3',
+                            style: CreatoDisplayCustomTextStyle
+                                .kTxtMedium
+                                .copyWith(
+                                fontSize: 10.sp,
+                                fontWeight: FontWeight.w500,
+                                color: AppColor.ucpWhite500),
+                          ),
+                          child: Container(
+                            height: 32.h,
+                            width: 32.w,
+                            padding: EdgeInsets.all(6.h),
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppColor.ucpWhite500),
                             child: Image.asset(
                               UcpStrings.ucpNotificationImage,
-                              height: 24.h,
-                              width: 24.w,
+                              height: 10.h,
+                              width: 10.w,
                             ),
                           ),
                         ),

@@ -10,6 +10,7 @@ import 'package:super_profile_picture/super_profile_picture.dart';
 import 'package:ucp/bloc/profile/profile_bloc.dart';
 import 'package:ucp/data/model/response/memberData.dart';
 import 'package:ucp/utils/appExtentions.dart';
+import 'package:ucp/utils/sharedPreference.dart';
 import 'package:ucp/utils/ucpLoader.dart';
 import 'package:ucp/view/mainUi/mainScreen/home/withdraw.dart';
 import 'package:ucp/view/mainUi/mainScreen/profile/profileWidget.dart';
@@ -175,6 +176,7 @@ bool isPushNotification = false;
                                           setState(() {
                                             if(index==3){
                                               isBiometric=!isBiometric;
+                                              MySharedPreference.enableBiometric(isBiometric);
                                             }else if(index==8){
                                               isPushNotification=!isPushNotification;
                                             }

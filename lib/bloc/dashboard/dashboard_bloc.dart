@@ -11,6 +11,7 @@ import '../../data/model/request/saveToAccount.dart';
 import '../../data/model/response/listOfBankResponse.dart';
 import '../../data/model/response/memberSavingAccount.dart';
 import '../../data/model/response/paymentModeResponse.dart';
+import '../../data/model/response/paymentResponse.dart';
 import '../../data/model/response/userAcctResponse.dart';
 import '../../utils/apputils.dart';
 
@@ -29,7 +30,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     on<GetPaymentModes>((event,emit){handleGetPaymentModes();});
     on<GetListOfBank>((event,emit){handleGetListOfBank();});
     on<GetMemberSavingAccounts>((event,emit){handleGetMemberSavingAccounts();});
-    on<SaveToAccountEvent>((event,emit){handleGetUserAccountSummary();});
+    on<MakePaymentEvent>((event,emit){handleMakePayment(event);});
   }
   void handleGetDashboardDataEvent()async{
     emit(DashboardIsLoading());
@@ -130,6 +131,22 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     }
   }
 
+  void handleMakePayment(event)async {
+    emit(DashboardIsLoading());
+    try {
+      final response = await dashboardRepository.makePayment(event.request);
+      if (response is PaymentSuccessfulResponse) {
+        emit(PaymentSuccessState(response));
+        AppUtils.debug("success");
+      } else {
+        emit(DashboardError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }
+    } catch (e, trace) {
+      print(trace);
+      print(e);
+    }
+  }
   initial(){
     emit(DashboardInitial());
   }

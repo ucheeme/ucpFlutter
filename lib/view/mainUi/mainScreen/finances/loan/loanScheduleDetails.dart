@@ -268,7 +268,7 @@ class _LoanRequestDetailScreenState extends State<LoanScheduleDetail> {
             body: Stack(
               children: [
                 SizedBox(
-                  height: MediaQuery.of(context).size.height,
+                  height: MediaQuery.of(context).size.height-23.h,
                   child: ListView(
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
                     children: [

@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:ucp/data/model/request/saveToAccount.dart';
 import 'package:ucp/data/repository/FinanceRepo.dart';
 import 'package:ucp/data/repository/defaultRepository.dart';
+import 'package:ucp/data/repository/profileRepo.dart';
 
 import '../../app/apiService/apiService.dart';
 import '../../app/apiService/appUrl.dart';
@@ -13,6 +15,7 @@ import '../model/response/defaultResponse.dart';
 import '../model/response/favoriteItemsResponse.dart';
 import '../model/response/itemsInPurchaseSummary.dart';
 import '../model/response/itemsOnCart.dart';
+import '../model/response/paymentResponse.dart';
 import '../model/response/purchasedItemSummartResponse.dart';
 import '../model/response/shopList.dart';
 
@@ -221,4 +224,23 @@ class ShoppingRepository extends DefaultRepository{
       return errorResponse!;
     }
   }
+  Future<Object> payForItemInCart(PaymentRequest request)async{
+    var response = await postRequestImage(filePath: ucpFilePath,
+        url:UCPUrls.payForItemsInCart, requiresToken: true,
+        imageFieldName:"UploadTeller" ,formFields: request.toJson());
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        PaymentSuccessfulResponse res = paymentSuccessfulResponseFromJson(json.encode(r.data));
+        return res;
+      } else {
+
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+
 }

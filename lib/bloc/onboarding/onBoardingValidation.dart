@@ -9,6 +9,8 @@ import 'package:ucp/data/model/request/signUpReq.dart';
 import '../../data/model/request/signUpSendOtp.dart';
 import '../../data/model/response/cooperativeList.dart';
 import '../../utils/customValidator.dart';
+import '../../utils/sharedPreference.dart';
+import '../../view/mainUi/onBoardingFlow/loginFlow/loginD.dart';
 
 String firstNameTemp = "";
 
@@ -435,6 +437,11 @@ class OnboardingValidation {
   }
 
   LoginRequest loginRequest() {
+    MySharedPreference.setAnythingNumber(key: isSelectedCooperative,
+        value:selectedCooperative!.nodeId);
+    MySharedPreference.setAnythingString(key: isUserName, value:_userNameSubject.value.trim());
+    MySharedPreference.setAnythingString(key: isPassword, value:_passwordSubject.value.trim());
+
     return LoginRequest(
         nodeId: selectedCooperative!.nodeId,
         username: _userNameSubject.value.trim(),

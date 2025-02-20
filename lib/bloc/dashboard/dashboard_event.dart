@@ -46,9 +46,9 @@ class GetPaymentModes extends DashboardEvent {
   // TODO: implement props
   List<Object?> get props => [];
 }
-class SaveToAccountEvent extends DashboardEvent{
-  SaveToAccountRequest request;
-  SaveToAccountEvent(this.request);
+class MakePaymentEvent extends DashboardEvent{
+  PaymentRequest request;
+  MakePaymentEvent(this.request);
   @override
   // TODO: implement props
   List<Object?> get props => [];

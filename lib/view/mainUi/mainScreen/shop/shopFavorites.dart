@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:ucp/utils/appExtentions.dart';
 import 'package:ucp/view/mainUi/mainScreen/shop/shopListWidget.dart';
+import 'package:ucp/view/mainUi/mainScreen/shop/widget_for_shop.dart';
 
 import '../../../../bloc/shop/shop_bloc.dart';
 import '../../../../data/model/request/addToCartRequest.dart';
@@ -84,12 +85,14 @@ class ItemsMarkedAsFavorite{
   String itemName;
   dynamic itemPrice;
   int quantity;
+  String? imageUrl;
   bool isFavourite;
   ItemsMarkedAsFavorite({
     required this.id,
     required this.itemCode,
     required this.quantity,
     required this.itemName,
+    this.imageUrl,
     required this.itemPrice,
     required this.isFavourite});
 }

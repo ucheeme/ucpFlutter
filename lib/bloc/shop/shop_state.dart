@@ -97,3 +97,9 @@ class ShopPurchasedItemRequestItemsLoaded extends ShopState{
   @override
   List<Object> get props => [purchasedItemsSummary];
 }
+class ShopItemPurchased extends ShopState{
+  PaymentSuccessfulResponse response;
+  ShopItemPurchased(this.response);
+  @override
+  List<Object> get props => [response];
+}

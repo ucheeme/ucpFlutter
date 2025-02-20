@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:ucp/data/model/request/saveToAccount.dart';
 import 'package:ucp/data/model/response/dashboardResponse.dart';
 import 'package:ucp/data/model/response/listOfBankResponse.dart';
 import 'package:ucp/data/model/response/transactionHistoryResponse.dart';
 import 'package:ucp/data/repository/defaultRepository.dart';
+import 'package:ucp/data/repository/profileRepo.dart';
 
 import '../../app/apiService/apiService.dart';
 import '../../app/apiService/apiStatus.dart';
@@ -14,6 +16,7 @@ import '../model/response/cooperativeList.dart';
 import '../model/response/defaultResponse.dart';
 import '../model/response/memberSavingAccount.dart';
 import '../model/response/paymentModeResponse.dart';
+import '../model/response/paymentResponse.dart';
 import '../model/response/signUpResponse.dart';
 import '../model/response/userAcctResponse.dart';
 
@@ -148,6 +151,24 @@ class DashboardRepository extends DefaultRepository {
         List<PaymentModes> res = paymentModesFromJson(json.encode(r.data));
         return res;
       } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+  Future<Object> makePayment(PaymentRequest request)async{
+    var response = await postRequestImage(filePath: ucpFilePath,
+        url:UCPUrls.processPayment, requiresToken: true,
+        imageFieldName:"UploadTeller" ,formFields: request.toJson());
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        PaymentSuccessfulResponse res = paymentSuccessfulResponseFromJson(json.encode(r.data));
+        return res;
+      } else {
+        print("This is me,${r.message}");
         return r;
       }
     } else {

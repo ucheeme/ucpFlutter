@@ -90,8 +90,10 @@ class _ShopScreenState extends State<ShopScreen> {
         }
 
         if (state is ShopItemAddedToCart) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {});
-         // bloc.initial();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+        bloc.add(GetAllItemOnCartEvent());
+          });
+          // bloc.initial();
         }
         if (state is ShopAllFavoriteItemsLoaded) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -101,7 +103,7 @@ class _ShopScreenState extends State<ShopScreen> {
             if (allFavoriteItems.isNotEmpty) {
               for (var element in shopItemsList) {
                 bool isFavorite = allFavoriteItems.any(
-                  (item) {
+                      (item) {
                     if( double.parse(element.itemCode) ==
                         double.parse(item.itemCode)){
                       id = item.id.toString();
@@ -109,12 +111,13 @@ class _ShopScreenState extends State<ShopScreen> {
                     }else{
                       return false;
                     }
-                    },
+                  },
                 );
 
                 allFavoriteItem2.add(
                   ItemsMarkedAsFavorite(
                     id: id,
+                    imageUrl: element.itemImage,
                     itemCode: element.itemCode,
                     itemName: element.itemName,
                     itemPrice: element.itemPrice,
@@ -123,14 +126,16 @@ class _ShopScreenState extends State<ShopScreen> {
                   ),
                 );
               }
-            } else {
+            }
+            else {
               allFavoriteItem2.addAll(
                 shopItemsList.map(
-                  (element) => ItemsMarkedAsFavorite(
+                      (element) => ItemsMarkedAsFavorite(
                     id: "",
                     itemCode: element.itemCode,
                     itemName: element.itemName,
                     itemPrice: element.itemPrice,
+                    imageUrl: element.itemImage,
                     quantity: element.quantity ?? 0,
                     isFavourite: false,
                   ),
@@ -189,9 +194,9 @@ class _ShopScreenState extends State<ShopScreen> {
                               UcpStrings.shoppingTxt,
                               style: CreatoDisplayCustomTextStyle.kTxtMedium
                                   .copyWith(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColor.ucpBlack500),
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColor.ucpBlack500),
                             ),
                             height14,
                             Row(
@@ -224,10 +229,10 @@ class _ShopScreenState extends State<ShopScreen> {
                                                 ? AppColor.ucpBlue600
                                                 : Colors.transparent,
                                             borderRadius:
-                                                BorderRadius.circular(40.r),
+                                            BorderRadius.circular(40.r),
                                           ),
                                           duration:
-                                              const Duration(milliseconds: 500),
+                                          const Duration(milliseconds: 500),
                                           child: Center(
                                             child: Text(
                                               UcpStrings.shopTxt,
@@ -254,7 +259,7 @@ class _ShopScreenState extends State<ShopScreen> {
                                         },
                                         child: AnimatedContainer(
                                           duration:
-                                              const Duration(milliseconds: 400),
+                                          const Duration(milliseconds: 400),
                                           height: 32.h,
                                           width: 84.w,
                                           decoration: BoxDecoration(
@@ -262,7 +267,7 @@ class _ShopScreenState extends State<ShopScreen> {
                                                 ? AppColor.ucpBlue600
                                                 : Colors.transparent,
                                             borderRadius:
-                                                BorderRadius.circular(40.r),
+                                            BorderRadius.circular(40.r),
                                           ),
                                           child: Center(
                                             child: Text(
@@ -290,7 +295,7 @@ class _ShopScreenState extends State<ShopScreen> {
                                         },
                                         child: AnimatedContainer(
                                           duration:
-                                              const Duration(milliseconds: 500),
+                                          const Duration(milliseconds: 500),
                                           height: 32.h,
                                           width: 90.w,
                                           decoration: BoxDecoration(
@@ -298,7 +303,7 @@ class _ShopScreenState extends State<ShopScreen> {
                                                 ? AppColor.ucpBlue600
                                                 : Colors.transparent,
                                             borderRadius:
-                                                BorderRadius.circular(40.r),
+                                            BorderRadius.circular(40.r),
                                           ),
                                           child: Center(
                                             child: Text(
@@ -326,18 +331,24 @@ class _ShopScreenState extends State<ShopScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                 isShop? UcpStrings.allAvailableItem : isRequest? UcpStrings.allItemRequestTxt : UcpStrings.allFavoriteItemTxt,
+                                  isShop? UcpStrings.allAvailableItem : isRequest? UcpStrings.allItemRequestTxt : UcpStrings.allFavoriteItemTxt,
                                   style: CreatoDisplayCustomTextStyle.kTxtBold
                                       .copyWith(
-                                          fontSize: 14.sp,
-                                          letterSpacing: -1,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColor.ucpBlack500),
+                                      fontSize: 14.sp,
+                                      letterSpacing: -1,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColor.ucpBlack500),
                                 ),
                                 GestureDetector(
-                                  onTap: (){
-                                    Get.to(CartSummary(allItemInCart:tempItemInCart));
-                                  },
+                                  onTap: () async {
+                                 bool? result=  await Get.to(CartSummary(allItemInCart:tempItemInCart));
+                                 if(result!=null){
+                                   if(result){
+                                     bloc.add(GetShopItemsEvent());
+                                     bloc.add(GetAllItemOnCartEvent());
+                                   }
+                                  }
+                                 },
                                   child: Container(
                                     height: 40.h,
                                     width: 40.w,
@@ -356,9 +367,9 @@ class _ShopScreenState extends State<ShopScreen> {
                                         style: CreatoDisplayCustomTextStyle
                                             .kTxtMedium
                                             .copyWith(
-                                                fontSize: 12.sp,
-                                                fontWeight: FontWeight.w500,
-                                                color: AppColor.ucpWhite500),
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w500,
+                                            color: AppColor.ucpWhite500),
                                       ),
                                       child: Image.asset(
                                         UcpStrings.ucpShoppingCart,

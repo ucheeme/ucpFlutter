@@ -14,6 +14,7 @@ dependencies:
   flutter_bloc: ^8.1.6
   lottie:
   gif:
+  webview_flutter: ^4.8.0
   super_profile_picture: ^1.0.0
   pie_chart: 
   date_time_format: ^2.0.1
@@ -26,12 +27,14 @@ dependencies:
   internet_connection_checker_plus: ^2.5.2
   flutter_slidable: ^3.1.0
   get:
+  webview_flutter_wkwebview: 3.17.0
   device_info_plus:
   dio:
   url_launcher:
   dio_cache_interceptor:
-  dio_logging_interceptor:
+  dio_logging_interceptor_v2:
   equatable:
+  flutter_pdfview: ^1.2.7
   cherry_toast: ^1.11.0
   flutter_flavor:
   flutter_dotenv:
@@ -45,6 +48,7 @@ dependencies:
   image_cropper: ^8.0.2
   image_picker: ^1.0.2
   msh_checkbox: ^2.0.1
+  file_picker: ^6.1.1
   flutter_staggered_animations:
   permission_handler:
   flutter_screenutil: ^5.9.0
@@ -63,6 +67,7 @@ dependencies:
   flutter_udid:
   flutter_animate:
   provider:
+  syncfusion_flutter_pdfviewer: ^24.1.41
   flutter_keyboard_visibility: ^6.0.0
   cupertino_icons: ^1.0.8
   shimmer: ^3.0.0

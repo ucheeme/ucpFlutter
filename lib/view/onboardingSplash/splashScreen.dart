@@ -5,13 +5,15 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:ucp/utils/constant.dart';
+import 'package:ucp/view/mainUi/onBoardingFlow/loginFlow/loginD.dart';
 
 import '../../app/customAnimations/animationManager.dart';
 import '../../utils/appStrings.dart';
 import '../../utils/colorrs.dart';
 import '../../utils/designUtils/reusableWidgets.dart';
+import '../../utils/sharedPreference.dart';
 import 'onBoarding.dart';
-
+Future<bool> bioMetric = MySharedPreference.getBiometricStatus();
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -78,7 +80,7 @@ class _SplashScreenState extends State<SplashScreen>
                               offset: _animationManager.imageSlideUpAnimation.value*10,
                               child: Image.asset(
                                 'assets/images/UCP_logo_no_BG.png', // Replace with your image asset
-                                 // Replace with responsive dimensions if needed
+                                // Replace with responsive dimensions if needed
                               ),
                             ),
                           ),
@@ -128,7 +130,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ],
                 ),
               ),
-             Gap(178.95.h),
+              Gap(178.95.h),
               AnimatedBuilder(
                 animation: _controller,
                 builder: (context, child) {
@@ -140,9 +142,9 @@ class _SplashScreenState extends State<SplashScreen>
                       height: 51.h,
                       width: 343.w,
                       textStyle:CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
-                          color:AppColor.ucpWhite500,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16.sp,
+                        color:AppColor.ucpWhite500,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16.sp,
                       ) ,
                       buttonText: UcpStrings.continueTxt,
                       buttonColor: AppColor.ucpBlue500,
@@ -153,7 +155,7 @@ class _SplashScreenState extends State<SplashScreen>
                   );
                 },
               ),
-             // Spacer(flex: 2,),
+              // Spacer(flex: 2,),
             ],
           ),
         ),

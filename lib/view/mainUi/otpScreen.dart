@@ -60,7 +60,7 @@ class _OtpscreenState extends State<Otpscreen>with TickerProviderStateMixin {
 
   @override
   void initState() {
-    MySharedPreference.saveCreateAccountStep(key: isCreateAccountFirstStep,value: false);
+    // MySharedPreference.saveCreateAccountStep(key: isCreateAccountFirstStep,value: false);
    // errorController = StreamController<ErrorAnimationType>();
     otpValue = widget.otpValue;
     startTimer();

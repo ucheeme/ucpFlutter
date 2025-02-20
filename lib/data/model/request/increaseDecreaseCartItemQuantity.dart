@@ -9,7 +9,7 @@ AddReduceItemQuantityOnCartRequest addReduceItemQuantityOnCartRequestFromJson(St
 String addReduceItemQuantityOnCartRequestToJson(AddReduceItemQuantityOnCartRequest data) => json.encode(data.toJson());
 
 class AddReduceItemQuantityOnCartRequest {
-  String itemCode;
+  int itemCode;
   int quantity;
 
   AddReduceItemQuantityOnCartRequest({
@@ -18,12 +18,12 @@ class AddReduceItemQuantityOnCartRequest {
   });
 
   factory AddReduceItemQuantityOnCartRequest.fromJson(Map<String, dynamic> json) => AddReduceItemQuantityOnCartRequest(
-    itemCode: json["itemCode"],
+    itemCode: json["itemRequestId"],
     quantity: json["quantity"],
   );
 
   Map<String, dynamic> toJson() => {
-    "itemCode": itemCode,
+    "itemRequestId": itemCode,
     "quantity": quantity,
   };
 }

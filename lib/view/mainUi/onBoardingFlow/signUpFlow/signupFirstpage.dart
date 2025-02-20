@@ -343,12 +343,15 @@ TextEditingController membershipAmountController = TextEditingController();
         AppColor.ucpWhite500,
         context: context,
         builder: (context) {
-          return Container(
-              height: 495.h,
-              color: AppColor.ucpWhite500,
-              child: CooperativeListDesign(
-                  cooperativeList:
-                  cooperativeList));
+          return Padding(
+            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+            child: Container(
+                height: 495.h,
+                color: AppColor.ucpWhite500,
+                child: CooperativeListDesign(
+                    cooperativeList:
+                    cooperativeList)),
+          );
         });
     if (response != null) {
       bloc.validation.selectedCooperative = response;

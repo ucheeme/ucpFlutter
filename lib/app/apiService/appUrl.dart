@@ -42,8 +42,13 @@ class UCPUrls{
   static const  getAllUserLoans= "${baseUrl}Loan/get-member-loan-account-numbers";
   static const  getMemberProfile= "${baseUrl}Profile/get-member-detail";
   static const  updateProfileDetails= "${baseUrl}Profile/update-member-profile";
+  static const  applyForPosition= "${baseUrl}Election/apply-for-election-as-a-contestant";
+  static const  getAppliedMemberInfo= "${baseUrl}Election/get-contestant-application";
+  static const  processPayment= "${baseUrl}Savings/contribute-to-saving-account";
   static const  changePassword= "${baseUrl}Profile/change-password";
   static const  getAllMemberSavingAcct= "${baseUrl}Savings/get-member-savings-account-numbers";
+  static const  payForItemsInCart= "${baseUrl}Shop/buy-item";
+  static const  getAllEligiblePosition= "${baseUrl}Election/get-elections";
 
   static const applyForLoan="${baseUrl}Loan/apply-for-loan";
 

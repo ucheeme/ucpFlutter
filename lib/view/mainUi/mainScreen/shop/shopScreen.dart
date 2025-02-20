@@ -6,6 +6,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:ucp/utils/appExtentions.dart';
 import 'package:ucp/view/mainUi/mainScreen/shop/shopFavorites.dart';
 import 'package:ucp/view/mainUi/mainScreen/shop/shopListWidget.dart';
+import 'package:ucp/view/mainUi/mainScreen/shop/widget_for_shop.dart';
 
 import '../../../../bloc/shop/shop_bloc.dart';
 import '../../../../data/model/request/addToCartRequest.dart';
@@ -72,6 +73,7 @@ class _ShopScreenListViewState extends State<ShopScreenListView> {
                           bloc.add(MarkItemAsFavoriteEvent(MarkAsFavoriteRequest(itemCode: element.itemCode)));
                         }
                       },
+                      imageUrl: element.imageUrl,
                       //isFavourite: selectedIndex==index,
                       state:state,
                       addToCartAction: (){
@@ -81,9 +83,10 @@ class _ShopScreenListViewState extends State<ShopScreenListView> {
                         bloc.add(AddItemToCartEvent(
                             AddItemToCartRequest(
                                 itemCode: element.itemCode,
-                                quantity: 0,
+                                quantity: 1,
                                 transactionOptionId: 1) ));
-                      }, isFavourite: element.isFavourite,
+                      },
+                      isFavourite: element.isFavourite,
                     ),
                   )).toList(),
             ),

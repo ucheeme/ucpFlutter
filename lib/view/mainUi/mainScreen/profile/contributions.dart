@@ -12,10 +12,12 @@ import 'package:ucp/bloc/dashboard/dashboard_bloc.dart';
 import 'package:ucp/bloc/profile/profile_bloc.dart';
 import 'package:ucp/data/model/response/memberSavingAccounts.dart';
 import 'package:ucp/utils/colorrs.dart';
+import 'package:ucp/utils/sharedPreference.dart';
 import 'package:ucp/utils/ucpLoader.dart';
 
 import '../../../../bloc/onboarding/onBoardingValidation.dart';
 import '../../../../bloc/profile/profileController.dart';
+import '../../../../data/model/request/saveToAccount.dart';
 import '../../../../utils/appStrings.dart';
 import '../../../../utils/apputils.dart';
 import '../../../../utils/constant.dart';
@@ -35,7 +37,7 @@ class ContributionScreen extends StatefulWidget {
 
 class _ContributionScreenState extends State<ContributionScreen> {
   late ProfileBloc bloc;
-
+String accountNumber ="";
   @override
   void initState() {
  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
@@ -85,7 +87,16 @@ class _ContributionScreenState extends State<ContributionScreen> {
                         color: AppColor.ucpBlue50,
                       ),
                       child: CustomButton(onTap: snapshot.hasData?(){
-
+                        saveToAccountRequest=PaymentRequest(
+                          amount: bloc.validation.contributionAmountController.text.replaceAll(",", ""),
+                          modeOfpayment: "",
+                          description: "",
+                          accountNumber:accountNumber,
+                          bank:null,
+                          bankAccountNumber: null,
+                          bankTeller: null,
+                          paidDate: null,);
+                        selectModeOfPayment();
                       }:(){},
                         height: 51.h,
                         buttonText: "${UcpStrings.makeChangesTxt} ",
@@ -284,12 +295,14 @@ class _ContributionScreenState extends State<ContributionScreen> {
     if (response != null) {
       controller.text=response.accountProduct;
       bloc.validation.setMemberAccountNumber(response.accountNumber);
+      accountNumber=response.accountNumber;
+      setState(() {});
     }else{
      controller.text= "";
     }
   }
   selectModeOfPayment() async {
-    MemberSavingAccounts response =
+    bool response =
         await showCupertinoModalBottomSheet(
         topRadius: Radius.circular(15.r),
         backgroundColor:
@@ -300,10 +313,10 @@ class _ContributionScreenState extends State<ContributionScreen> {
               height: 495.h,
               color: AppColor.ucpWhite500,
               child: PaymentModeBottomSheet(
-                  isSaving:false));
+                  isSaving:true));
         });
-    if (response != null) {
-
+    if (response) {
+      Get.back();
     }else{
 
     }

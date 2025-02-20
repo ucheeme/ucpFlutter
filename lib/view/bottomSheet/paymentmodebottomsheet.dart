@@ -12,6 +12,7 @@ import 'package:ucp/utils/sharedPreference.dart';
 import 'package:ucp/view/bottomSheet/makeSavingsDraggableBottomSheet.dart';
 
 import '../../bloc/dashboard/dashboard_bloc.dart';
+import '../../data/model/request/saveToAccount.dart';
 import '../../utils/appStrings.dart';
 import '../../utils/colorrs.dart';
 import '../../utils/constant.dart';
@@ -19,6 +20,7 @@ import '../../utils/designUtils/reusableWidgets.dart';
 
 class PaymentModeBottomSheet extends StatefulWidget {
   bool isSaving;
+  // Function()? onDone;
    PaymentModeBottomSheet({super.key,this.isSaving = false});
 
   @override
@@ -51,7 +53,7 @@ class _PaymentModeBottomSheetState extends State<PaymentModeBottomSheet> {
           selectedPaymentMode = paymentModes[0];
         });
       }else{
-        bloc.add(const GetMemberSavingAccounts());
+        bloc.add(const GetPaymentModes());
       }
     });
     super.initState();
@@ -95,12 +97,12 @@ class _PaymentModeBottomSheetState extends State<PaymentModeBottomSheet> {
                       alignment: Alignment.centerLeft,
                       child: Row(
                         children: [
-                          GestureDetector(
-                              onTap: (){
-                                Get.back();
-                              },
-                              child: Icon(Icons.arrow_back ,size: 28.h, color: AppColor.ucpBlack500)),
-                          Gap(10.w),
+                          // GestureDetector(
+                          //     onTap: (){
+                          //       Get.back();
+                          //     },
+                          //     child: Icon(Icons.arrow_back ,size: 28.h, color: AppColor.ucpBlack500)),
+                          // Gap(10.w),
                           Text(
                             UcpStrings.sPaymentModeTxt,
                             style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
@@ -231,13 +233,14 @@ class _PaymentModeBottomSheetState extends State<PaymentModeBottomSheet> {
                             ),
                             child: CustomButton(
                               onTap: () {
-                                if(widget.isSaving){
+                              //  if(widget.isSaving){
                                   saveToAccountRequest?.modeOfpayment=
                                       selectedPaymentMode!.modeOfPayId.toString();
                                   _showUserAccountModal(this.context);
-                                }else{
-                                  Get.back(result: selectedPaymentMode!.modeOfPayId.toString());
-                                }
+                               // }
+                                // else{
+                                //   Get.back(result: selectedPaymentMode!.modeOfPayId.toString());
+                                // }
 
                               },
                               borderRadius: 30.r,
@@ -266,22 +269,35 @@ class _PaymentModeBottomSheetState extends State<PaymentModeBottomSheet> {
   }
 
   Future<void> _showUserAccountModal(context) async {
-    showModalBottomSheet(
+    List<dynamic>response = await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: AppColor.ucpWhite500,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
       ),
-      builder: (context) => DraggableScrollableSheet(
-        expand: false,
-        initialChildSize: 0.6,
-        maxChildSize: 1.0,
-        minChildSize: 0.3,
-        builder: (context, scrollController) {
-          return MakeDeposit(scrollController: scrollController, title: '',);
-        },
-      ),
+      builder: (context) =>
+          DraggableScrollableSheet(
+            expand: false,
+            initialChildSize: 0.6,
+            maxChildSize: 1.0,
+            minChildSize: 0.3,
+            builder: (context, scrollController) {
+              return MakeDeposit(scrollController: scrollController, title: '',
+                  isFromSavings: widget.isSaving,
+                  paymentRequest: PaymentRequest(
+                    amount: saveToAccountRequest!.amount,
+                    modeOfpayment: saveToAccountRequest!.modeOfpayment,
+                    accountNumber: saveToAccountRequest!.accountNumber,
+                    description: saveToAccountRequest!.description,
+                  )
+              );
+            },
+          ),
     );
+    if (response[1]==true) {
+      Get.back(result: response[1]);
+      // Get.back(result: response);
+    }
   }
 }

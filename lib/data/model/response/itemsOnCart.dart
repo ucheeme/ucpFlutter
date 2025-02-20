@@ -19,8 +19,9 @@ class ItemsOnCart {
   String itemName;
   dynamic sellprice;
   dynamic totalprice;
-  String? customerId;
-  String? transOption;
+  dynamic customerId;
+  dynamic transOption;
+  String? itemImage;
 
   ItemsOnCart({
     required this.id,
@@ -35,6 +36,7 @@ class ItemsOnCart {
     required this.totalprice,
      this.customerId,
      this.transOption,
+    required this.itemImage,
   });
 
   factory ItemsOnCart.fromJson(Map<String, dynamic> json) => ItemsOnCart(
@@ -50,6 +52,7 @@ class ItemsOnCart {
     totalprice: json["totalprice"],
     customerId: json["customerId"],
     transOption: json["transOption"],
+    itemImage: json["itemImage"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -65,5 +68,6 @@ class ItemsOnCart {
     "totalprice": totalprice,
     "customerId": customerId,
     "transOption": transOption,
+    "itemImage": itemImage,
   };
 }

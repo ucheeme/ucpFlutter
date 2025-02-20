@@ -12,7 +12,8 @@ import '../model/response/memberSavingAccounts.dart';
 import '../model/response/profileUpdateResponse.dart';
 import '../model/response/withdrawTransactionHistory.dart';
 import 'FinanceRepo.dart';
-String ucpFilePath = "";
+String? ucpFilePath ;
+String? ucpFilePath2 ;
 class ProfileRepository extends DefaultRepository{
   Future<Object> getMemberProfile() async {
     var response = await postRequest(
@@ -46,6 +47,7 @@ class ProfileRepository extends DefaultRepository{
         ProfileUpdateResponse res = profileUpdateResponseFromJson(json.encode(r.data));
         return res;
       } else {
+        print("This is me 222");
         return r;
       }
     } else {

@@ -26,78 +26,82 @@ TextEditingController amountController = TextEditingController();
   bool isTouched = false;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomSheet:  Container(
-          height: 83.h,
-          width: double.infinity,
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: AppColor.ucpBlue50,     //Color( 0xffEDF4FF),
-            // borderRadius: BorderRadius.only(
-            //   bottomRight: Radius.circular(15.r),
-            //   bottomLeft: Radius.circular(15.r),
-            // ),
-          ),
-          child: CustomButton(
-            onTap: () {
-              saveToAccountRequest?.amount = amountController.text.replaceAll(",", "");
-              Get.back();
-              _showUserAccountModal();
-            },
-            borderRadius: 30.r,
-            buttonColor: AppColor.ucpBlue500,
-            buttonText: UcpStrings.doneTxt,
-            height: 51.h,
-            textStyle: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
-              fontWeight: FontWeight.w500,
-              fontSize: 16.sp,
-              color: AppColor.ucpWhite500,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+          bottomSheet:  Container(
+            height: 83.h,
+            width: double.infinity,
+            padding: EdgeInsets.all(16.w),
+            decoration: const BoxDecoration(
+              color: AppColor.ucpBlue50,     //Color( 0xffEDF4FF),
+              // borderRadius: BorderRadius.only(
+              //   bottomRight: Radius.circular(15.r),
+              //   bottomLeft: Radius.circular(15.r),
+              // ),
             ),
-            textColor: AppColor.ucpWhite500,
-          )
-      ),
-        body: Container(
-            height: 300.h,
-            decoration: BoxDecoration(
-              color: AppColor.ucpWhite500,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20.r),
-                topRight: Radius.circular(20.r),
+            child: CustomButton(
+              onTap: () {
+                saveToAccountRequest?.amount = amountController.text.replaceAll(",", "");
+                Get.back();
+                _showUserAccountModal();
+              },
+              borderRadius: 30.r,
+              buttonColor: AppColor.ucpBlue500,
+              buttonText: UcpStrings.doneTxt,
+              height: 51.h,
+              textStyle: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                fontWeight: FontWeight.w500,
+                fontSize: 16.sp,
+                color: AppColor.ucpWhite500,
               ),
-            ),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-              Gap(20.h),
-              Padding(
-                padding:  EdgeInsets.symmetric(horizontal: 15.w),
-                child: Text("Enter Amount",
-                    style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w500,
-                      color: AppColor.ucpBlack700,
-                    )),
-              ),
-              Gap(15.h),
-              Padding(
-                padding:  EdgeInsets.symmetric(horizontal: 15.w),
-                child: CustomizedTextField(
-                  textEditingController:amountController,
-                  inputFormat: [ThousandSeparatorFormatter(),],
-                  hintTxt: UcpStrings.enterAmount,
-                  keyboardType: TextInputType.number,
-                  validator: (value) {},
-                  isConfirmPasswordMatch: false,
-                  isTouched: isTouched,
-                  onTap: (){
-                    setState(() {
-                      isTouched = true;
-                    });
-                  },
+              textColor: AppColor.ucpWhite500,
+            )
+        ),
+          body: Container(
+              height: 250.h,
+              decoration: BoxDecoration(
+                color: AppColor.ucpWhite500,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20.r),
+                  topRight: Radius.circular(20.r),
                 ),
               ),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                Gap(20.h),
+                Padding(
+                  padding:  EdgeInsets.symmetric(horizontal: 15.w),
+                  child: Text("Enter Amount",
+                      style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                        color: AppColor.ucpBlack700,
+                      )),
+                ),
+                Gap(35.h),
+                Padding(
+                  padding:  EdgeInsets.symmetric(horizontal: 15.w),
+                  child: CustomizedTextField(
+                    textEditingController:amountController,
+                    inputFormat: [ThousandSeparatorFormatter(),],
+                    hintTxt: UcpStrings.enterAmount,
+                    keyboardType: TextInputType.number,
+                    validator: (value) {},
+                    isConfirmPasswordMatch: false,
+                    isTouched: isTouched,
+                    onTap: (){
+                      setState(() {
+                        isTouched = true;
+                      });
+                    },
+                  ),
+                ),
 
-            ])));
+              ]))),
+    );
   }
 
   Future<void> _showUserAccountModal() async {
@@ -106,10 +110,13 @@ TextEditingController amountController = TextEditingController();
       backgroundColor: AppColor.ucpWhite500,
       context: context,
       builder: (context) {
-        return Container(
-          height: 485.h,
-          color: AppColor.ucpWhite500,
-          child:MemberSavingAccountsBottomSheets(),
+        return Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Container(
+            height: 485.h,
+            color: AppColor.ucpWhite500,
+            child:MemberSavingAccountsBottomSheets(),
+          ),
         );
       },
     );

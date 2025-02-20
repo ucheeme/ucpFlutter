@@ -35,6 +35,10 @@ class UcpStrings{
  static const sMemberAccountTxt ="Select Account";
  static const datePaidText ="Date Paid";
  static const uploadTellerText ="Upload Teller";
+ static const uploadYourPhotoTxt ="Upload your photograph";
+ static const uploadYourPlansFourCoporativeTxt ="Upload your plans for the cooperative";
+ static const reasonForRunningTxt ="Reason for running";
+ static const plansForCoperativeTxt ="Plans for the cooperative if elected for running";
  static const membershipFeeTxt ="Membership fee";
  static const aTermsAndConditionsTxt ="Accept terms and conditions";
  static const alreadyHaveAnAcctTxt ="Already have an account? ";
@@ -109,6 +113,7 @@ class UcpStrings{
  static const searchTxt ="Search";
  static const startDate ="Start Date";
  static const endDate ="End Date";
+ static const preferredNameForElection ="Preferred name for election";
 
   static const cancelTxt = "Cancel";
   static const doneTxt = "Done";
@@ -151,7 +156,13 @@ class UcpStrings{
  static const withdrawalTxt ="Withdrawal";
  static const withdrawalsReqTxt ="Withdrawals request";
  static const allTxt ="All";
+ static const applyETxt ="Apply";
+ static const elcetionTxt ="Elections";
+ static const resultEText ="Result";
  static const shopTxt ="Shop";
+ static const applyForAPositionTxt ="Apply for a position";
+ static const castAVoteTxt ="Cast a vote";
+ static const electionResultTxt ="Election result";
  static const shoppingTxt ="Shopping";
  static const favouriteTxt ="Favourite";
  static const inFlowTxt ="Inflow";
@@ -190,6 +201,7 @@ class UcpStrings{
  static const loanMTxt="Loan management";
  static const loanMSGTxt="Effectively manage loans.";
  static const savingTxt="Savings";
+ static const electionFormTxt="Election application form";
  static const loanRequestBreakDownTxt="Loan request breakdown";
  static const savingMSGTxt="Manage your savings effectively and easily.";
  static const withdrawalMSGTxt="Easily withdraw your cash anytime.";
@@ -266,7 +278,10 @@ class UcpStrings{
  static const favouriteI= "assets/images/favoriteChecked.png";
  static const unFavouriteI= "assets/images/favoriteUnchecked.png";
  static const loadingCartIcon= "assets/images/shopping_cart_loading.png";
+ static const sampleImageOne= "assets/images/sampleImageOne.png";
   static const monthsTxt="months";
+  static const positionAppTxt="Position application form";
+  static const fillFormpTxt="Fill the form below to apply for a position of your choice";
 
   static const enterAmount="Enter Amount";
 
@@ -281,6 +296,8 @@ class UcpStrings{
   static String reOccurringTxt="Recurring contribution period";
   static String contributionDate="Recurring contribution period";
   static String contributionSubHeading="Review and adjust your contribution frequency and total amount to align with your current goals and finances.";
+
+  static var enterNameForElection="Enter name for election";
 
 
 
