@@ -6,6 +6,7 @@ import 'package:ucp/data/repository/profileRepo.dart';
 
 import '../../app/apiService/apiService.dart';
 import '../../app/apiService/appUrl.dart';
+import '../model/request/castVoteRequest.dart';
 import '../model/response/contestantInfo.dart';
 import '../model/response/defaultResponse.dart';
 import '../model/response/electionDetailResponse.dart';
@@ -93,6 +94,26 @@ class VoteRepository extends DefaultRepository {
       if (r.isSuccessful == true) {
         ElectionDetails res =
         electionDetailsFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+
+  Future<Object> voteCandidate(CastVote request) async {
+    var response = await postRequest(
+        request,
+        UCPUrls.voteForCandidate,
+        true,
+        HttpMethods.post);
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        UcpDefaultResponse res = ucpDefaultResponseFromJson(json.encode(r));
         return res;
       } else {
         return r;

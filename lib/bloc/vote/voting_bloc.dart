@@ -5,6 +5,7 @@ import 'package:ucp/data/repository/FinanceRepo.dart';
 import 'package:ucp/data/repository/votingRepo.dart';
 
 import '../../data/model/request/applyAsContestant.dart';
+import '../../data/model/request/castVoteRequest.dart';
 import '../../data/model/response/allElections.dart';
 import '../../data/model/response/electionDetailResponse.dart';
 import '../../utils/apputils.dart';
@@ -28,6 +29,22 @@ class VotingBloc extends Bloc<VotingEvent, VotingState> {
 
     on<GetElectionDetailsEvent>((event, emit)async{
       handleGetElectionDetailsEvent(event);
+    });
+    on<VoteCandidateEvent>((event, emit) async {
+      emit(VotingIsLoading());
+      try {
+        final response = await voteRepository.voteCandidate(event.castVote);
+        if (response is UcpDefaultResponse) {
+          emit(VotedForCandidate(response));
+        } else {
+          emit(VotingError(response as UcpDefaultResponse));
+        }
+      } catch (e, trace) {
+        print(trace);
+        print(e);
+        emit(VotingError(
+            AppUtils.defaultErrorResponse(msg: "Something went wrong")));
+      }
     });
   }
 

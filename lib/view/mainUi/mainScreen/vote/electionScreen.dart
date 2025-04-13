@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:ucp/bloc/vote/voting_bloc.dart';
 import 'package:ucp/data/model/response/electionDetailResponse.dart';
 import 'package:ucp/utils/appExtentions.dart';
 import 'package:ucp/utils/colorrs.dart';
 import 'package:ucp/utils/ucpLoader.dart';
+import 'package:ucp/view/mainUi/mainScreen/vote/VoteContestant.dart';
 import 'package:ucp/view/mainUi/mainScreen/vote/eligiblePosition.dart';
 
 import '../../../../data/repository/FinanceRepo.dart';
@@ -108,6 +111,14 @@ class _ElectionScreensState extends State<ElectionScreens> {
                         contestants.add(item);
                       }
                     }
+                    String electionId="";
+                    String positionId="";
+                    tempPositionEligibleList.forEach((vlue) {
+                      if (vlue.positionName.toLowerCase() == element.toLowerCase()) {
+                     electionId= vlue.electionId;
+                     positionId= vlue.positionId;
+                      }
+                    });
                     details = ElectionDetails(
                         id: response.id,
                         title: element,
@@ -121,8 +132,14 @@ class _ElectionScreensState extends State<ElectionScreens> {
                         contestants: contestants);
                     return Padding(
                       padding:  EdgeInsets.symmetric(vertical: 14.h),
-                      child: ElectionItemWithCandidate(
-                          details: details),
+                      child: GestureDetector(
+                        onTap: (){
+                         Get.to(VoteContestant(electionPosition: details!,
+                         electionId: electionId,positionId: positionId,));
+                        },
+                        child: ElectionItemWithCandidate(
+                            details: details),
+                      ),
                     );
                   }).toList()),
 

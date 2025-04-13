@@ -81,32 +81,44 @@ class _FinalElectionInFomationState extends State<FinalElectionInFomation> {
                      color: AppColor.ucpBlack500),
                ),
                //height12,
-               Stack(
-                 children: [
-                   Container(
-                     height: 202.h,
-                     width: 343.w,
-                     decoration: BoxDecoration(
-                       borderRadius: BorderRadius.only(
-                         topLeft: Radius.circular(12.r),
-                         topRight: Radius.circular(12.r),),
-                       image:  const DecorationImage(image:AssetImage(UcpStrings.contestanctBG), fit: BoxFit.cover),
-                     ),
-
-                   ),
-                   Container(
-                     height: 202.h,
-                     width: 343.w,
-                     decoration: BoxDecoration(
-                       borderRadius: BorderRadius.only(
-                         topLeft: Radius.circular(12.r),
-                         topRight: Radius.circular(12.r),),
-                       image:  DecorationImage(image: contestantProfileImage==null?AssetImage(UcpStrings.sampleImageOne):
-                       MemoryImage(transparentImageBytes!),
-                           fit: BoxFit.cover),
-                     ),
-                   )
-                 ],
+               // Stack(
+               //   children: [
+               //     Container(
+               //       height: 202.h,
+               //       width: 343.w,
+               //       decoration: BoxDecoration(
+               //         borderRadius: BorderRadius.only(
+               //           topLeft: Radius.circular(12.r),
+               //           topRight: Radius.circular(12.r),),
+               //         image:  const DecorationImage(image:AssetImage(UcpStrings.contestanctBG), fit: BoxFit.cover),
+               //       ),
+               //
+               //     ),
+               //     Container(
+               //       height: 202.h,
+               //       width: 343.w,
+               //       decoration: BoxDecoration(
+               //         borderRadius: BorderRadius.only(
+               //           topLeft: Radius.circular(12.r),
+               //           topRight: Radius.circular(12.r),),
+               //         image:  DecorationImage(image: contestantProfileImage==null?AssetImage(UcpStrings.sampleImageOne):
+               //         MemoryImage(transparentImageBytes!),
+               //             fit: BoxFit.contain),
+               //       ),
+               //     )
+               //   ],
+               // ),
+               Container(
+                 height: 202.h,
+                 width: 343.w,
+                 decoration: BoxDecoration(
+                   borderRadius: BorderRadius.only(
+                     topLeft: Radius.circular(12.r),
+                     topRight: Radius.circular(12.r),),
+                   image:  DecorationImage(image: contestantProfileImage==null?const AssetImage(UcpStrings.sampleImageOne):
+                   FileImage(contestantProfileImage!),
+                       fit: BoxFit.cover),
+                 ),
                ),
                height20,
                Text(

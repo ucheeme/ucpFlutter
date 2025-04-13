@@ -199,6 +199,7 @@ class UcpStrings{
  static const financeTxt="Finances";
  static const contributionTxt="Contributions";
  static const financeSTxt="Quick access to your funds, Tips for effective growth.";
+ static const voteTxt="Choose your candidate of choice fore the position";
  static const loanMTxt="Loan management";
  static const loanMSGTxt="Effectively manage loans.";
  static const savingTxt="Savings";
@@ -251,6 +252,7 @@ class UcpStrings{
  static const ucpRetirementImage = "assets/images/retirement_finance.png";
  static const ucpRetirementProfileImage = "assets/images/profileRetirement.png";
  static const financeIcon = "assets/images/finance_icon.png";
+ static const votingIcon = "assets/images/beHeader.png";
  static const contributionBg = "assets/images/contributionBackG.png";
  static const  winkBg= "assets/images/Wink.png";
  static const  supportMail= "assets/images/mail.png";

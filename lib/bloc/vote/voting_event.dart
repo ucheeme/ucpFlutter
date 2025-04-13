@@ -22,3 +22,9 @@ class GetElectionDetailsEvent extends VotingEvent {
   GetElectionDetailsEvent(this.electionId);
   List<Object> get props => [];
 }
+class VoteCandidateEvent extends VotingEvent {
+  CastVote castVote;
+  VoteCandidateEvent(this.castVote);
+  @override
+  List<Object> get props => [];
+}
