@@ -171,44 +171,62 @@ class _MakeDepositState extends State<MakeDeposit> {
                     textColor: AppColor.ucpWhite500,
                   )
               ),
+              appBar: AppBar(
+                backgroundColor: AppColor.ucpWhite500,
+                elevation: 0,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.black),
+                  onPressed: () {
+                    Get.back();
+                  },
+                ),
+                title: Text(
+                  widget.title,
+                  style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16.sp,
+                      color: AppColor.ucpBlack500),
+                ),
+              ),
               body: SizedBox(
                 height: MediaQuery.of(context).size.height,
                 child: ListView(
+                  //physics: NeverScrollableScrollPhysics(),
                   controller: widget.scrollController,
                   // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      height: 59.h,
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColor.ucpBlue25, //Color( 0xffEDF4FF),
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(15.r),
-                          topLeft: Radius.circular(15.r),
-                        ),
-                      ),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Row(
-                          children: [
-                            // GestureDetector(
-                            //     onTap: ()=>Get.back(),
-                            //     child: Icon(Icons.arrow_back ,size: 28.h, color: AppColor.ucpBlack500)),
-                            // Gap(10.w),
-                            Text(
-                              UcpStrings.sMakePaymentTxt,
-                              style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16.sp,
-                                  color: AppColor.ucpBlack500),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // Container(
+                    //   height: 59.h,
+                    //   width: double.infinity,
+                    //   padding: EdgeInsets.symmetric(
+                    //     horizontal: 16.w,
+                    //   ),
+                    //   decoration: BoxDecoration(
+                    //     color: AppColor.ucpBlue25, //Color( 0xffEDF4FF),
+                    //     borderRadius: BorderRadius.only(
+                    //       topRight: Radius.circular(15.r),
+                    //       topLeft: Radius.circular(15.r),
+                    //     ),
+                    //   ),
+                    //   child: Align(
+                    //     alignment: Alignment.centerLeft,
+                    //     child: Row(
+                    //       children: [
+                    //         // GestureDetector(
+                    //         //     onTap: ()=>Get.back(),
+                    //         //     child: Icon(Icons.arrow_back ,size: 28.h, color: AppColor.ucpBlack500)),
+                    //         // Gap(10.w),
+                    //         Text(
+                    //           UcpStrings.sMakePaymentTxt,
+                    //           style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                    //               fontWeight: FontWeight.w500,
+                    //               fontSize: 16.sp,
+                    //               color: AppColor.ucpBlack500),
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     height10,
                     Visibility(
                       visible: saveToAccountRequest?.modeOfpayment == "2"? true : false,

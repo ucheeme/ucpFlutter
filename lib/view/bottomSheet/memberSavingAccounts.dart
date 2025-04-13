@@ -20,7 +20,8 @@ import '../../utils/designUtils/reusableFunctions.dart';
 import '../../utils/designUtils/reusableWidgets.dart';
 
 class MemberSavingAccountsBottomSheets extends StatefulWidget {
-   MemberSavingAccountsBottomSheets({super.key});
+  bool? isLoan;
+   MemberSavingAccountsBottomSheets({super.key,this.isLoan});
 
   @override
   State<MemberSavingAccountsBottomSheets> createState() => _MemberSavingAccountsBottomSheetsState();
@@ -234,8 +235,13 @@ class _MemberSavingAccountsBottomSheetsState extends State<MemberSavingAccountsB
                             child: CustomButton(
                               onTap: () {
                                 saveToAccountRequest?.accountNumber= selectedSavingAccount!.accountNumber;
-                           //  Get.back();
-                                _showUserAccountModal();
+                                 Get.back();
+                                if(widget.isLoan == true){
+                                  Get.back(result: selectedSavingAccount);
+                                }else{
+                                  _showUserAccountModal();
+                                }
+
                               },
                               borderRadius: 30.r,
                               buttonColor: AppColor.ucpBlue500,

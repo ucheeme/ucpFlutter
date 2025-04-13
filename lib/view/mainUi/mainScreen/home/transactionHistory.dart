@@ -151,7 +151,7 @@ ScrollController outflowScrollController = ScrollController();
                   height: Get.height,
                   child: ListView(
                     children: [
-                      Gap(120.h),
+                      Gap(150.h),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.w),
                         child: SizedBox(
@@ -353,11 +353,11 @@ ScrollController outflowScrollController = ScrollController();
                                 }
                               },
                               child: CircleWithIconSingleColor(
-                                height: 40.h,
-                                width: 40.w,
-                                isIcon: const Icon(
+                                // height: 40.h,
+                                // width: 40.w,
+                                isIcon:  Icon(
                                   Icons.keyboard_option_key,
-                                  size: 15,
+                                  size: 20.r,
                                   color: AppColor.ucpBlack700,
                                 ),
                                 image: UcpStrings.ucpCreditImage,

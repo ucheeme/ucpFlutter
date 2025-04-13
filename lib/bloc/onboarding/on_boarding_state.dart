@@ -27,6 +27,20 @@ class AllCooperatives extends OnBoardingState{
   List<Object?> get props => [response];
 }
 
+class AllUcpCountries extends OnBoardingState{
+  final List<AllCountriesResponse> response;
+  const AllUcpCountries(this.response);
+  @override
+  List<Object?> get props => [response];
+}
+
+class AllUcpStates extends OnBoardingState{
+  final List<AllStateResponse> response;
+  const AllUcpStates(this.response);
+  @override
+  List<Object?> get props => [response];
+}
+
 class CreateAccountSuccess extends OnBoardingState{
   final SignUpResponse response;
   const CreateAccountSuccess(this.response);
@@ -50,6 +64,13 @@ class GetNextMemberIdSuccess extends OnBoardingState{
   List<Object?> get props => [response];
 }
 
+class ShopItemsLoaded extends OnBoardingState{
+  final List<ShopItemList> response;
+  ShopItemsLoaded(this.response);
+  @override
+  List<Object?> get props => [response];
+}
+
 class LoginOTPSuccessful extends OnBoardingState{
   final OTPValidationResponse response;
   LoginOTPSuccessful(this.response);
@@ -60,6 +81,27 @@ class LoginOTPSuccessful extends OnBoardingState{
 class SignUpOTPSuccessful extends OnBoardingState{
   final OTPValidationResponse response;
   SignUpOTPSuccessful(this.response);
+  @override
+  List<Object?> get props => [response];
+}
+
+class MemberSignUpCostSuccess extends OnBoardingState{
+  final MemberSignUpCost response;
+  MemberSignUpCostSuccess(this.response);
+  @override
+  List<Object?> get props => [response];
+}
+
+class MemberForgotPasswordSuccess extends OnBoardingState{
+  final UcpDefaultResponse response;
+  MemberForgotPasswordSuccess(this.response);
+  @override
+  List<Object?> get props => [response];
+}
+
+class GetCooperativePrivilegesSuccess extends OnBoardingState{
+  final CheckIfCooperativeIsSetUpForElection response;
+  GetCooperativePrivilegesSuccess(this.response);
   @override
   List<Object?> get props => [response];
 }

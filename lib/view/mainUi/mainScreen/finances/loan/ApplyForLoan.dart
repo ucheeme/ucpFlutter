@@ -41,7 +41,9 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
 
   @override
   void initState() {
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusManager.instance.primaryFocus?.unfocus();
       for (var element in tempLoanFrequencies) {
         print("the frequency is ${element.freqName}");
       }
@@ -264,7 +266,7 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
                           readOnly: false,
                           textEditingController:    widget.controller.loanDurationController,
                           hintTxt: UcpStrings.loanDuration,
-                          keyboardType: TextInputType.name,
+                          keyboardType: TextInputType.number,
                           isTouched:    widget.controller.loanDurationController.text.isNotEmpty,
                           // onTap: () => _showLoanProductSelectionModal(),
                         ),

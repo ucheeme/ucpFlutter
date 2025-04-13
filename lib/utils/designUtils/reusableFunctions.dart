@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:date_time_format/date_time_format.dart';
@@ -175,14 +176,15 @@ bool _compareKeys(Map<String, dynamic> map1, Map<String, dynamic> map2) {
   return true;
 }
 
-showSlidingModalLogOut(BuildContext context,) {
-  showDialog(
+showSlidingModalLogOut(BuildContext context,) async {
+ bool response =await showDialog(
     context: context,
     // Makes the background transparent
     builder: (BuildContext context) {
       return LogOutScreen();
     },
   );
+ return response;
 }
 //1 cash 2 cheque 3 member bank account
 
@@ -226,4 +228,23 @@ String convertDate(String inputDate) {
 Uint8List convertBase64Image(String base64String) {
   Uint8List imageBytes = base64Decode(base64String);
   return imageBytes;
+}
+
+String getOrdinalSuffix(int day) {
+  if (day >= 11 && day <= 13) return "th";
+  switch (day % 10) {
+    case 1: return "st";
+    case 2: return "nd";
+    case 3: return "rd";
+    default: return "th";
+  }
+}
+
+/// Formats a [date] as "Fri. 22nd, 2025"
+String dateFormat(DateTime date) {
+  final String dayOfWeek = DateFormat("MMM").format(date); // e.g., "Fri"
+  final int day = date.day;
+  final String suffix = getOrdinalSuffix(day);
+  final int year = date.year;
+  return "$dayOfWeek. ${day}${suffix}, $year";
 }

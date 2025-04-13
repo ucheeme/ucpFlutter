@@ -27,3 +27,22 @@ class GetMemberSavingAccountsEvent extends ProfileEvent {
   @override
   List<Object> get props => [];
 }
+class GetListOfBank extends ProfileEvent {
+  const GetListOfBank();
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}
+
+class AddMemberBankAccountDetails extends ProfileEvent {
+  final AddBankDetailRequest request;
+  const AddMemberBankAccountDetails(this.request);
+  @override
+  List<Object> get props => [request];
+}
+class GetMemberImage extends ProfileEvent{
+  const GetMemberImage();
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,7 +16,10 @@ import 'package:ucp/view/mainUi/onBoardingFlow/loginFlow/loginD.dart';
 import 'package:ucp/view/mainUi/onBoardingFlow/signUpFlow/signupFirstpage.dart';
 
 
+import '../../firebase_options.dart';
+import '../../utils/authManager.dart';
 import '../../utils/constant.dart';
+import '../../utils/firebaseService.dart';
 import '../../utils/sharedPreference.dart';
 
 
@@ -26,7 +30,8 @@ import '../customAnimations/animationManager.dart';
 import '../flavour/flavour.dart';
 import '../flavour/locatot.dart';
 import '../providerService.dart';
-
+final AuthManager authManager = AuthManager();
+String firebaseToken="";
 void mainCommon(AppFlavorConfig config) async{
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
@@ -36,6 +41,14 @@ void mainCommon(AppFlavorConfig config) async{
     }
   };
   WidgetsFlutterBinding.ensureInitialized();
+  try {
+    //await initializeService();
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform,);
+    await FirebaseService().initNotifications();
+
+  }catch(e){
+    AppUtils.debug("Failed to initialize Firebase: $e");
+  }
   statusBarTheme();
   await MySharedPreference.init();
   FlutterError.onError = (FlutterErrorDetails details) {
@@ -60,6 +73,7 @@ class _MyAppState extends State<MyApp> {
   late final AppLifecycleListener _listener;
   @override
   void initState() {
+    getToken();
     super.initState();
    // WidgetsBinding.instance.addPostFrameCallback((_){
       _subscription = InternetConnection().onStatusChange.listen((status) {
@@ -80,7 +94,11 @@ class _MyAppState extends State<MyApp> {
    // });
 
   }
-
+  getToken()async{
+    String? deviceToken= await FirebaseService().getFirebaseToken();
+    firebaseToken = deviceToken!;
+    AppUtils.debug("This is Firbase token: $deviceToken");
+  }
   @override
   void dispose() {
     _subscription.cancel();

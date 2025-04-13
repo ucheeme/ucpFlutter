@@ -101,7 +101,7 @@ class _ListofbankBottomSheetState extends State<ListofbankBottomSheet> {
                       Icon(Icons.arrow_back ,size: 28.h, color: AppColor.ucpBlack500),
                       Gap(10.w),
                       Text(
-                        UcpStrings.sCooperativeTxt,
+                        UcpStrings.sBankTxt,
                         style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
                             fontWeight: FontWeight.w500,
                             fontSize: 16.sp,

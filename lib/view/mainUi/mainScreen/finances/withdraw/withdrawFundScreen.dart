@@ -203,7 +203,7 @@ class _WithdrawFundsState extends State<WithdrawFunds> {
                         children: [
                           Column(
                             children: [
-                              Gap(120.h),
+                              Gap(100.h),
                               Container(
                                 height: 230.h,
                                 decoration: BoxDecoration(
@@ -383,7 +383,7 @@ class _WithdrawFundsState extends State<WithdrawFunds> {
                                               height8,
                                               SizedBox(
                                                 height: 200.h,
-                                                child: ListView(
+                                                child: Column(
 
                                                     children: modeOfPayment
                                                         .mapIndexed((element, index) =>
@@ -449,7 +449,7 @@ class _WithdrawFundsState extends State<WithdrawFunds> {
                     ),
                     UCPCustomAppBar(
                         height: 95.h,
-                        appBarColor: AppColor.ucpWhite10.withOpacity(0.3),
+                        appBarColor: AppColor.ucpWhite500,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,

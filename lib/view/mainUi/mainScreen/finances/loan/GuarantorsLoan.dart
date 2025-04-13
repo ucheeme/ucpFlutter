@@ -48,7 +48,9 @@ class _LoanGuarantorsState extends State<LoanGuarantors> {
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_){
 
-      bloc.add(GetAllLoanGuarantorsRequestEvent(PaginationRequest(currentPage: currentPage,pageSize: pageSize)));
+      bloc.add(GetAllLoanGuarantorsRequestEvent(PaginationRequest(
+          currentPage: currentPage,
+          pageSize: pageSize)));
     });
     super.initState();
   }
@@ -204,10 +206,16 @@ class _LoanGuarantorsState extends State<LoanGuarantors> {
                   ),
                 ],
               ):
-              EmptyNotificationsScreen(press: (){
-                bloc.add(GetAllLoanApplicationEvent(PaginationRequest(currentPage: currentPage,pageSize: pageSize)));
-              },
-                emptyMessage: "NO LOAN APPLICATIONS YET",
+              SizedBox(
+                height: 700.h,
+                child: EmptyNotificationsScreen(press: (){
+                  bloc.add(GetAllLoanGuarantorsRequestEvent(
+                      PaginationRequest(
+                          currentPage: currentPage,pageSize: pageSize)));
+                },
+                  emptyHeader: "NO GUARANTOR REQUESTS",
+                  emptyMessage: "",
+                ),
               )
 
           ),

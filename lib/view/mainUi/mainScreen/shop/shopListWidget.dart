@@ -281,7 +281,7 @@ class _CartSummaryListDesignState extends State<CartSummaryListDesign> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -292,6 +292,7 @@ class _CartSummaryListDesignState extends State<CartSummaryListDesign> {
                             fontWeight: FontWeight.w500,
                             color: Color(0xff000000)),
                       ),
+                      Gap(16.w),
                       Text(
                         NumberFormat.currency(
                             symbol: 'NGN', decimalDigits: 0)

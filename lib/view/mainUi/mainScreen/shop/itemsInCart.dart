@@ -106,7 +106,7 @@ class _CartSummaryState extends State<CartSummary> {
           child: Scaffold(
             backgroundColor:AppColor.ucpWhite10,
             extendBodyBehindAppBar: true,
-            bottomSheet: Container(
+            bottomSheet:  allItemInCart.isEmpty?null: Container(
                 height: 83.h,
                 width: double.infinity,
                 padding: EdgeInsets.all(16.w),
@@ -183,6 +183,12 @@ class _CartSummaryState extends State<CartSummary> {
             ),
             body: Stack(
               children: [
+                allItemInCart.isEmpty?
+                EmptyNotificationsScreen(
+                  emptyHeader: UcpStrings.emptyCartTxt,
+                  emptyMessage: UcpStrings.emptyMessageTxt,
+                  press: () { bloc.add(GetAllItemOnCartEvent()); },
+                ):
                 Padding(
                   padding:EdgeInsets.symmetric(horizontal: 16.w),
                   child: SingleChildScrollView(
@@ -190,8 +196,7 @@ class _CartSummaryState extends State<CartSummary> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Gap(120.h),
-                        allItemInCart.isEmpty?
-                        EmptyNotificationsScreen(emptyHeader: UcpStrings.emptyCartTxt,emptyMessage: UcpStrings.emptyMessageTxt,press: () { bloc.add(GetAllItemOnCartEvent()); },):
+
                         SizedBox(
                           height: 90.h * allItemInCart.length,
                           child: SingleChildScrollView(
@@ -254,7 +259,8 @@ class _CartSummaryState extends State<CartSummary> {
                                               color: AppColor.ucpBlack500
                                           ),
                                         ),
-                                        Text(NumberFormat.currency(name: "NGN",decimalDigits: 0).format(element.sellprice),
+                                        Text(NumberFormat.currency(name: "NGN",decimalDigits: 0).format(
+                                            element.sellprice* element.quantity),
                                           style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
                                               fontSize: 14.sp,
                                               fontWeight: FontWeight.w500,
@@ -379,7 +385,7 @@ class _CartSummaryState extends State<CartSummary> {
     );
   }
 }
- Future<bool> makePayment(context,{bool isSaving =false})async{
+ Future<bool> makePayment(context,{bool isSaving =false,isLoan})async{
   bool response = await showCupertinoModalBottomSheet(
      topRadius: Radius.circular(15.r),
      backgroundColor: AppColor.ucpWhite500,
@@ -388,7 +394,7 @@ class _CartSummaryState extends State<CartSummary> {
        return Container(
          height: 500.h,
          color: AppColor.ucpWhite500,
-         child:PaymentModeBottomSheet(isSaving: isSaving,),
+         child:PaymentModeBottomSheet(isSaving: isSaving,isLoan: isLoan,),
        );
      },
    );

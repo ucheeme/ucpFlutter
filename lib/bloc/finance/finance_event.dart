@@ -148,3 +148,18 @@ class GuarantorRejectRequestEvent extends FinanceEvent{
   // TODO: implement props
   List<Object?> get props => [];
 }
+
+class RepayLoanEvent extends FinanceEvent{
+  PaymentRequest request;
+  RepayLoanEvent(this.request);
+  @override
+  // TODO: implement props
+  List<Object?> get props => [];
+}
+class VerifyPaymentEvent extends FinanceEvent {
+String reference;
+VerifyPaymentEvent(this.reference);
+@override
+// TODO: implement props
+List<Object?> get props => [];
+}

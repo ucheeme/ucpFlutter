@@ -6,8 +6,11 @@ import 'package:ucp/data/model/response/memberData.dart';
 import 'package:ucp/data/model/response/memberSavingAccounts.dart';
 import 'package:ucp/data/repository/profileRepo.dart';
 
+import '../../data/model/request/addMemberBankDetailRequest.dart';
 import '../../data/model/request/changePasswordRequest.dart';
 import '../../data/model/request/updateProfileRequest.dart';
+import '../../data/model/response/listOfBankResponse.dart';
+import '../../data/model/response/memberImageResponse.dart';
 import '../../data/model/response/memberSavingAccount.dart';
 import '../../data/model/response/profileUpdateResponse.dart';
 import '../../utils/apputils.dart';
@@ -24,9 +27,26 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<UpdateProfileEvent>((event, emit) {handleUpdateProfileEvent(event.request);});
     on<ChangePasswordEvent>((event, emit) {handleChangePasswordEvent(event);});
     on<GetMemberSavingAccountsEvent>((event, emit) {handleGetMemberSavingAccountsEvent();});
-
+    on<GetListOfBank>((event,emit){handleGetListOfBank();});
+    on<AddMemberBankAccountDetails>((event,emit){handleAddMemberBankAccountDetails(event.request);});
+    on<GetMemberImage>((event,emit){handleGetMemberImage();});
   }
-
+  void handleGetListOfBank()async{
+    emit(ProfileLoading());
+    try{
+      final response = await profileRepository.getBanks();
+      if (response is   List<ListOfBank>) {
+        emit(UcpBanks(response));
+        AppUtils.debug("success");
+      }else{
+        emit(ProfileError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProfileError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
+    }
+  }
   void handleGetMemberProfileEvent()async{
     emit(ProfileLoading());
     try{
@@ -96,5 +116,45 @@ void handleGetMemberSavingAccountsEvent()async{
 
   initial(){
     emit(ProfileInitial());
+  }
+
+  void handleAddMemberBankAccountDetails(AddBankDetailRequest request)async{
+    emit(ProfileLoading());
+    try{
+      final response = await profileRepository.addMemberBankAccountDetails(request);
+      if (response is UcpDefaultResponse) {
+        if(response.isSuccessful==true){
+          emit(MemberBankDetailsAdded(response));
+          AppUtils.debug("success");
+        }else{
+          emit(ProfileError(response as UcpDefaultResponse));
+          AppUtils.debug("error");
+        }
+
+      }else{
+        emit(ProfileError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(e);
+      print(trace);
+      emit(ProfileError(AppUtils.defaultErrorResponse()));
+    }
+  }
+  void handleGetMemberImage()async{
+    emit(ProfileLoading());
+    try{
+      final response = await profileRepository.getMemberImage();
+      if (response is MemberImageResponse) {
+        emit(MemberImageState(response));
+        AppUtils.debug("success");
+      }else{
+        emit(ProfileError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProfileError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
+    }
   }
 }

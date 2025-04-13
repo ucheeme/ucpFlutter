@@ -188,7 +188,10 @@ class ApiService {
         );
       }
     }
-
+    if(statusCode > 500){
+      gettt.Get.to(NoconnectionScreen(press: () => gettt.Get.back(),description: "The service is unavailable",));
+    return ForbiddenAccess();
+    }
     // Default case (Unhandled)
     return Failure(statusCode, UcpDefaultResponse(
       isSuccessful: false,
@@ -255,6 +258,10 @@ class ApiService {
       if (ApiResponseCodes.success == res.statusCode){
         return  Success(res.statusCode!,response);
       }
+      if(res.statusCode! > 500){
+        gettt.Get.to(NoconnectionScreen(press: () => gettt.Get.back(),description: "The service is unavailable",));
+        return ForbiddenAccess();
+      }
       if (ApiResponseCodes.error == res.statusCode || ApiResponseCodes.internalServerError == res.statusCode){
        print("interesting");
         return  Failure(res.statusCode,(ucpDefaultResponseFromJson( response)));
@@ -266,6 +273,7 @@ class ApiService {
       else{
         return  Failure(res.statusCode!,"Error Occurred");
       }
+
     }on HttpException{
       return  NetWorkFailure();
 
@@ -363,7 +371,10 @@ class ApiService {
           ucpDefaultResponseFromJson(jsonEncode(response.data)), // Deserialize error response
         );
       }
-
+      if(response.statusCode! > 500){
+        gettt.Get.to(NoconnectionScreen(press: () => gettt.Get.back(),description: "The service is unavailable",));
+        return ForbiddenAccess();
+      }
       // Handle authorization error response
       if (ApiResponseCodes.authorizationError == response.statusCode){
         gettt.Get.offAll(LoginFlow());
@@ -479,7 +490,10 @@ static upLoad2DiffFiles({
         ucpDefaultResponseFromJson(jsonEncode(response.data)), // Deserialize error response
       );
     }
-
+    if(response.statusCode! > 500){
+      gettt.Get.to(NoconnectionScreen(press: () => gettt.Get.back(),description: "The service is unavailable",));
+      return ForbiddenAccess();
+    }
     // Handle authorization error response
     if (ApiResponseCodes.authorizationError == response.statusCode){
       gettt.Get.offAll(LoginFlow());

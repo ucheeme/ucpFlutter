@@ -64,10 +64,11 @@ class _LoanmainscreenState extends State<Loanmainscreen> {
                 ),
                 child: CustomButton(
                   onTap: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
                     if (controller.loanProductController.text.isNotEmpty
                         && controller.loanAmountController.text.isNotEmpty
                         && controller.loanDurationController.text.isNotEmpty
-                        && controller.netMonthlyPayController.text.isNotEmpty
+                       // && controller.netMonthlyPayController.text.isNotEmpty
                     ) {
                       bloc.add(GetAllGuarantorsEvent());
                     } else {
@@ -77,7 +78,7 @@ class _LoanmainscreenState extends State<Loanmainscreen> {
                   },
                   borderRadius: 30.r,
                   buttonColor: AppColor.ucpBlue500,
-                  buttonText: UcpStrings.doneTxt,
+                  buttonText: "Apply for a loan",
                   height: 51.h,
                   textStyle: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
                     fontWeight: FontWeight.w500,

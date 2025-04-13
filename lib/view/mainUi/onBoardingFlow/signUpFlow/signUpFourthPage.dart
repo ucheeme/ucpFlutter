@@ -11,15 +11,19 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:ucp/data/model/response/statesInCountry.dart';
+import 'package:ucp/view/bottomSheet/countries.dart';
 import 'package:ucp/view/mainUi/onBoardingFlow/signUpFlow/signupFifthPage.dart';
 
 import '../../../../bloc/onboarding/on_boarding_bloc.dart';
 import '../../../../data/model/request/signUpReq.dart';
+import '../../../../data/model/response/allCountries.dart';
 import '../../../../utils/appStrings.dart';
 import '../../../../utils/apputils.dart';
 import '../../../../utils/colorrs.dart';
 import '../../../../utils/constant.dart';
 import '../../../../utils/designUtils/reusableWidgets.dart';
+import '../../../../utils/sharedPreference.dart';
 import '../../../../utils/ucpLoader.dart';
 import '../../../bottomSheet/gender.dart';
 import '../../otpScreen.dart';
@@ -41,6 +45,8 @@ class _SignUpFourthPageState extends State<SignUpFourthPage> {
   TextEditingController countryController = TextEditingController();
   TextEditingController homeAddressController = TextEditingController();
   late OnBoardingBloc bloc;
+  AllCountriesResponse? selectedCountry;
+  AllStateResponse? selectedStated;
   @override
   void initState() {
    
@@ -62,6 +68,14 @@ class _SignUpFourthPageState extends State<SignUpFourthPage> {
             Get.to(Otpscreen(isSignUp: true,bloc: widget.bloc,otpValue: state.response.otp.toString() ,));
           });
           widget.bloc.initial();
+        }
+        if(state is AllUcpStates){
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+
+            // if(res!=null){
+            //   bloc.add(GetAllStatesEvent(res.countryCode));
+            // }
+          });
         }
         if (state is OnBoardingError) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -196,7 +210,7 @@ class _SignUpFourthPageState extends State<SignUpFourthPage> {
                                         child: Icon(Ionicons.chevron_down),
                                       ),
                                       onTap: () async {
-                                        showModalBottomSheet(
+                                        AllCountriesResponse? res = await  showModalBottomSheet(
                                           isScrollControlled: true,
                                           backgroundColor: AppColor.ucpWhite500,
                                           context: context,
@@ -206,66 +220,44 @@ class _SignUpFourthPageState extends State<SignUpFourthPage> {
                                                     .size
                                                     .height *
                                                 0.7,
-                                            child: ShowCountryDialog(
-                                              searchHint:
-                                                  'Search for a country',
-                                              substringBackground: Colors.black,
-                                              style:
-                                                  CreatoDisplayCustomTextStyle
-                                                      .kTxtMedium
-                                                      .copyWith(
-                                                          fontSize: 14.sp,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: AppColor
-                                                              .ucpBlack500),
-                                              countryHeaderStyle:
-                                                  CreatoDisplayCustomTextStyle
-                                                      .kTxtMedium
-                                                      .copyWith(
-                                                          fontSize: 14.sp,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: AppColor
-                                                              .ucpBlack500),
-                                              searchStyle:
-                                                  CreatoDisplayCustomTextStyle
-                                                      .kTxtMedium
-                                                      .copyWith(
-                                                          fontSize: 12.sp,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: AppColor
-                                                              .ucpBlack500),
-                                              subStringStyle:
-                                                  CreatoDisplayCustomTextStyle
-                                                      .kTxtMedium
-                                                      .copyWith(
-                                                          fontSize: 14.sp,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: AppColor
-                                                              .ucpWhite500),
-                                              selectedCountryBackgroundColor:
-                                                  AppColor.ucpWhite500,
-                                              notSelectedCountryBackgroundColor:
-                                                  AppColor.ucpWhite500,
-                                              onSelectCountry: () {
-                                                setState(() {
-                                                  var selectedCountry =
-                                                      Selected.country;
-                                                  setState(() {
-                                                    countryController.text =
-                                                        selectedCountry;
-                                                  });
-                                                  bloc.validation
-                                                      .setCountry(
-                                                          selectedCountry);
-                                                });
-                                              },
-                                            ),
+                                            child: CountriesDesign(allcountries: allCountries,)
                                           ),
                                         );
+                                      if(res!=null){
+                                        var selectedCountry =
+                                            res;
+                                        this.selectedCountry=res;
+                                        setState(() {
+                                          countryController.text =
+                                              selectedCountry.countryName;
+                                        });
+                                        bloc.validation
+                                            .setCountry(res.countryCode);
+                                        AllStateResponse res2=await  showModalBottomSheet(
+                                          isScrollControlled: true,
+                                          backgroundColor: AppColor.ucpWhite500,
+                                          context: context,
+                                          isDismissible: true,
+                                          builder: (context) => SizedBox(
+                                              height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                                  0.7,
+                                              child: StateDesign(countryId: res.countryCode,)
+                                          ),
+                                        );
+                                      if(res2!=null){
+                                        selectedStated = res2;
+                                        var selectedState =
+                                          res2;
+                                        setState(() {
+                                          stateController.text =
+                                              selectedState.stateName;
+                                        });
+                                        bloc.validation
+                                            .setState(res2.stateCode);
+                                      }
+                                      }
                                       },
                                     );
                                   }),
@@ -294,148 +286,33 @@ class _SignUpFourthPageState extends State<SignUpFourthPage> {
                                         child: Icon(Ionicons.chevron_down),
                                       ),
                                       onTap: () async {
-                                        showModalBottomSheet(
+                                        AllStateResponse res2=await  showModalBottomSheet(
                                           isScrollControlled: true,
-                                          context: context,
                                           backgroundColor: AppColor.ucpWhite500,
-                                          isDismissible: true,
-                                          builder: (context) => SizedBox(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.7,
-                                            child: ShowStateDialog(
-                                              style:
-                                                  CreatoDisplayCustomTextStyle
-                                                      .kTxtMedium
-                                                      .copyWith(
-                                                          fontSize: 14.sp,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: AppColor
-                                                              .ucpBlack500),
-                                              stateHeaderStyle:
-                                                  CreatoDisplayCustomTextStyle
-                                                      .kTxtMedium
-                                                      .copyWith(
-                                                          fontSize: 14.sp,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: AppColor
-                                                              .ucpBlack500),
-                                              subStringStyle:
-                                                  CreatoDisplayCustomTextStyle
-                                                      .kTxtMedium
-                                                      .copyWith(
-                                                          fontSize: 14.sp,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: AppColor
-                                                              .ucpWhite500),
-                                              substringBackground: Colors.black,
-                                              selectedStateBackgroundColor:
-                                                  AppColor.ucpWhite500,
-                                              notSelectedStateBackgroundColor:
-                                                  AppColor.ucpWhite500,
-                                              onSelectedState: () {
-                                                var selectedState =
-                                                    Selected.state;
-                                                setState(() {
-                                                  stateController.text =
-                                                      selectedState;
-                                                });
-                                                bloc.validation
-                                                    .setState(selectedState);
-                                              },
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  }),
-                              Text(
-                                UcpStrings.sCityTxt,
-                                style: CreatoDisplayCustomTextStyle.kTxtMedium
-                                    .copyWith(
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColor.ucpBlack600),
-                              ),
-                              height12,
-                              // height20,
-                              StreamBuilder<Object>(
-                                  stream: bloc.validation.city,
-                                  builder: (context, snapshot) {
-                                    return CustomizedTextField(
-                                      textEditingController: cityController,
-                                      hintTxt: UcpStrings.sCityTxt,
-                                      readOnly: true,
-                                      keyboardType: TextInputType.name,
-                                      surffixWidget: Padding(
-                                        padding: EdgeInsets.only(right: 8.w),
-                                        child: Icon(Ionicons.chevron_down),
-                                      ),
-                                      onChanged: bloc.validation.setCity,
-                                      onTap: () async {
-                                        showModalBottomSheet(
-                                          isScrollControlled: true,
                                           context: context,
-                                          backgroundColor: AppColor.ucpWhite10,
                                           isDismissible: true,
                                           builder: (context) => SizedBox(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.7,
-                                            child: ShowCityDialog(
-                                              style:
-                                                  CreatoDisplayCustomTextStyle
-                                                      .kTxtMedium
-                                                      .copyWith(
-                                                          fontSize: 14.sp,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: AppColor
-                                                              .ucpBlack500),
-                                              countryHeaderStyle:
-                                                  CreatoDisplayCustomTextStyle
-                                                      .kTxtMedium
-                                                      .copyWith(
-                                                          fontSize: 14.sp,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: AppColor
-                                                              .ucpBlack500),
-                                              subStringStyle:
-                                                  CreatoDisplayCustomTextStyle
-                                                      .kTxtMedium
-                                                      .copyWith(
-                                                          fontSize: 14.sp,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: AppColor
-                                                              .ucpWhite500),
-                                              substringBackground: Colors.black,
-                                              selectedCityBackgroundColor:
-                                                  AppColor.ucpWhite500,
-                                              notSelectedCityBackgroundColor:
-                                                  AppColor.ucpWhite500,
-                                              onSelectedCity: () {
-                                                var selectedCity =
-                                                    Selected.city;
-                                                setState(() {
-                                                  cityController.text =
-                                                      selectedCity;
-                                                });
-                                                bloc.validation
-                                                    .setCity(selectedCity);
-                                              },
-                                            ),
+                                              height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                                  0.7,
+                                              child: StateDesign(countryId: selectedCountry!.countryCode,)
                                           ),
                                         );
+                                        if(res2!=null){
+                                          var selectedState =
+                                              res2;
+                                          setState(() {
+                                            stateController.text =
+                                                selectedState.stateName;
+                                          });
+                                          bloc.validation
+                                              .setState(res2.stateCode);
+                                        }
                                       },
                                     );
                                   }),
+
                             ],
                           ),
                         ),
@@ -461,9 +338,10 @@ class _SignUpFourthPageState extends State<SignUpFourthPage> {
                                   return CustomButton(
                                     onTap: () {
                                     //  bloc.add(GetAllCooperativesEvent());
-                                      snapshot.data == true
-                                          ? _creatUser()
-                                          : print("thd");
+                                    //   snapshot.data == true
+                                    //       ?
+                                      _creatUser();
+                                          //: print("thd");
                                     },
                                     height: 51.h,
                                     width: 163.5.w,

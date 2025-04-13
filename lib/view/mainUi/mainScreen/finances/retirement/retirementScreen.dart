@@ -41,7 +41,7 @@ class _RetirementScreenState extends State<RetirementScreen> {
           RitirementRequestHistory(),
           UCPCustomAppBar(
               height: 145.h,
-              appBarColor: AppColor.ucpWhite10.withOpacity(0.3),
+              appBarColor: AppColor.ucpWhite500,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

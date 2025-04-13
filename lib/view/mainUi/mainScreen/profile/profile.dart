@@ -7,13 +7,21 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:super_profile_picture/super_profile_picture.dart';
+import 'package:ucp/bloc/dashboard/dashboard_bloc.dart';
+import 'package:ucp/bloc/onboarding/onBoardingValidation.dart';
 import 'package:ucp/bloc/profile/profile_bloc.dart';
 import 'package:ucp/data/model/response/memberData.dart';
 import 'package:ucp/utils/appExtentions.dart';
+import 'package:ucp/utils/customValidator.dart';
 import 'package:ucp/utils/sharedPreference.dart';
 import 'package:ucp/utils/ucpLoader.dart';
+import 'package:ucp/view/mainUi/mainScreen/finances/retirement/retirementScreen.dart';
 import 'package:ucp/view/mainUi/mainScreen/home/withdraw.dart';
 import 'package:ucp/view/mainUi/mainScreen/profile/profileWidget.dart';
+import 'package:ucp/view/mainUi/mainScreen/profile/support.dart';
+import 'package:ucp/view/mainUi/mainScreen/shop/itemsInCart.dart';
+import 'package:ucp/view/mainUi/mainScreen/vote/eligiblePosition.dart';
+import 'package:ucp/view/onboardingSplash/splashScreen.dart';
 
 import '../../../../utils/appStrings.dart';
 import '../../../../utils/apputils.dart';
@@ -22,7 +30,10 @@ import '../../../../utils/constant.dart';
 import '../../../../utils/designUtils/reusableFunctions.dart';
 import '../../../../utils/designUtils/reusableWidgets.dart';
 import '../../../errorPages/underConstruction.dart';
+import '../../bottomNav.dart';
+import '../../onBoardingFlow/loginFlow/loginD.dart';
 import 'EditProfile.dart';
+import 'bankdetails/addBankDetails.dart';
 import 'changePassword.dart';
 import 'contributions.dart';
 MemberProfileData? tempMemberProfileData;
@@ -39,14 +50,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
 @override
   void initState() {
   WidgetsBinding.instance.addPostFrameCallback((_){
-    // if(tempMemberProfileData!=null){
-    //   setState(() {
-    //     memberProfileData = tempMemberProfileData!;
-    //   });
-    // }else{
+    if(bioMetric){
+      setState(() {
+        isBiometric = true;
+      });
+    }
+    if(tempMemberProfileData!=null){
+      setState(() {
+        memberProfileData = tempMemberProfileData!;
+      });
+    }else{
       bloc.add(GetMemberProfileEvent());
-  //  }
-
+   }
   });
     super.initState();
   }
@@ -67,6 +82,7 @@ bool isPushNotification = false;
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             memberProfileData = state.data;
             tempMemberProfileData = state.data;
+            //memberImageResponse?.profileImage=state.data.profileImage??"";
           });
           bloc.initial();
         }
@@ -80,6 +96,7 @@ bool isPushNotification = false;
           overlayColor: AppColor.ucpBlack400,
           transparency: 0.2,
           child: Scaffold(
+            backgroundColor: AppColor.ucpWhite10,
               extendBodyBehindAppBar: true,
               extendBody: true,
               body: Stack(
@@ -88,37 +105,44 @@ bool isPushNotification = false;
                     children: [
                       Gap(100.h),
                       Padding(
-                        padding:  EdgeInsets.symmetric(horizontal: 16.w),
+                        padding:  EdgeInsets.symmetric(horizontal: 16.w,),
                         child: Container(
-                          height: 274.h,
-                          width: 343.w,
+                         // height: 174.h,
+                          width: 243.w,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(25.r),
                               image: DecorationImage(
                                   fit: BoxFit.cover,
-                                  image: AssetImage(UcpStrings.profileBaG))
+                                  image: tempMemberProfileData?.profileImage!=null?
+                                  NetworkImage(tempMemberProfileData!.profileImage!)
+                                      :AssetImage(UcpStrings.profileBaG))
                           ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              height20,
                               Container(
-                                height: 100.h,
-
+                                height: 70.h,
                                 decoration: BoxDecoration(
-                                  shape: BoxShape.circle
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(image:
+                                      memberImageResponse==null?
+                                  AssetImage(UcpStrings.tempImage):
+                                  NetworkImage(
+                                     memberImageResponse?.profileImage??"",
+                                  )
+
+                                  )
                                 ),
-                                child:  NetworkImageWithFallback(
-                                  imageUrl: memberProfileData.profileImage??"",
-                                  fallbackImage: UcpStrings.tempImage,
-                                )
                               ),
-                              height14,
+                              // height14,
                               SizedBox(
                                 height: 112.h,
-                                width: 211.w,
+                               // width: 211.w,
                                 child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text("${memberProfileData.firstName} ${memberProfileData.lastName}",
+                                    Text("${memberProfileData.firstName??""} ${memberProfileData.lastName??""}",
                                         style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
                                             fontWeight: FontWeight.w500,
                                             fontSize: 20.sp,
@@ -169,15 +193,16 @@ bool isPushNotification = false;
                                 width: 343.w,
                                 child: Column(
                                   children: [
-                                    height16,
+                                    height8,
                                     ProfileListDesign(
                                       onTap: (){
                                         if(element.isToggle){
                                           setState(() {
-                                            if(index==3){
+                                            if(index==1){
                                               isBiometric=!isBiometric;
+                                              isBiometricEnabled=isBiometric;
                                               MySharedPreference.enableBiometric(isBiometric);
-                                            }else if(index==8){
+                                            }else if(index==6){
                                               isPushNotification=!isPushNotification;
                                             }
                                           });
@@ -186,7 +211,7 @@ bool isPushNotification = false;
                                       },
                                       profileDataValue: element,
                                       isToggle:chooseOpinion(index),),
-                                    height16,
+                                    height8,
                                     Visibility(
                                         visible: index!=profileData.length-1,
                                         child: Divider(color: AppColor.ucpBlue50,)),
@@ -202,7 +227,7 @@ bool isPushNotification = false;
                   ),
                   UCPCustomAppBar(
                       height: 93.h,
-                      appBarColor: AppColor.ucpWhite10.withOpacity(0.3),
+                      appBarColor: AppColor.ucpWhite10,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -229,9 +254,9 @@ bool isPushNotification = false;
     );
   }
   bool chooseOpinion(int index){
-    if(index==3){
+    if(index==1){
       return isBiometric;
-    }else if(index==8){
+    }else if(index==6){
       return isPushNotification;
     }else{
       return false;
@@ -242,32 +267,52 @@ bool isPushNotification = false;
     case 0:
       Get.to( EditProfileScreen(),curve: Curves.easeIn);
       break;
-    case 1:
-      Get.to(WithdrawScreen(),curve: Curves.easeIn);
+    // case 1:
+    //  // Get.to(WithdrawScreen(),curve: Curves.easeIn);
+    //   break;
+    // case 2:
+    //  // Get.to(RetirementScreen(),curve: Curves.easeIn);
+    //   break;
+    case 1: null;
       break;
     case 2:
-      Get.to( UnderMaintenanceScreen(),curve: Curves.easeIn);
-      break;
-    case 3: null;
-      break;
-    case 4:
       Get.to( ChangePasswordScreen(),curve: Curves.easeIn);
       break;
-    case 5:
+    case 3:
       Get.to( ContributionScreen(),curve: Curves.easeIn);
       break;
-      case 6:
-      Get.to( UnderMaintenanceScreen(),curve: Curves.easeIn);
+      case 4:
+      Get.to(MemberBankDetailScreen(),curve: Curves.easeIn);
       break;
-      case 7:
-      Get.to( UnderMaintenanceScreen(),curve: Curves.easeIn);
+      case 5:
+      Get.to(SupportScreen(),curve: Curves.easeIn);
       break;
-      case 8:null;
+      case 6:null;
       break;
-      case 9: {
+      case 7: {
         bool response=  await showSlidingModalLogOut(context);
         if (response) {
-          setState(() {});
+          tempBankList.clear();
+          tempMemberProfileData = null;
+          tempTransactionList.clear();
+          tempMemberAccounts.clear();
+          tempLoansGuarantors.clear();
+          tempLoanFrequencies.clear();
+          tempLoanProducts.clear();
+          tempMemberSavingAccounts.clear();
+          tempPaymentModes.clear();
+          accessToken = "";
+          tempAccounts.clear();
+          tempMemberSavingHistory.clear();
+          tempRetirementHistory.clear();
+          tempWithdrawTransactionHistory.clear();
+          tempPositionEligibleList.clear();
+          tempItemInCart.clear();
+          tempPassword="";
+          purchasedSummaryListTemp.clear();
+          firstNameTemp = "";
+          Get.offAll(LoginFlow(), predicate: (route) => false);
+         // setState(() {});
         }
       }
 

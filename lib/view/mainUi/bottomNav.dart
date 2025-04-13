@@ -12,6 +12,7 @@ import 'package:ucp/view/mainUi/mainScreen/vote/vote.dart';
 import 'package:ucp/view/mainUi/onBoardingFlow/loginFlow/loginD.dart';
 import 'dart:ui';
 
+import '../../bloc/dashboard/dashboard_bloc.dart';
 import '../../utils/appStrings.dart';
 import '../../utils/colorrs.dart';
 import 'mainScreen/home/home.dart';
@@ -162,7 +163,7 @@ class _MyBottomNavState extends State<MyBottomNav> {
                         image: "storefront_selected",
                         unimage: "store_unselected",
                         title: "Shop",
-                        badgeCount: dashboardResponse?.shopInventory,
+                        badgeCountT: badgeCount,
                         index: 1,
                         active: _currentIndex == 1),
                     itemWidget(
@@ -192,7 +193,7 @@ class _MyBottomNavState extends State<MyBottomNav> {
                           });
                         },
                         isUserImage: true,
-                        userProfileImage: "hkhkh",
+                        userProfileImage: memberImageResponse?.profileImage??UcpStrings.tempImage,
                         title: "Profile",
                         active: _currentIndex == 4),
                   ],
@@ -209,7 +210,7 @@ class _MyBottomNavState extends State<MyBottomNav> {
       required String title,
       String? image,
       String? unimage,
-        int? badgeCount,
+        int? badgeCountT,
         int? index,
       String? userProfileImage,
       required bool active,
@@ -237,11 +238,11 @@ class _MyBottomNavState extends State<MyBottomNav> {
                     SizedBox(
                       height: 30.h,
                       width: 30.w,
-                      child: const SuperProfilePicture(
+                      child:  SuperProfilePicture(
                         label: "",
                         radius: 30,
-                        image: AssetImage(
-                          UcpStrings.tempImage,),
+                        image:memberImageResponse==null? const AssetImage(
+                          UcpStrings.tempImage,):NetworkImage(memberImageResponse!.profileImage),
                       ),
                     )
                         : Stack(
@@ -287,7 +288,7 @@ class _MyBottomNavState extends State<MyBottomNav> {
                     shape: BoxShape.circle,
                   ),
                   child: Center(
-                    child: Text(badgeCount.toString().length>2?"99+":badgeCount.toString(),
+                    child: Text(badgeCountT.toString().length>99?"99+":badgeCountT.toString(),
                         style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
                             fontWeight: FontWeight.w500,
                             fontSize: 9.sp,

@@ -13,15 +13,18 @@ import 'package:ucp/view/bottomSheet/makeSavingsDraggableBottomSheet.dart';
 
 import '../../bloc/dashboard/dashboard_bloc.dart';
 import '../../data/model/request/saveToAccount.dart';
+import '../../data/model/response/memberSavingAccount.dart';
 import '../../utils/appStrings.dart';
 import '../../utils/colorrs.dart';
 import '../../utils/constant.dart';
 import '../../utils/designUtils/reusableWidgets.dart';
+import 'memberSavingAccounts.dart';
 
 class PaymentModeBottomSheet extends StatefulWidget {
   bool isSaving;
+  bool? isLoan;
   // Function()? onDone;
-   PaymentModeBottomSheet({super.key,this.isSaving = false});
+   PaymentModeBottomSheet({super.key,this.isSaving = false,this.isLoan});
 
   @override
   State<PaymentModeBottomSheet> createState() => _PaymentModeBottomSheetState();
@@ -47,16 +50,26 @@ class _PaymentModeBottomSheetState extends State<PaymentModeBottomSheet> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_){
+      checkIfItsLoan();
+
+    });
+    super.initState();
+  }
+
+  void checkIfItsLoan() {
+        if(widget.isLoan == true){
+      bloc.add(const GetLoanPaymentMethods());
+    }else{
       if(tempSavingAccounts.isNotEmpty){
         setState(() {
           paymentModes = tempPaymentModes;
           selectedPaymentMode = paymentModes[0];
         });
       }else{
+
         bloc.add(const GetPaymentModes());
       }
-    });
-    super.initState();
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -67,6 +80,17 @@ class _PaymentModeBottomSheetState extends State<PaymentModeBottomSheet> {
           WidgetsBinding.instance.addPostFrameCallback((_){
             tempPaymentModes = state.response;
             paymentModes = state.response;
+            selectedPaymentMode = paymentModes[0];
+          });
+          //savingAccounts = state.response;
+          bloc.initial();
+        }
+        if(state is UcpLoanPaymentModes){
+          WidgetsBinding.instance.addPostFrameCallback((_){
+            tempLoanPaymentModes = state.response;
+            tempPaymentModes.removeWhere((element) => element.modeOfPayment == "USSD");
+            paymentModes = state.response;
+            paymentModes.removeWhere((element) => element.modeOfPayment == "USSD");
             selectedPaymentMode = paymentModes[0];
           });
           //savingAccounts = state.response;
@@ -180,6 +204,11 @@ class _PaymentModeBottomSheetState extends State<PaymentModeBottomSheet> {
                                         selectedPaymentMode = element;
                                         selectedindex = index;
                                       });
+                                      if(selectedPaymentMode?.modeOfPayment.toLowerCase() == "savings account"){
+                                        saveToAccountRequest?.modeOfpayment=
+                                            selectedPaymentMode!.modeOfPayId.toString();
+                                        _showUserAccountModal(isLoan: widget.isLoan);
+                                      }
                                     },
                                     child: Container(
                                         height: element.modeOfPayment.length > 30
@@ -236,7 +265,15 @@ class _PaymentModeBottomSheetState extends State<PaymentModeBottomSheet> {
                               //  if(widget.isSaving){
                                   saveToAccountRequest?.modeOfpayment=
                                       selectedPaymentMode!.modeOfPayId.toString();
-                                  _showUserAccountModal(this.context);
+                                  Get.back();
+                                  Get.to(MakeDeposit( isFromSavings: widget.isSaving,
+                                      paymentRequest: PaymentRequest(
+                                        amount: saveToAccountRequest!.amount,
+                                        modeOfpayment: saveToAccountRequest!.modeOfpayment,
+                                        accountNumber: saveToAccountRequest!.accountNumber,
+                                        description: saveToAccountRequest!.description,
+                                      ), title: 'Payment ',));
+                                 // _showMakeDepositModal(this.context);
                                // }
                                 // else{
                                 //   Get.back(result: selectedPaymentMode!.modeOfPayId.toString());
@@ -267,8 +304,27 @@ class _PaymentModeBottomSheetState extends State<PaymentModeBottomSheet> {
       },
     );
   }
-
-  Future<void> _showUserAccountModal(context) async {
+  _showUserAccountModal({bool? isLoan}) async {
+   var response = await showCupertinoModalBottomSheet(
+      topRadius: Radius.circular(15.r),
+      backgroundColor: AppColor.ucpWhite500,
+      context: context,
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Container(
+            height: 485.h,
+            color: AppColor.ucpWhite500,
+            child:MemberSavingAccountsBottomSheets(isLoan: isLoan,),
+          ),
+        );
+      },
+    );
+   if(response is UserSavingAccounts){
+     _showMakeDepositModal(this.context);
+   }
+  }
+  Future<void> _showMakeDepositModal(context) async {
     List<dynamic>response = await showModalBottomSheet(
       context: context,
       isScrollControlled: true,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 // TODO: add flutter_svg package to pubspec.yaml
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -14,29 +15,32 @@ class EmptyNotificationsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.ucpWhite10,
-      body: Column(
-        children: [
-          const Spacer(flex: 2),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.8,
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: SvgPicture.string(
-                noNotificationIllistration,
-                fit: BoxFit.scaleDown,
+      body: Padding(
+        padding:  EdgeInsets.symmetric(horizontal: 16.w,vertical: 16.h),
+        child: Column(
+          children: [
+            const Spacer(flex: 2),
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: SvgPicture.string(
+                  noNotificationIllistration,
+                  fit: BoxFit.scaleDown,
+                ),
               ),
             ),
-          ),
-          const Spacer(flex: 2),
-          ErrorInfo(
-            title: emptyHeader??"Empty Notifications",
-            description:emptyMessage??
-            "It looks like you don't have any notifications right now. We'll let you know when there's something new.",
-            // button: you can pass your custom button,
-            btnText: "Check again",
-            press: press,
-          ),
-        ],
+            const Spacer(flex: 2),
+            ErrorInfo(
+              title: emptyHeader??"Empty Notifications",
+              description:emptyMessage??
+              "It looks like you don't have any notifications right now. We'll let you know when there's something new.",
+              // button: you can pass your custom button,
+              btnText: "Check again",
+              press: press,
+            ),
+          ],
+        ),
       ),
     );
   }

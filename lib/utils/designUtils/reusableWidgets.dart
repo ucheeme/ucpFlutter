@@ -430,7 +430,7 @@ class _UCPWelcomeOptionState extends State<UCPWelcomeOption> {
                               .copyWith(
                                   color: AppColor.ucpBlack700,
                                   fontWeight: FontWeight.w400,
-                                  fontSize: 13.sp),
+                                  fontSize: 14.sp),
                         ),
                       ],
                     ),

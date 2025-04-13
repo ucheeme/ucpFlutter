@@ -180,6 +180,7 @@ class UcpStrings{
  static const outflowEmptyMessageTxt ="It looks like you don't have any debit transaction on this account";
  static const userDifferentAccts ="Select Account";
  static const transactionHistoryFilter ="Filter Transaction History";
+ static const memberProfileBankAccount ="Bank account";
  static const selectMonth ="Filter duration";
  static const withdrawFunds ="Withdraw funds";
  static const cartSummary ="Cart summary";
@@ -230,7 +231,10 @@ class UcpStrings{
 
 
  static const ucpLogo = "assets/images/logoWithoutText.png";
+ static const ucpSupportFWDArrow= "assets/images/icon/Arrow/arrow-right.png";
  static const ucpAddImage = "assets/images/addPhotoIcon.png";
+ static const ucpTimer = "assets/images/timer.png";
+ static const ucpGroup = "assets/images/group_icon.png";
  static const ucpLogOut = "assets/images/logout_icon.png";
  static const ucpArrowForward = "assets/images/arrow_forward.png";
  static const ucpEditProfileImage = "assets/images/edit_profilee.png";
@@ -248,6 +252,9 @@ class UcpStrings{
  static const ucpRetirementProfileImage = "assets/images/profileRetirement.png";
  static const financeIcon = "assets/images/finance_icon.png";
  static const contributionBg = "assets/images/contributionBackG.png";
+ static const  winkBg= "assets/images/Wink.png";
+ static const  supportMail= "assets/images/mail.png";
+ static const  supportCall= "assets/images/call.png";
  static const addToCartIcon = "assets/images/storefront_cart_icon.png";
  static const reduceInventoryIcon = "assets/images/reduce_inventory_count.png";
  static const increaseInventoryIcon = "assets/images/increase_inventory_count.png";
@@ -279,11 +286,14 @@ class UcpStrings{
  static const unFavouriteI= "assets/images/favoriteUnchecked.png";
  static const loadingCartIcon= "assets/images/shopping_cart_loading.png";
  static const sampleImageOne= "assets/images/sampleImageOne.png";
+ static const contestanctBG= "assets/images/contestantBG.png";
+ static const noBankAcctIcon ="assets/images/bankIcon.png";
   static const monthsTxt="months";
   static const positionAppTxt="Position application form";
   static const fillFormpTxt="Fill the form below to apply for a position of your choice";
 
   static const enterAmount="Enter Amount";
+  static const enterEmail="Enter Email";
 
   static String fillAllFields="Fill all fields";
 
@@ -298,6 +308,15 @@ class UcpStrings{
   static String contributionSubHeading="Review and adjust your contribution frequency and total amount to align with your current goals and finances.";
 
   static var enterNameForElection="Enter name for election";
+
+  static const noBankAcctTxt="Add a new bank account";
+
+  static String bankNameTxt="Bank name";
+
+ static String accountNumberTxt="Account number";
+ static String accountNameTxt="Account name";
+
+  static String bankAddressTxt="Bank address";
 
 
 

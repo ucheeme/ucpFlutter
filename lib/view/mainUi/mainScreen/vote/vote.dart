@@ -10,6 +10,7 @@ import 'package:ucp/utils/apputils.dart';
 import 'package:ucp/utils/colorrs.dart';
 import 'package:ucp/utils/ucpLoader.dart';
 import 'package:ucp/view/mainUi/mainScreen/vote/electionScreen.dart';
+import 'package:ucp/view/mainUi/mainScreen/vote/leaderBoard.dart';
 
 import '../../../../utils/appStrings.dart';
 import '../../../../utils/constant.dart';
@@ -39,7 +40,9 @@ class _ElectionMainScreenState extends State<ElectionMainScreen> {
   builder: (context, state) {
     if(state is VotingError){
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        AppUtils.showSnack(state.errorResponse.message, context);
+        if(state.errorResponse.message.toLowerCase()!="no active election"){
+          AppUtils.showSnack(state.errorResponse.message, context);
+        }
       });
       votingBloc.initial();
     }
@@ -50,172 +53,162 @@ class _ElectionMainScreenState extends State<ElectionMainScreen> {
       });
       votingBloc.initial();
     }
-    return UCPLoadingScreen(
-      visible: state is VotingIsLoading,
-      loaderWidget: LoadingAnimationWidget.discreteCircle(
-        color: AppColor.ucpBlue500,
-        size: 40.h,
-        secondRingColor: AppColor.ucpBlue100,
-      ),
-      overlayColor: AppColor.ucpBlack400,
-      transparency: 0.2,
-      child: Scaffold(
-        backgroundColor: AppColor.ucpWhite10,
-        body: Stack(
-          children: [
-            selectedScreen(),
-            UCPCustomAppBar(
-                height: MediaQuery.of(context).size.height*0.18,
-                appBarColor: AppColor.ucpWhite500,
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Gap(30.h),
-                      Text(
-                       isApplyPosition? UcpStrings.applyForAPositionTxt:
-                       isAllElection?UcpStrings.castAVoteTxt:
-                       UcpStrings.electionResultTxt,
-                        style: CreatoDisplayCustomTextStyle.kTxtMedium
-                            .copyWith(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
-                            color: AppColor.ucpBlack500),
-                      ),
-                      height14,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Container(
-                            height: 40.h,
-                            width: 248.w,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 8.w, vertical: 5.h),
-                            decoration: BoxDecoration(
-                              color: AppColor.ucpBlue25,
-                              borderRadius: BorderRadius.circular(40.r),
-                            ),
-                            child: Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      isApplyPosition = true;
-                                      isAllElection = false;
-                                      isElectionResult = false;
-                                    });
-                                  },
-                                  child: AnimatedContainer(
-                                    height: 32.h,
-                                    width: 57.w,
-                                    decoration: BoxDecoration(
-                                      color: isApplyPosition
-                                          ? AppColor.ucpBlue600
-                                          : Colors.transparent,
-                                      borderRadius:
-                                      BorderRadius.circular(40.r),
-                                    ),
-                                    duration:
-                                    const Duration(milliseconds: 500),
-                                    child: Center(
-                                      child: Text(
-                                        UcpStrings.applyETxt,
-                                        style: CreatoDisplayCustomTextStyle
-                                            .kTxtMedium
-                                            .copyWith(
-                                          fontSize: 14.sp,
-                                          color: isApplyPosition
-                                              ? AppColor.ucpWhite500
-                                              : AppColor.ucpBlack800,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      isApplyPosition = false;
-                                      isAllElection = true;
-                                      isElectionResult = false;
-                                    });
-                                  },
-                                  child: AnimatedContainer(
-                                    duration:
-                                    const Duration(milliseconds: 400),
-                                    height: 32.h,
-                                    width: 84.w,
-                                    decoration: BoxDecoration(
-                                      color: isAllElection
-                                          ? AppColor.ucpBlue600
-                                          : Colors.transparent,
-                                      borderRadius:
-                                      BorderRadius.circular(40.r),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        UcpStrings.elcetionTxt,
-                                        style: CreatoDisplayCustomTextStyle
-                                            .kTxtMedium
-                                            .copyWith(
-                                          fontSize: 14.sp,
-                                          color: isAllElection
-                                              ? AppColor.ucpWhite500
-                                              : AppColor.ucpBlack800,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      isApplyPosition = false;
-                                      isAllElection = false;
-                                      isElectionResult = true;
-                                    });
-                                  },
-                                  child: AnimatedContainer(
-                                    duration:
-                                    const Duration(milliseconds: 500),
-                                    height: 32.h,
-                                    width: 90.w,
-                                    decoration: BoxDecoration(
-                                      color: isElectionResult
-                                          ? AppColor.ucpBlue600
-                                          : Colors.transparent,
-                                      borderRadius:
-                                      BorderRadius.circular(40.r),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        UcpStrings.resultEText,
-                                        style: CreatoDisplayCustomTextStyle
-                                            .kTxtMedium
-                                            .copyWith(
-                                          fontSize: 14.sp,
-                                          color: isElectionResult
-                                              ? AppColor.ucpWhite500
-                                              : AppColor.ucpBlack800,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+    return Scaffold(
+      backgroundColor: AppColor.ucpWhite10,
+      body: Stack(
+        children: [
+          selectedScreen(),
+          UCPCustomAppBar(
+              height: MediaQuery.of(context).size.height*0.18,
+              appBarColor: AppColor.ucpWhite500,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Gap(30.h),
+                    Text(
+                     isApplyPosition? UcpStrings.applyForAPositionTxt:
+                     isAllElection?UcpStrings.castAVoteTxt:
+                     UcpStrings.electionResultTxt,
+                      style: CreatoDisplayCustomTextStyle.kTxtMedium
+                          .copyWith(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w500,
+                          color: AppColor.ucpBlack500),
+                    ),
+                    height14,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          height: 40.h,
+                          width: 248.w,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 8.w, vertical: 5.h),
+                          decoration: BoxDecoration(
+                            color: AppColor.ucpBlue25,
+                            borderRadius: BorderRadius.circular(40.r),
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
-                )),
-          ],
-        ),
+                          child: Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    isApplyPosition = true;
+                                    isAllElection = false;
+                                    isElectionResult = false;
+                                  });
+                                },
+                                child: AnimatedContainer(
+                                  height: 32.h,
+                                  width: 57.w,
+                                  decoration: BoxDecoration(
+                                    color: isApplyPosition
+                                        ? AppColor.ucpBlue600
+                                        : Colors.transparent,
+                                    borderRadius:
+                                    BorderRadius.circular(40.r),
+                                  ),
+                                  duration:
+                                  const Duration(milliseconds: 500),
+                                  child: Center(
+                                    child: Text(
+                                      UcpStrings.applyETxt,
+                                      style: CreatoDisplayCustomTextStyle
+                                          .kTxtMedium
+                                          .copyWith(
+                                        fontSize: 14.sp,
+                                        color: isApplyPosition
+                                            ? AppColor.ucpWhite500
+                                            : AppColor.ucpBlack800,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    isApplyPosition = false;
+                                    isAllElection = true;
+                                    isElectionResult = false;
+                                  });
+                                },
+                                child: AnimatedContainer(
+                                  duration:
+                                  const Duration(milliseconds: 400),
+                                  height: 32.h,
+                                  width: 84.w,
+                                  decoration: BoxDecoration(
+                                    color: isAllElection
+                                        ? AppColor.ucpBlue600
+                                        : Colors.transparent,
+                                    borderRadius:
+                                    BorderRadius.circular(40.r),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      UcpStrings.elcetionTxt,
+                                      style: CreatoDisplayCustomTextStyle
+                                          .kTxtMedium
+                                          .copyWith(
+                                        fontSize: 14.sp,
+                                        color: isAllElection
+                                            ? AppColor.ucpWhite500
+                                            : AppColor.ucpBlack800,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    isApplyPosition = false;
+                                    isAllElection = false;
+                                    isElectionResult = true;
+                                  });
+                                },
+                                child: AnimatedContainer(
+                                  duration:
+                                  const Duration(milliseconds: 500),
+                                  height: 32.h,
+                                  width: 90.w,
+                                  decoration: BoxDecoration(
+                                    color: isElectionResult
+                                        ? AppColor.ucpBlue600
+                                        : Colors.transparent,
+                                    borderRadius:
+                                    BorderRadius.circular(40.r),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      UcpStrings.resultEText,
+                                      style: CreatoDisplayCustomTextStyle
+                                          .kTxtMedium
+                                          .copyWith(
+                                        fontSize: 14.sp,
+                                        color: isElectionResult
+                                            ? AppColor.ucpWhite500
+                                            : AppColor.ucpBlack800,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              )),
+        ],
       ),
     );
   },
@@ -223,11 +216,12 @@ class _ElectionMainScreenState extends State<ElectionMainScreen> {
   }
   Widget selectedScreen() {
     if (isApplyPosition) {
-      return const MemberEligiblePositionScreen();
+      return  MemberEligiblePositionScreen(votingBloc: votingBloc,);
     } else if (isAllElection) {
-      return ElectionScreens();
+      return ElectionScreens(votingBloc: votingBloc,);
     } else if (isElectionResult) {
-      return ElectionResultScren();
+      return ElectionResultScren(bloc: votingBloc,);
+     // return LeaderboardScreen();
     } else {
       return Text(UcpStrings.requestTxt);
     }

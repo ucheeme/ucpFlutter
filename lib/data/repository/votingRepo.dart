@@ -8,6 +8,7 @@ import '../../app/apiService/apiService.dart';
 import '../../app/apiService/appUrl.dart';
 import '../model/response/contestantInfo.dart';
 import '../model/response/defaultResponse.dart';
+import '../model/response/electionDetailResponse.dart';
 import '../model/response/profileUpdateResponse.dart';
 import 'FinanceRepo.dart';
 
@@ -15,7 +16,8 @@ class VoteRepository extends DefaultRepository {
   Future<Object> getEligiblePosition(PaginationRequest request) async {
     var response = await postRequest(
       null,
-      "${UCPUrls.getAllEligiblePosition}?PageSize=${request.pageSize}&PageNumber=${request.currentPage}",
+      "${UCPUrls.getAllEligiblePosition}?PageSize=${request
+          .pageSize}&PageNumber=${request.currentPage}",
       true,
       HttpMethods.get,
     );
@@ -61,14 +63,15 @@ class VoteRepository extends DefaultRepository {
   Future<Object> getAppliedMemberInfo(request) async {
     var response = await postRequest(
         null,
-        "${UCPUrls.getAppliedMemberInfo}?electionId=${request.electionId}&positionId=${request.positionId}",
+        "${UCPUrls.getAppliedMemberInfo}?electionId=${request
+            .electionId}&positionId=${request.positionId}",
         true,
         HttpMethods.get);
     var r = handleSuccessResponse(response);
     if (r is UcpDefaultResponse) {
       if (r.isSuccessful == true) {
         ContestantInfoResponse res =
-            contestantInfoFromJson(json.encode(r.data));
+        contestantInfoFromJson(json.encode(r.data));
         return res;
       } else {
         return r;
@@ -79,8 +82,24 @@ class VoteRepository extends DefaultRepository {
     }
   }
 
-
-
-
-
+  Future<Object> getElectionDetails(request) async {
+    var response = await postRequest(
+        null,
+        "${UCPUrls.getElectionDetails}?id=$request",
+        true,
+        HttpMethods.get);
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        ElectionDetails res =
+        electionDetailsFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
 }

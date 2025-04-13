@@ -19,6 +19,7 @@ import 'package:badges/badges.dart' as badges;
 import 'package:ucp/utils/sharedPreference.dart';
 import 'package:ucp/utils/ucpLoader.dart';
 import 'package:ucp/view/bottomSheet/enterAmoun.dart';
+import 'package:ucp/view/mainUi/mainScreen/home/homeTransactionHistory.dart';
 import 'package:ucp/view/mainUi/mainScreen/home/transactionHistory.dart';
 import 'package:ucp/view/mainUi/mainScreen/home/withdraw.dart';
 import 'package:ucp/view/mainUi/mainScreen/profile/profile.dart';
@@ -29,7 +30,10 @@ import '../../../../utils/apputils.dart';
 import '../../../../utils/colorrs.dart';
 import '../../../../utils/designUtils/reusableFunctions.dart';
 import '../../../../utils/designUtils/reusableWidgets.dart';
+import '../../bottomNav.dart';
+import '../finances/loan/loanMainScreen.dart';
 import 'homeWidgets.dart';
+import 'notification_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -49,6 +53,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      int year = DateTime.now().year-4;
+      bloc.add(GetMemberImage());
+      if(tempMemberNotifications.isEmpty){
+        bloc.add(GetMemberNotifications());
+      }
       if(tempAccounts.isEmpty){
         bloc.add(GetDashboardDataEvent());
       }else{
@@ -56,6 +65,15 @@ class _HomeScreenState extends State<HomeScreen> {
           accounts = tempAccounts;
           selectedOption =tempAccounts[0];
         });
+      }
+      if(tempMemberTransactionList.isEmpty){
+        bloc.add(GetMemberTransactions(
+          MemberTransactionRequest(
+            true,
+            "1",
+             "$year-01-01",
+             "${DateTime.now().year}-12-31",
+          )));
       }
       if(tempTransactionList.isEmpty){
         bloc.add(GetUserAccountSummary());
@@ -87,8 +105,20 @@ class _HomeScreenState extends State<HomeScreen> {
         if (state is DashboardError) {
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             AppUtils.showSnack(
-                "${state.errorResponse.message} ${state.errorResponse.data}",
+                "${state.errorResponse.message} ${state.errorResponse.data??""}",
                 context);
+          });
+          bloc.initial();
+        }
+        if(state is MemberImageState){
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            memberImageResponse = state.response;
+          });
+          bloc.initial();
+        }
+        if(state is MemberNotificationState){
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            tempMemberNotifications = state.response;
           });
           bloc.initial();
         }
@@ -136,6 +166,12 @@ class _HomeScreenState extends State<HomeScreen> {
         if(state is UcpPaymentModes){
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             tempPaymentModes = state.response;
+          });
+          bloc.initial();
+        }
+        if(state is MemberTransactionsState){
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            tempMemberTransactionList = state.response;
           });
           bloc.initial();
         }
@@ -222,7 +258,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 height40,
                                 SizedBox(
-                                  height: 79.h,
+                                  height: 80.h,
                                   width: double.infinity,
                                   child: Column(
                                     children: [
@@ -292,8 +328,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Padding(
                                     padding:
                                         EdgeInsets.symmetric(horizontal: 16.w),
-                                    child: Image.asset(
-                                        UcpStrings.ucpApplyLoanImage),
+                                    child: GestureDetector(
+                                      onTap: ()=> Get.to(Loanmainscreen()),
+                                      child: Image.asset(
+                                          UcpStrings.ucpApplyLoanImage),
+                                    ),
                                   ),
                                   height16,
                                   SizedBox(
@@ -312,7 +351,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     color: AppColor.ucpBlack800),
                                           ),
                                           GestureDetector(
-                                            onTap: () {},
+                                            onTap: () {
+                                              Get.to(Hometransactionhistory(transactionList: tempMemberTransactionList));
+                                            },
                                             child: Container(
                                               height: 28.h,
                                               width: 80.w,
@@ -357,9 +398,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   height12,
                                   SizedBox(
                                     height: 300.h,
-                                    child: transactionList.isEmpty?
+                                    child: tempMemberTransactionList.isEmpty?
                                     Center(
-                                      child: Text(UcpStrings.emptyTransactionTxt,style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                                      child: Text(UcpStrings.emptyTransactionTxt,
+                                          style: CreatoDisplayCustomTextStyle.
+                                          kTxtMedium.copyWith(
                                         fontWeight: FontWeight.w500,
                                         fontSize: 16.sp,
                                         color: AppColor.ucpBlack500
@@ -368,14 +411,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ListView(
                                       physics: NeverScrollableScrollPhysics(),
                                       padding: EdgeInsets.symmetric(horizontal:16.w),
-                                      children: transactionList
+                                      children: tempMemberTransactionList
                                           .mapIndexed(
                                               (element, index) => Padding(
                                                     padding: EdgeInsets.only(
                                                         bottom: 14.h),
-                                                    child: TransactWidget(
+                                                    child: HomeTransactWidget(
                                                       transaction: element,
-                                                      transactionType: element.debit==null?"credit":"debit",
+                                                      transactionType: element.debitacct==0?"credit":"debit",
                                                     ),
                                                   ))
                                           .toList(),
@@ -466,7 +509,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               width: 32.w,
                               decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  image: DecorationImage(image:tempMemberProfileData==null?AssetImage(UcpStrings.tempImage): NetworkImage(tempMemberProfileData!.profileImage??"")),
+                                  image: DecorationImage(image:memberImageResponse==null?AssetImage(UcpStrings.tempImage): NetworkImage(memberImageResponse?.profileImage??"")),
                                   border: Border.all(
                                       color: AppColor.ucpOrange200)),
                             ),
@@ -485,7 +528,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Center(
                         child: badges.Badge(
                           badgeContent: Text(
-                            '3',
+                            '${tempMemberNotifications.where((e) => e.isRead==false).length}',
                             style: CreatoDisplayCustomTextStyle
                                 .kTxtMedium
                                 .copyWith(
@@ -493,17 +536,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                 fontWeight: FontWeight.w500,
                                 color: AppColor.ucpWhite500),
                           ),
-                          child: Container(
-                            height: 32.h,
-                            width: 32.w,
-                            padding: EdgeInsets.all(6.h),
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: AppColor.ucpWhite500),
-                            child: Image.asset(
+                          child: GestureDetector(
+                            onTap: (){
+                              Get.to(NotificationScreen());
+                            },
+                            child:Image.asset(
                               UcpStrings.ucpNotificationImage,
-                              height: 10.h,
-                              width: 10.w,
+                              color: AppColor.ucpBlack500,
+                              height: 20.h,
+                              width: 20.w,
                             ),
                           ),
                         ),
@@ -523,7 +564,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
-        height: 81.h,
+        height: 85.h,
 
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

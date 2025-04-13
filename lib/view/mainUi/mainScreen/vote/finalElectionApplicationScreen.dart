@@ -1,16 +1,26 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:image_background_remover/image_background_remover.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-
+import 'package:ucp/view/mainUi/mainScreen/vote/ElectionApplicationFormScreen.dart';
+import 'package:http/http.dart' as http;
 import '../../../../utils/appStrings.dart';
 import '../../../../utils/colorrs.dart';
 import '../../../../utils/constant.dart';
 import '../../../../utils/designUtils/reusableWidgets.dart';
 
 class FinalElectionInFomation extends StatefulWidget {
-  const FinalElectionInFomation({super.key});
+  String contestantName;
+   FinalElectionInFomation({super.key, required this.contestantName});
 
   @override
   State<FinalElectionInFomation> createState() => _FinalElectionInFomationState();
@@ -20,12 +30,43 @@ class _FinalElectionInFomationState extends State<FinalElectionInFomation> {
   bool isApplyPosition = true;
   bool isAllElection = false;
   bool isElectionResult = false;
+  bool isLoading = true;
+  Uint8List? transparentImageBytes;
+
+  @override
+  void initState() {
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+
+      final result = await BackgroundRemover.instance.removeBg(
+        contestantProfileImage!.readAsBytesSync(),
+      );
+      ByteData? byteData=await result.toByteData(format: ImageByteFormat.png);
+      print("this is value: ${byteData?.buffer.asUint8List()}");
+      print("this is value: ${await result.toByteData()}");
+      print("this is value: $result");
+      setState(() {
+        transparentImageBytes = byteData?.buffer.asUint8List();
+        isLoading = false;
+      });
+    });
+    super.initState();
+    BackgroundRemover.instance.initializeOrt();
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.ucpWhite10,
       body: Stack(
        children: [
+         isLoading? const Center(
+           child: CircularProgressIndicator(
+             color: AppColor.ucpBlue500,
+           ),
+         ):
          SizedBox(
            child: ListView(
              padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -40,19 +81,36 @@ class _FinalElectionInFomationState extends State<FinalElectionInFomation> {
                      color: AppColor.ucpBlack500),
                ),
                //height12,
-               Container(
-                 height: 202.h,
-                 width: 343.w,
-                 decoration: BoxDecoration(
-                   borderRadius: BorderRadius.only(
-                     topLeft: Radius.circular(12.r),
-                     topRight: Radius.circular(12.r),),
-                   image: const DecorationImage(image: AssetImage(UcpStrings.sampleImageOne), fit: BoxFit.cover),
-                 ),
+               Stack(
+                 children: [
+                   Container(
+                     height: 202.h,
+                     width: 343.w,
+                     decoration: BoxDecoration(
+                       borderRadius: BorderRadius.only(
+                         topLeft: Radius.circular(12.r),
+                         topRight: Radius.circular(12.r),),
+                       image:  const DecorationImage(image:AssetImage(UcpStrings.contestanctBG), fit: BoxFit.cover),
+                     ),
+
+                   ),
+                   Container(
+                     height: 202.h,
+                     width: 343.w,
+                     decoration: BoxDecoration(
+                       borderRadius: BorderRadius.only(
+                         topLeft: Radius.circular(12.r),
+                         topRight: Radius.circular(12.r),),
+                       image:  DecorationImage(image: contestantProfileImage==null?AssetImage(UcpStrings.sampleImageOne):
+                       MemoryImage(transparentImageBytes!),
+                           fit: BoxFit.cover),
+                     ),
+                   )
+                 ],
                ),
                height20,
                Text(
-                 "Mikael Jackson",
+                 widget.contestantName,
                  style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
                    fontWeight: FontWeight.w500,
                    fontSize: 24.sp,
@@ -60,8 +118,9 @@ class _FinalElectionInFomationState extends State<FinalElectionInFomation> {
                  )
                ),
                Container(
-                 height: 600.h,
-                 child: SfPdfViewer.network("https://www.tutorialspoint.com/flutter/flutter_tutorial.pdf"),
+                 height: 400.h,
+                 color: Colors.transparent,
+                 child: SfPdfViewer.file(contestantsManifesto!),
                )
              ],
            ),
@@ -144,6 +203,8 @@ class _FinalElectionInFomationState extends State<FinalElectionInFomation> {
                                    isAllElection = true;
                                    isElectionResult = false;
                                  });
+                                 Get.back();
+                                 Get.back();
                                },
                                child: AnimatedContainer(
                                  duration:
@@ -222,6 +283,8 @@ class _FinalElectionInFomationState extends State<FinalElectionInFomation> {
       ),
     );
   }
+
+
   // ImageProvider<Object> imageValue() {
   //   if(true){
   //     return  NetworkImage(userDetails!.profilePic!,);

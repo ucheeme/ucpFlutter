@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -59,11 +60,48 @@ class _CameraOptionState extends State<CameraOption> {
 
 
   }
+  Future<File?> _compressImage(File file) async {
+    final dir = await getTemporaryDirectory();
+    final targetPath = '${dir.path}/compressed_image.jpg'; // Use a fixed filename
+
+    XFile? compressedFile = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      targetPath,
+      quality: 40, // Adjust quality for better compression
+    );
+
+    if (compressedFile != null) {
+      File finalFile = File(compressedFile.path);
+
+      // Ensure the file is ≤ 20KB, but prevent infinite recursion
+      if (finalFile.lengthSync() > 20 * 1024) {
+        return await _compressImageWithLowerQuality(finalFile);
+      }
+      return finalFile;
+    }
+    return null;
+  }
+
+// Compress with lower quality if the file is still > 20KB
+  Future<File?> _compressImageWithLowerQuality(File file) async {
+    final dir = await getTemporaryDirectory();
+    final targetPath = '${dir.path}/compressed_image_low.jpg';
+
+    XFile? compressedFile = await FlutterImageCompress.compressAndGetFile(
+      file.absolute.path,
+      targetPath,
+      quality: 20, // Reduce quality further
+    );
+
+    return compressedFile != null ? File(compressedFile.path) : null;
+  }
+
   Future<void> _resizeAndEncodeImage() async {
     final fileSize = await _image!.length();
 
     if (fileSize > 300 * 1024) {
       // Image size is greater than 300KB, resize the image
+      _compressImageWithLowerQuality(_image!);
       final tempDir = await getTemporaryDirectory();
       final tempPath = path.join(tempDir.path, path.basename(_image!.path));
 

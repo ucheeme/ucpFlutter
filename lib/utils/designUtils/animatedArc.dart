@@ -22,6 +22,7 @@ class _AnimatedArcState extends State<AnimatedArc>
 
   @override
   void initState() {
+    print("this os end ${widget.end}");
     super.initState();
 
     // Initialize the animation controller

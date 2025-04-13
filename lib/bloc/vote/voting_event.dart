@@ -16,3 +16,9 @@ class ApplyAsACandidateForElectionEvent extends VotingEvent {
   @override
   List<Object> get props => [];
 }
+
+class GetElectionDetailsEvent extends VotingEvent {
+  String electionId;
+  GetElectionDetailsEvent(this.electionId);
+  List<Object> get props => [];
+}

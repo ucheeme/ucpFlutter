@@ -5,7 +5,8 @@ import 'package:ucp/utils/colorrs.dart';
 
 class NoconnectionScreen extends StatelessWidget {
   Function() press;
-   NoconnectionScreen({super.key, required this.press});
+  String? description;
+   NoconnectionScreen({super.key, required this.press, this.description  });
 
   @override
   Widget build(BuildContext context) {

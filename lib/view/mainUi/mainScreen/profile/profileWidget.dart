@@ -17,8 +17,8 @@ class ProfileDataValue{
 
 List<ProfileDataValue> profileData =[
   ProfileDataValue(title:profileDataString[0], image:UcpStrings.ucpEditProfileImage, isToggle: false),
-  ProfileDataValue(title:profileDataString[1], image:UcpStrings.ucpWithdrawProfileImage, isToggle: false),
-  ProfileDataValue(title:profileDataString[2], image:UcpStrings.ucpRetirementProfileImage, isToggle: false),
+  //ProfileDataValue(title:profileDataString[1], image:UcpStrings.ucpWithdrawProfileImage, isToggle: false),
+  //ProfileDataValue(title:profileDataString[2], image:UcpStrings.ucpRetirementProfileImage, isToggle: false),
   ProfileDataValue(title:profileDataString[3], image:UcpStrings.ucpBiometericProfileImage, isToggle: true),
   ProfileDataValue(title:profileDataString[4], image:UcpStrings.ucpChangePasswordProfileImage, isToggle: false),
   ProfileDataValue(title:profileDataString[5], image:UcpStrings.ucpContributionProfileImage, isToggle: false),
@@ -38,7 +38,6 @@ class ProfileListDesign extends StatefulWidget {
   @override
   State<ProfileListDesign> createState() => _ProfileListDesignState();
 }
-
 class _ProfileListDesignState extends State<ProfileListDesign> {
   @override
   Widget build(BuildContext context) {
@@ -85,3 +84,87 @@ class _ProfileListDesignState extends State<ProfileListDesign> {
   }
 }
 
+class SupportWidget extends StatelessWidget {
+  String iconImage;
+  String mainHeader;
+  String messageBody;
+  String contact;
+  String instruction;
+  Function()? onTap;
+  SupportWidget({super.key,
+    this.onTap,
+     required this.iconImage,
+     required this.contact,
+     required this.mainHeader,
+     required this.messageBody,
+    required this.instruction
+   });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 281.h,
+        width: 343.w,
+        padding: EdgeInsets.symmetric(horizontal: 18.w,vertical: 20.h),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(11.r),
+          color: AppColor.ucpWhite500
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.asset(iconImage,height: 24.h,width: 24.w,),
+            Gap(16.h),
+            SizedBox(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(mainHeader,
+                  style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                    fontSize: 20.sp,fontWeight: FontWeight.w500,
+                    color: AppColor.ucpBlack500
+                  ),),
+                  Image.asset(UcpStrings.ucpSupportFWDArrow,height: 24.h,width: 24.w,),
+                ],
+              ),
+            ),
+            Gap(24.h),
+            Text(messageBody,
+              style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14.sp,
+                  color: AppColor.ucpBlack700
+              ),
+            ),
+            Gap(24.h),
+            Container(
+              height: 35.h,
+              padding: EdgeInsets.all(6.h),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.r),
+                color: AppColor.ucpBlue50
+              ),
+              child: Text(contact,
+              style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                fontWeight: FontWeight.w500,
+                fontSize: 14.sp,
+                color: AppColor.ucpBlue600
+              ),
+              ),
+            ),
+            Gap(14.h),
+            Text(instruction,
+              style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14.sp,
+                  color: AppColor.ucpBlue600
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

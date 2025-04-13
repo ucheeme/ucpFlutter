@@ -286,7 +286,8 @@ class _OrderRequestBreakdownScreenState extends State<OrderRequestBreakdownScree
                                         color: AppColor.ucpBlack500
                                     ),
                                   ),
-                                  Text(NumberFormat.currency(name: "NGN",decimalDigits: 0).format(element.unitPrice),
+                                  Text(NumberFormat.currency(name: "NGN",decimalDigits: 0).format(
+                                      element.unitPrice*element.quantity),
                                     style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
                                         fontSize: 14.sp,
                                         fontWeight: FontWeight.w500,

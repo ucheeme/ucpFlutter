@@ -6,6 +6,7 @@ import 'package:ucp/data/repository/votingRepo.dart';
 
 import '../../data/model/request/applyAsContestant.dart';
 import '../../data/model/response/allElections.dart';
+import '../../data/model/response/electionDetailResponse.dart';
 import '../../utils/apputils.dart';
 
 part 'voting_event.dart';
@@ -23,6 +24,10 @@ class VotingBloc extends Bloc<VotingEvent, VotingState> {
     });
     on<ApplyAsACandidateForElectionEvent>((event, emit) async {
       handleApplyAsACandidateForElectionEvent(event);
+    });
+
+    on<GetElectionDetailsEvent>((event, emit)async{
+      handleGetElectionDetailsEvent(event);
     });
   }
 
@@ -48,8 +53,28 @@ class VotingBloc extends Bloc<VotingEvent, VotingState> {
     emit(VotingInitial());
   }
 
+  void handleGetElectionDetailsEvent(GetElectionDetailsEvent event)async{
+    emit(VotingIsLoading());
+    try{
+      final response = await voteRepository.getElectionDetails(
+          event.electionId);
+      if (response is ElectionDetails) {
+        emit(ElectionDetailLoaded(response));
+        print("I amherrrrrrrrr");
+      } else {
+        emit(VotingError(response as UcpDefaultResponse));
+      }
+
+    }catch(e,trace){
+      print(e);
+      print(trace);
+      emit(VotingError(AppUtils.defaultErrorResponse(msg: "Something went wrong")));
+    }
+  }
+
   void handleApplyAsACandidateForElectionEvent(
-      ApplyAsACandidateForElectionEvent event) async {
+      ApplyAsACandidateForElectionEvent event)
+  async {
     emit(VotingIsLoading());
     try {
       final response = await voteRepository.applyAsACandidateForElection(

@@ -9,6 +9,31 @@ class GetAllCooperativesEvent extends OnBoardingEvent{
   @override
   List<Object> get props => [];
 }
+class GetAllCountriesEvent extends OnBoardingEvent{
+  const GetAllCountriesEvent();
+  @override
+  List<Object> get props => [];
+}
+
+class GetShopItemsEvent extends OnBoardingEvent {
+  const GetShopItemsEvent();
+  @override
+  List<Object> get props => [];
+}
+
+class GetAllStatesEvent extends OnBoardingEvent{
+  String countryId;
+   GetAllStatesEvent(this.countryId);
+  @override
+  List<Object> get props => [];
+}
+
+class GetMemberSignUpCostEvent extends OnBoardingEvent{
+  String cooperativeId;
+  GetMemberSignUpCostEvent(this.cooperativeId);
+  @override
+  List<Object> get props => [];
+}
 
 class CreateAccountEvent extends OnBoardingEvent{
   final SignupRequest request;
@@ -41,6 +66,20 @@ class SendSignUpOtpEvent extends OnBoardingEvent{
 class SendLoginOtpEvent extends OnBoardingEvent{
   LoginSendOtpRequest request;
   SendLoginOtpEvent(this.request);
+  @override
+  List<Object> get props => [];
+}
+
+class ForgotPasswordEvent extends OnBoardingEvent{
+  ForgotPasswordRequest request;
+  ForgotPasswordEvent(this.request);
+  @override
+  List<Object> get props => [];
+}
+
+class GetCooperativePrivilegesEvent extends OnBoardingEvent{
+  String cooperativeId;
+  GetCooperativePrivilegesEvent(this.cooperativeId);
   @override
   List<Object> get props => [];
 }

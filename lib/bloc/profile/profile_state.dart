@@ -20,6 +20,13 @@ class ProfileError extends ProfileState {
   List<Object> get props => [errorResponse];
 }
 
+class UcpBanks extends ProfileState{
+  List<ListOfBank> response;
+  UcpBanks(this.response);
+  @override
+  List<Object> get props => [response];
+}
+
 class ProfileLoaded extends ProfileState {
   MemberProfileData data;
   ProfileLoaded( this.data);
@@ -46,4 +53,18 @@ class MemberSavingAccountsLoaded extends ProfileState {
   MemberSavingAccountsLoaded(this.data);
   @override
   List<Object> get props => [data];
+}
+
+class MemberBankDetailsAdded extends ProfileState {
+  UcpDefaultResponse data;
+  MemberBankDetailsAdded(this.data);
+  @override
+  List<Object> get props => [data];
+}
+
+class MemberImageState extends ProfileState{
+  MemberImageResponse response;
+  MemberImageState(this.response);
+  @override
+  List<Object> get props => [response];
 }

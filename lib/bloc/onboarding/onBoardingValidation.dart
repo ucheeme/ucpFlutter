@@ -207,16 +207,16 @@ class OnboardingValidation {
       ) =>
           true);
 
-  Stream<bool> get completeSignupFourthPageValidation => Rx.combineLatest4(
+  Stream<bool> get completeSignupFourthPageValidation => Rx.combineLatest3(
       homeAddress,
       country,
       state,
-      city,
+
       (
         homeAddress,
         country,
         state,
-        city,
+
       ) =>
           true);
 
@@ -385,7 +385,7 @@ class OnboardingValidation {
       return false;
     } else {
       if (isMember) {
-        if (_membershipAmountSubject.valueOrNull != null &&
+        if (
             selectedCooperative != null &&
             _memberSubject.valueOrNull != null) {
           return true;
@@ -394,8 +394,7 @@ class OnboardingValidation {
           return false;
         }
       } else {
-        if (_membershipAmountSubject.valueOrNull != null &&
-            selectedCooperative != null) {
+        if (selectedCooperative != null) {
           print("Not Member Donee");
           return true;
         } else {

@@ -37,6 +37,7 @@ class _RefundWidgetState extends State<RefundWidget> {
             height: 46.h,
             width: 46.w,
             child: AnimatePieChart(
+             // total: widget.total,
               total: widget.total,
               colorBackground: widget.data.paymentStatus.toLowerCase() == "outstanding"?AppColor.ucpDanger150:AppColor.ucpSuccess150,
               color:  widget.data.paymentStatus.toLowerCase() == "outstanding"?AppColor.ucpDanger50:AppColor.ucpSuccess50,
@@ -45,10 +46,11 @@ class _RefundWidgetState extends State<RefundWidget> {
                 "amountToPay": widget.data.totalRepayAmount.runtimeType==int?(widget.data.principalAmount*widget.index):
                 (widget.data.totalRepayAmount * widget.index),
               },
-              colorList: widget.data.paymentStatus.toLowerCase() == "outstanding"?[
+              colorList: widget.data.paymentStatus.toLowerCase() == "outstanding"?
+              [
                 AppColor.ucpDanger50,
                 AppColor.ucpDanger150,
-              ]:[
+              ]: [
                 AppColor.ucpSuccess50,
                 AppColor.ucpSuccess150,
               ],

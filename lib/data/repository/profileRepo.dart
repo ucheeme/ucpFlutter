@@ -3,10 +3,15 @@ import 'dart:convert';
 import 'package:ucp/data/repository/defaultRepository.dart';
 
 import '../../app/apiService/apiService.dart';
+import '../../app/apiService/apiStatus.dart';
 import '../../app/apiService/appUrl.dart';
+import '../model/request/addMemberBankDetailRequest.dart';
+import '../model/request/logOutRequest.dart';
 import '../model/request/updateProfileRequest.dart';
 import '../model/response/defaultResponse.dart';
+import '../model/response/listOfBankResponse.dart';
 import '../model/response/memberData.dart';
+import '../model/response/memberImageResponse.dart';
 import '../model/response/memberSavingAccount.dart';
 import '../model/response/memberSavingAccounts.dart';
 import '../model/response/profileUpdateResponse.dart';
@@ -15,6 +20,23 @@ import 'FinanceRepo.dart';
 String? ucpFilePath ;
 String? ucpFilePath2 ;
 class ProfileRepository extends DefaultRepository{
+
+  Future<Object> getBanks() async {
+    var response = await ApiService.makeApiCall(null, UCPUrls.getBankList,
+        requireAccess: true,
+        method: HttpMethods.get,
+        baseUrl: UCPUrls.baseUrl);
+    print("this is the response: $response");
+    if (response is Success) {
+      List<ListOfBank> res =
+      listOfBankFromJson(response.response as String);
+      return res;
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+
   Future<Object> getMemberProfile() async {
     var response = await postRequest(
       null,
@@ -96,5 +118,68 @@ class ProfileRepository extends DefaultRepository{
       handleErrorResponse(response);
       return errorResponse!;
     }
+  }
+
+  Future<Object>addMemberBankAccountDetails(AddBankDetailRequest request)async{
+    var response = await postRequest(
+        request,
+        UCPUrls.addMemberBankAccountDetails,
+        true,
+        HttpMethods.post,);
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        UcpDefaultResponse res = ucpDefaultResponseFromJson(json.encode(r));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+
+  Future<Object> logOutUser(LogOutRequest request)async{
+    var response = await postRequest(
+      request,
+      UCPUrls.logOut,
+      true,
+      HttpMethods.post,
+    );
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        UcpDefaultResponse res = ucpDefaultResponseFromJson(json.encode(r));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+
+  Future<Object> getMemberImage() async {
+    var response = await postRequest(
+      null, UCPUrls.getMemberImage,
+      true,
+      HttpMethods.get,
+    );
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        MemberImageResponse res =
+        memberImageResponseFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+
   }
 }

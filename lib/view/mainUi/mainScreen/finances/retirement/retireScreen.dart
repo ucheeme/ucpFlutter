@@ -203,9 +203,10 @@ class _RetireScreenState extends State<RetireScreen> {
                         children: [
                           Column(
                             children: [
-                              Gap(170.h),
+                              Gap(150.h),
                               Container(
-                                height: 230.h,
+                                height: 200.h,
+                                margin: EdgeInsets.symmetric(vertical: 10.h),
                                 decoration: BoxDecoration(
                                     image: DecorationImage(
                                         fit: BoxFit.fill,
@@ -332,16 +333,151 @@ class _RetireScreenState extends State<RetireScreen> {
                                   ],
                                 ),
                               ),
+                              Container(
+                                height: 160.h,
+                                width: 343.w,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      fit: BoxFit.fill,
+                                      image: AssetImage(holderImager)),
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+
+                                  children: [
+                                    Gap(20.h),
+                                    SizedBox(
+                                      height: 50.h,
+                                      width: 303.w,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          SizedBox(
+                                            height: 49.h,
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text("MEMBER BALANCE",
+                                                  style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
+                                                      color: AppColor.ucpWhite500,
+                                                      fontSize: 13.sp,
+                                                      fontWeight: FontWeight.w400
+                                                  ),),
+                                                Text(selectedAccoutBalanceInfo.accountBalance.isNegative
+                                                    ? "- ${NumberFormat.currency(symbol: 'NGN', decimalDigits: 0).format(double.parse(selectedAccoutBalanceInfo.accountBalance.toString().replaceAll("-", "")))}"
+                                                    : NumberFormat.currency(
+                                                    symbol: 'NGN',
+                                                    decimalDigits: 0)
+                                                    .format(selectedAccoutBalanceInfo
+                                                    ?.accountBalance ?? 0),
+                                                  style: CreatoDisplayCustomTextStyle.kTxtBold.copyWith(
+                                                      color: AppColor.ucpWhite500,
+                                                      fontSize: 16.sp,
+                                                      fontWeight: FontWeight.w700
+                                                  ),),
+
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 49.h,
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text("LOAN PRINCIPAL",
+                                                  style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
+                                                      color: AppColor.ucpWhite500,
+                                                      fontSize: 13.sp,
+                                                      fontWeight: FontWeight.w400
+                                                  ),),
+                                                Text(selectedAccoutBalanceInfo.loanPrinicpal.isNegative
+                                                    ? "- ${NumberFormat.currency(symbol: 'NGN', decimalDigits: 0).format(double.parse(selectedAccoutBalanceInfo.loanPrinicpal.toString().replaceAll("-", "")))}"
+                                                    : NumberFormat.currency(
+                                                    symbol: 'NGN',
+                                                    decimalDigits: 0)
+                                                    .format(selectedAccoutBalanceInfo
+                                                    ?.loanPrinicpal ?? 0),
+                                                  style: CreatoDisplayCustomTextStyle.kTxtBold.copyWith(
+                                                      color: AppColor.ucpWhite500,
+                                                      fontSize: 16.sp,
+                                                      fontWeight: FontWeight.w700
+                                                  ),),
+
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Gap(16.h),
+                                    SizedBox(
+                                      height: 50.h,
+                                      width: 303.w,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          SizedBox(
+                                            height: 49.h,
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text("LOAN INTEREST",
+                                                  style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
+                                                      color: AppColor.ucpWhite500,
+                                                      fontSize: 13.sp,
+                                                      fontWeight: FontWeight.w400
+                                                  ),),
+                                                Text("${selectedAccoutBalanceInfo.loanInterest}%",
+                                                  style: CreatoDisplayCustomTextStyle.kTxtBold.copyWith(
+                                                      color: AppColor.ucpWhite500,
+                                                      fontSize: 16.sp,
+                                                      fontWeight: FontWeight.w700
+                                                  ),),
+
+                                              ],
+                                            ),
+                                          ),
+                                          Spacer(),
+                                          SizedBox(
+                                            height: 49.h,
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text("CHARGES",
+                                                  style: CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
+                                                      color: AppColor.ucpWhite500,
+                                                      fontSize: 13.sp,
+                                                      fontWeight: FontWeight.w400
+                                                  ),),
+                                                Text("",
+                                                  style: CreatoDisplayCustomTextStyle.kTxtBold.copyWith(
+                                                      color: AppColor.ucpWhite500,
+                                                      fontSize: 16.sp,
+                                                      fontWeight: FontWeight.w700
+                                                  ),),
+
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Gap(20.h),
+                                  ],
+                                ),
+                              ),
+
                               SingleChildScrollView(
                                 child: Container(
-                                  height: Get.height.h,
+                                  height: MediaQuery.of(context).size.height,
                                   color: AppColor.ucpWhite10,
                                   child: Column(
                                     children: [
                                       Gap(20.h),
                                       height16,
                                       SizedBox(
-                                          height: 400.h,
+                                          height: MediaQuery.of(context).size.height*0.5,
                                           width: MediaQuery.of(context).size.width,
                                           child:Padding(
                                             padding:  EdgeInsets.symmetric(horizontal: 16.w),
@@ -383,8 +519,8 @@ class _RetireScreenState extends State<RetireScreen> {
                                                 height8,
                                                 SizedBox(
                                                   height: 200.h,
-                                                  child: ListView(
-                                                    physics: NeverScrollableScrollPhysics(),
+                                                  child: Column(
+                                                   // physics: NeverScrollableScrollPhysics(),
                                                       children: modeOfPayment
                                                           .mapIndexed((element, index) =>
                                                           GestureDetector(

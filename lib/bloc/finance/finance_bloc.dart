@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:ucp/data/model/request/saveToAccount.dart';
 import 'package:ucp/data/model/request/withdrawalRequest.dart';
 import 'package:ucp/data/model/response/loanProductResponse.dart';
 import 'package:ucp/data/model/response/loanRequestBreakDown.dart';
@@ -15,6 +16,7 @@ import '../../data/model/response/loanFrequencyResponse.dart';
 import '../../data/model/response/loanProductDetailsFI.dart';
 import '../../data/model/response/loanScheduleForRefund.dart';
 import '../../data/model/response/memberSavingAccount.dart';
+import '../../data/model/response/paymentResponse.dart';
 import '../../data/model/response/usersLoans.dart';
 import '../../data/model/response/withdrawBalanceInfo.dart';
 import '../../data/model/response/withdrawTransactionHistory.dart';
@@ -52,6 +54,8 @@ class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
     on<GetAllLoanGuarantorsRequestEvent>((event,emit){handleGetAllLoanGuarantorsEvent(event);});
     on<GuarantorAcceptRequestEvent>((event,emit){handleGuarantorAcceptRequestEvent(event);});
     on<GuarantorRejectRequestEvent>((event,emit){handleGuarantorRejectRequestEvent(event);});
+    on<RepayLoanEvent>((event,emit){handleRepayLoanEvent(event);});
+    on<VerifyPaymentEvent>((event,emit){handleVerifyPaymentEvent(event);});
   }
   void handleGetMemberSavingAccounts()async{
     emit(FinanceIsLoading());
@@ -376,6 +380,40 @@ class FinanceBloc extends Bloc<FinanceEvent, FinanceState> {
     }catch(e,trace){
       print(trace);
       emit(FinanceError(AppUtils.defaultErrorResponse(msg: "Something went wrong")));
+    }
+  }
+
+  void handleRepayLoanEvent(RepayLoanEvent event) async {
+    emit(FinanceIsLoading());
+    try {
+      final response = await financeRepository.payLoan(event.request);
+      if (response is PaymentSuccessfulResponse) {
+        emit(LoanRepayedState(response));
+        AppUtils.debug("success");
+      } else {
+        emit(FinanceError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }
+    } catch (e, trace) {
+      print(trace);
+      print("The answer");
+      emit(FinanceError(
+          AppUtils.defaultErrorResponse(msg: "Something went wrong")));
+    }
+  }
+
+  void handleVerifyPaymentEvent(VerifyPaymentEvent event)async {
+    emit(FinanceIsLoading());
+    try{
+      final response = await financeRepository.verifyPayment(event.reference);
+      if(response is UcpDefaultResponse && response.isSuccessful == true){
+        emit(PaymentVerifiedState(response));
+      }
+    }catch (e, trace) {
+      print(trace);
+      print("The answer");
+      emit(FinanceError(
+          AppUtils.defaultErrorResponse(msg: "Something went wrong")));
     }
   }
 

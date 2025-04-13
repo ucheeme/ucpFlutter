@@ -55,6 +55,13 @@ class UcpPaymentModes extends DashboardState{
   List<Object> get props => [response];
 }
 
+class UcpLoanPaymentModes extends DashboardState{
+  List<PaymentModes> response;
+  UcpLoanPaymentModes(this.response);
+  @override
+  List<Object> get props => [response];
+}
+
 class UcpBanks extends DashboardState{
   List<ListOfBank> response;
   UcpBanks(this.response);
@@ -67,4 +74,38 @@ class PaymentSuccessState extends DashboardState{
   PaymentSuccessState(this.response);
   @override
   List<Object> get props => [];
+}
+
+class MemberImageState extends DashboardState{
+  MemberImageResponse response;
+  MemberImageState(this.response);
+  @override
+  List<Object> get props => [response];
+}
+
+class MemberNotificationState extends DashboardState{
+  List<UcpNotification> response;
+  MemberNotificationState(this.response);
+  @override
+  List<Object> get props => [response];
+}
+
+class MemberNotificationClearState extends DashboardState{
+  UcpDefaultResponse response;
+  MemberNotificationClearState(this.response);
+  @override
+  List<Object> get props => [response];
+}
+
+class MarkNotificationReadState extends DashboardState{
+  UcpDefaultResponse response;
+  MarkNotificationReadState(this.response);
+  @override
+  List<Object> get props => [response];
+}
+class MemberTransactionsState extends DashboardState{
+  List<MemberTransactionReport> response;
+  MemberTransactionsState(this.response);
+  @override
+  List<Object> get props => [response];
 }

@@ -15,6 +15,8 @@ import 'package:ucp/utils/colorrs.dart';
 import 'package:ucp/utils/ucpLoader.dart';
 import 'package:ucp/view/mainUi/mainScreen/profile/profile.dart';
 
+
+import '../../../../bloc/dashboard/dashboard_bloc.dart' as dashboard;
 import '../../../../utils/appStrings.dart';
 import '../../../../utils/apputils.dart';
 import '../../../../utils/cameraOption.dart';
@@ -35,7 +37,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 @override
   void initState() {
   WidgetsBinding.instance.addPostFrameCallback((_){
+    bloc.validation.fullNameController.text = "${tempMemberProfileData?.firstName} "
+        "${tempMemberProfileData?.otherName} ${tempMemberProfileData?.lastName} ";
+    bloc.validation.emailController.text = "${tempMemberProfileData?.email}";
+    bloc.validation.phoneController.text = "${tempMemberProfileData?.phone}";
+    bloc.validation.addressController.text = "${tempMemberProfileData?.residentState}, ${tempMemberProfileData?.residentCountry}";
+    bloc.validation.setFullName(  bloc.validation.fullNameController.text);
+    bloc.validation.setEmail(  bloc.validation.emailController.text);
+    bloc.validation.setPhoneNumber(  bloc.validation.phoneController.text);
+    bloc.validation.setAddress(  bloc.validation.addressController.text);
     bloc.validation.memberController.text ="Member 0001";
+    bloc.validation.setMember(bloc.validation.memberController.text);
   });
 
     super.initState();
@@ -51,8 +63,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           });
           bloc.initial();
         }
-        if(state is ProfileUpdated){
+        if(state is MemberImageState){
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            dashboard.memberImageResponse = state.response;
             showCupertinoModalBottomSheet(
               topRadius: Radius.circular(15.r),
               backgroundColor: AppColor.ucpWhite500,
@@ -61,14 +74,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 return Container(
                   height: 400.h,
                   color: AppColor.ucpWhite500,
-                  child: LoadLottie(lottiePath: UcpStrings.ucpLottieSuccess1,
-                    bottomText: state.data.retmsg,
+                  child: const LoadLottie(lottiePath: UcpStrings.ucpLottieSuccess1,
+                    bottomText: "Profile Updated Successfully",
                   ),
                 );
               },
             ).then((value){
               Get.back(result: true);
             });
+          });
+          bloc.initial();
+        }
+        if(state is ProfileUpdated){
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            bloc.add(GetMemberImage());
           });
           bloc.initial();
         }
@@ -359,10 +378,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       final value = convertBase64Image(selectedImage!);
       return MemoryImage(value);
     }else{
-      if(tempMemberProfileData?.profileImage==null||tempMemberProfileData!.profileImage!.isEmpty){
+      if(dashboard.memberImageResponse?.profileImage==null||dashboard.memberImageResponse!.profileImage!.isEmpty){
         return  const AssetImage(UcpStrings.tempImage,);
-      }else if(tempMemberProfileData?.profileImage!=null||tempMemberProfileData!.profileImage!.isNotEmpty){
-        return NetworkImage(tempMemberProfileData!.profileImage!);
+      }else if(dashboard.memberImageResponse?.profileImage!=null||dashboard.memberImageResponse!.profileImage!.isNotEmpty){
+        return NetworkImage(dashboard.memberImageResponse!.profileImage!);
       }
     }
 

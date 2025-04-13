@@ -1,19 +1,30 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:ucp/data/model/request/loginReq.dart';
 import 'package:ucp/utils/constant.dart';
+import 'package:ucp/utils/ucpLoader.dart';
 import 'package:ucp/view/mainUi/onBoardingFlow/loginFlow/loginD.dart';
 
 import '../../app/customAnimations/animationManager.dart';
+import '../../app/main/main.dart';
+import '../../bloc/onboarding/on_boarding_bloc.dart';
 import '../../utils/appStrings.dart';
+import '../../utils/apputils.dart';
 import '../../utils/colorrs.dart';
 import '../../utils/designUtils/reusableWidgets.dart';
 import '../../utils/sharedPreference.dart';
+import '../mainUi/bottomNav.dart';
 import 'onBoarding.dart';
-Future<bool> bioMetric = MySharedPreference.getBiometricStatus();
+
+bool bioMetric = MySharedPreference.getBiometricStatus();
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -25,6 +36,9 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late AnimationManager _animationManager;
+  late OnBoardingBloc bloc;
+  final LocalAuthentication _localAuth = LocalAuthentication();
+  bool _isAuthenticated = false;
 
   @override
   void initState() {
@@ -43,6 +57,8 @@ class _SplashScreenState extends State<SplashScreen>
     Future.delayed(const Duration(milliseconds: 500), () {
       _controller.forward();
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {});
   }
 
   @override
@@ -51,115 +67,214 @@ class _SplashScreenState extends State<SplashScreen>
     super.dispose();
   }
 
+  void _handleOnBoardingErrorState(OnBoardingError state) {
+    AppUtils.showSnack(
+      "${state.errorResponse.message} ${state.errorResponse.data}",
+      context,
+    );
+    bloc.initial();
+  }
+
+  Future<void> _authenticate() async {
+    try {
+      bool canCheckBiometrics = await _localAuth.canCheckBiometrics;
+      bool isAuthenticated = false;
+
+      if (canCheckBiometrics) {
+        isAuthenticated = await _localAuth.authenticate(
+          localizedReason: 'Authenticate to access the app',
+          options: AuthenticationOptions(
+            biometricOnly: true,
+          ),
+        );
+      }
+      setState(() {
+        _isAuthenticated = isAuthenticated;
+      });
+      if (_isAuthenticated) {
+        // Get.back();
+        LoginRequest? request = await authManager.attemptAutoLogin();
+        if (request != null) {
+          bloc.add(LoginEvent(request));
+        }
+      }
+    } catch (e) {
+      print("Error during authentication: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColor.ucpWhite500, // Replace with your AppColor if needed
-      body: Padding(
-        padding:  EdgeInsets.symmetric(horizontal: 20.w),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Gap(150.h),
-              SizedBox(
-                height: 350.05.h,
-                width: 343.w,
+    bloc = BlocProvider.of<OnBoardingBloc>(context);
+    return BlocBuilder<OnBoardingBloc, OnBoardingState>(
+      builder: (context, state) {
+        if (state is LoginSuccess) {
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            memberLoginDetails = state.response.memberLoginDetails;
+            accessToken = state.response.token;
+            refreshAccessToken = state.response.refreshToken;
+            bloc.add(GetShopItemsEvent());
+          });
+          bloc.initial();
+        }
+
+        if (state is ShopItemsLoaded) {
+          // Ensuring the widget tree is not rebuilt during the callback
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            // Extract the shop items list from the state
+            badgeCount = state.response.length;
+
+            Get.offAll(MyBottomNav(), predicate: (route) => false);
+          });
+          // Reinitializing the bloc after processing the items
+          bloc.initial();
+        }
+        if (state is OnBoardingError) {
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            _handleOnBoardingErrorState(state);
+          });
+        }
+        ;
+        return UCPLoadingScreen(
+          visible: state is OnboardingIsLoading,
+          loaderWidget: LoadingAnimationWidget.discreteCircle(
+            color: AppColor.ucpBlue500,
+            size: 30.h,
+            secondRingColor: AppColor.ucpBlue100,
+          ),
+          //visible: true,
+          overlayColor: AppColor.ucpBlack400,
+          transparency: 0.2,
+          child: Scaffold(
+            backgroundColor: AppColor.ucpWhite500,
+            // Replace with your AppColor if needed
+            body: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: SingleChildScrollView(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
+                    Gap(150.h),
+                    SizedBox(
+                      height: 355.05.h,
+                      width: 343.w,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          AnimatedBuilder(
+                            animation: _controller,
+                            builder: (context, child) {
+                              return Transform.translate(
+                                offset: _animationManager
+                                        .imageSlideAnimation.value *
+                                    MediaQuery.of(context).size.width,
+                                child: Transform.scale(
+                                  scale: _animationManager
+                                      .imageScaleAnimation.value,
+                                  child: Transform.translate(
+                                    offset: _animationManager
+                                            .imageSlideUpAnimation.value *
+                                        10,
+                                    child: Image.asset(
+                                      'assets/images/UCP_logo_no_BG.png', // Replace with your image asset
+                                      // Replace with responsive dimensions if needed
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          AnimatedBuilder(
+                            animation: _controller,
+                            builder: (context, child) {
+                              return Transform.translate(
+                                offset: _animationManager
+                                        .contentSlideAnimation.value *
+                                    MediaQuery.of(context).size.height,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 52.h,
+                                      width: 343.w,
+                                      child: Text(
+                                        UcpStrings.onboard1,
+                                        style: CreatoDisplayCustomTextStyle
+                                            .kTxtMedium
+                                            .copyWith(
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w400,
+                                          color: AppColor.ucpBlack800,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      //height: 96.h,
+                                      width: 343.w,
+                                      child: Text(
+                                        UcpStrings.onboard2,
+                                        style: CreatoDisplayCustomTextStyle
+                                            .kTxtMedium
+                                            .copyWith(
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w400,
+                                          color: AppColor.ucpBlack800,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                   Gap(230.h),
                     AnimatedBuilder(
                       animation: _controller,
                       builder: (context, child) {
                         return Transform.translate(
-                          offset: _animationManager.imageSlideAnimation.value *
-                              MediaQuery.of(context).size.width,
-                          child: Transform.scale(
-                            scale: _animationManager.imageScaleAnimation.value,
-                            child: Transform.translate(
-                              offset: _animationManager.imageSlideUpAnimation.value*10,
-                              child: Image.asset(
-                                'assets/images/UCP_logo_no_BG.png', // Replace with your image asset
-                                // Replace with responsive dimensions if needed
-                              ),
+                          offset:
+                              _animationManager.contentSlideAnimation.value *
+                                  MediaQuery.of(context).size.height,
+                          child: CustomButton(
+                            onTap: () async {
+                              if (bioMetric) {
+                                _authenticate();
+                              } else {
+                                Get.to(OnBoarding());
+                              }
+                            },
+                            height: 51.h,
+                            width: 343.w,
+                            textStyle: CreatoDisplayCustomTextStyle.kTxtMedium
+                                .copyWith(
+                              color: AppColor.ucpWhite500,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16.sp,
                             ),
+                            buttonText: UcpStrings.continueTxt,
+                            buttonColor: AppColor.ucpBlue500,
+                            borderRadius: 25.r,
+                            textColor: AppColor.ucpWhite500,
+                            textfontSize: 16.sp,
                           ),
                         );
                       },
                     ),
-                    AnimatedBuilder(
-                      animation: _controller,
-                      builder: (context, child) {
-                        return Transform.translate(
-                          offset: _animationManager.contentSlideAnimation.value *
-                              MediaQuery.of(context).size.height,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                height: 52.h,
-                                width: 343.w,
-                                child:  Text(
-                                  UcpStrings.onboard1,
-                                  style:CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColor.ucpBlack800,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                              SizedBox(
-                                //height: 96.h,
-                                width: 343.w,
-                                child:  Text(
-                                  UcpStrings.onboard2,
-                                  style:CreatoDisplayCustomTextStyle.kTxtRegular.copyWith(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColor.ucpBlack800,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              )
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                    SizedBox(
+                      height: 100.h,
+                    )
                   ],
                 ),
               ),
-              Gap(178.95.h),
-              AnimatedBuilder(
-                animation: _controller,
-                builder: (context, child) {
-                  return Transform.translate(
-                    offset: _animationManager.contentSlideAnimation.value *
-                        MediaQuery.of(context).size.height,
-                    child:CustomButton(
-                      onTap: () { Get.to(OnBoarding()); },
-                      height: 51.h,
-                      width: 343.w,
-                      textStyle:CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
-                        color:AppColor.ucpWhite500,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16.sp,
-                      ) ,
-                      buttonText: UcpStrings.continueTxt,
-                      buttonColor: AppColor.ucpBlue500,
-                      borderRadius: 25.r,
-                      textColor: AppColor.ucpWhite500,
-                      textfontSize: 16.sp,
-                    ),
-                  );
-                },
-              ),
-              // Spacer(flex: 2,),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

@@ -37,3 +37,10 @@ class ApplyAsACandidateForElectionLoaded extends VotingState {
   @override
   List<Object> get props => [response];
 }
+
+class ElectionDetailLoaded extends VotingState {
+  final ElectionDetails response;
+  ElectionDetailLoaded(this.response);
+  @override
+  List<Object> get props => [response];
+}

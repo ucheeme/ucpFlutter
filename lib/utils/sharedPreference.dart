@@ -1,10 +1,14 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ucp/data/model/request/saveToAccount.dart';
+import 'package:ucp/data/model/response/allCountries.dart';
 import 'package:ucp/data/model/response/allGuarantors.dart';
 import 'package:ucp/data/model/response/cooperativeList.dart';
 import 'package:ucp/data/model/response/loanFrequencyResponse.dart';
 import 'package:ucp/data/model/response/loanProductResponse.dart';
+import 'package:ucp/data/model/response/memberTransactionHistory.dart';
+import 'package:ucp/data/model/response/notificationResponse.dart';
 import 'package:ucp/data/model/response/paymentModeResponse.dart';
+import 'package:ucp/data/model/response/statesInCountry.dart';
 import 'package:ucp/data/model/response/transactionHistoryResponse.dart';
 import 'package:ucp/data/model/response/withdrawTransactionHistory.dart';
 import 'package:ucp/view/mainUi/onBoardingFlow/loginFlow/loginD.dart';
@@ -98,10 +102,13 @@ class MySharedPreference {
   }
 }
 List<CooperativeListResponse> allCooperatives = [];
+List<AllCountriesResponse> allCountries = [];
+List<AllStateResponse> allStates  = [];
 String accessToken = "";
 String refreshAccessToken = "";
 MemberLoginDetails? memberLoginDetails;
 List<UserTransaction> tempTransactionList =[];
+List<MemberTransactionReport> tempMemberTransactionList =[];
 List<Account> tempAccounts=[];
 List<UserSavingAccounts>tempMemberSavingAccounts= [];
 List<WithdrawTransactionHistory>tempWithdrawTransactionHistory= [];
@@ -114,6 +121,8 @@ List<LoanFrequencyList>tempLoanFrequencies=[];
 List<LoanGuantorsList>tempLoansGuarantors=[];
 List<LoanProductList>tempLoanProducts=[];
 List<PaymentModes> tempPaymentModes= [];
+List<PaymentModes> tempLoanPaymentModes= [];
+List<UcpNotification> tempMemberNotifications= [];
 PaymentRequest saveToAccountRequest = PaymentRequest(
     amount:"",
     modeOfpayment: "",

@@ -154,3 +154,16 @@ class FinanceGuarantorRejected extends FinanceState{
   @override
   List<Object> get props => [response];
 }
+
+class LoanRepayedState extends FinanceState{
+  PaymentSuccessfulResponse response;
+  LoanRepayedState(this.response);
+  @override
+  List<Object> get props => [response];
+}
+class PaymentVerifiedState extends FinanceState{
+  UcpDefaultResponse response;
+  PaymentVerifiedState(this.response);
+  @override
+  List<Object> get props => [response];
+}

@@ -8,8 +8,10 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:ucp/data/model/request/forgotPasswordRequest.dart';
 import 'package:ucp/data/model/response/dashboardResponse.dart';
 
+import '../../../../app/main/main.dart';
 import '../../../../app/main/pages.dart';
 import '../../../../bloc/onboarding/on_boarding_bloc.dart';
 import '../../../../data/model/response/cooperativeList.dart';
@@ -22,7 +24,9 @@ import '../../../../utils/designUtils/reusableFunctions.dart';
 import '../../../../utils/designUtils/reusableWidgets.dart';
 import '../../../../utils/sharedPreference.dart';
 import '../../../../utils/ucpLoader.dart';
+import '../../../bottomSheet/SuccessNotification.dart';
 import '../../../bottomSheet/cooperatives.dart';
+import '../../../bottomSheet/enterAmoun.dart';
 import '../../bottomNav.dart';
 import '../../otpScreen.dart';
 import '../signUpFlow/signUpSecondPage.dart';
@@ -32,6 +36,9 @@ String isBioMetric ="isBioMetric";
 String isUserName ="isUserName";
 String isPassword ="isPassword";
 String isSelectedCooperative ="isSelectedCooperative";
+int? badgeCount=0;
+bool isBiometricEnabled=false;
+bool canVote=false;
 class LoginFlow extends StatefulWidget {
   bool? isTokenExpired;
 
@@ -61,6 +68,7 @@ class _LoginFlowState extends State<LoginFlow> {
     });
     super.initState();
   }
+  CooperativeListResponse? sCooperative;
   Future<void> _showCooperativeSelectionModal() async {
     CooperativeListResponse? response = await showCupertinoModalBottomSheet(
       topRadius: Radius.circular(15.r),
@@ -82,6 +90,7 @@ class _LoginFlowState extends State<LoginFlow> {
       setState(() {
         sCollectiveController.text = response.tenantName;
         bloc.validation.selectedCooperative = response;
+        sCooperative = response;
       });
      // bloc.validation.setCooperative(response);
     }
@@ -119,14 +128,58 @@ class _LoginFlowState extends State<LoginFlow> {
           });
           bloc.initial();
         }
+        if(state is MemberForgotPasswordSuccess){
+          WidgetsBinding.instance.addPostFrameCallback((_){
+            showCupertinoModalBottomSheet(
+              topRadius: Radius.circular(15.r),
+              backgroundColor: AppColor.ucpWhite500,
+              context: context,
+              builder: (context) {
+                return Container(
+                  height: 400.h,
+                  color: AppColor.ucpWhite500,
+                  child: LoadLottie(lottiePath: UcpStrings.ucpLottieSuccess1,
+                    bottomText: state.response.data,
+                  ),
+                );
+              },
+            ).then((value){
+              Get.back(result: true);
+            });
+          });
+          bloc.initial();
+        }
         if(state is LoginSuccess){
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             memberLoginDetails=state.response.memberLoginDetails;
             accessToken = state.response.token;
             refreshAccessToken = state.response.refreshToken;
+            bloc.add(GetShopItemsEvent());
 
+
+          });
+          bloc.initial();
+        }
+        if(state is GetCooperativePrivilegesSuccess){
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            final res = state.response.privilegdes.where((element) => element.menuName.toLowerCase().contains("election")).toList();
+            canVote = res.single.isAssigned;
             Get.offAll(MyBottomNav(), predicate: (route) => false);
           });
+          bloc.initial();
+        }
+
+        if (state is ShopItemsLoaded) {
+          // Ensuring the widget tree is not rebuilt during the callback
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            // Extract the shop items list from the state
+            badgeCount = state.response.length;
+            await authManager.saveLoginCredentials(userNameController.text,
+                passwordController.text,sCooperative?.nodeId.toString()??"0", rememberMe,);
+            bloc.add(GetCooperativePrivilegesEvent(sCooperative!.nodeId.toString()));
+
+          });
+          // Reinitializing the bloc after processing the items
           bloc.initial();
         }
         if (state is OnBoardingError) {
@@ -251,6 +304,9 @@ class _LoginFlowState extends State<LoginFlow> {
                             StreamBuilder<Object>(
                                 stream: bloc.validation.userName,
                                 builder: (context, snapshot) {
+                                  // if(snapshot.hasData && snapshot.data != null){
+                                  //   userNameController.text=snapshot.data.toString();
+                                  // }
                                   return CustomizedTextField(
                                     isConfirmPasswordMatch: false,
                                     hintTxt: UcpStrings.enterUNameTxt,
@@ -312,7 +368,7 @@ class _LoginFlowState extends State<LoginFlow> {
                               children: [
                                 SizedBox(
                                   height: 20.h,
-                                  width: 165.w,
+                                  width: 145.w,
                                   child: RememberMeCheckbox(
                                     onChanged: (value) {
                                      // print("This is the value:$value");
@@ -323,13 +379,44 @@ class _LoginFlowState extends State<LoginFlow> {
                                     },
                                     value:rememberMe ,),
                                 ),
-                                Text(UcpStrings.forgotPasswordTxt,
-                                  style: CreatoDisplayCustomTextStyle.kTxtMedium
-                                      .copyWith(
-                                      decoration: TextDecoration.underline,
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColor.ucpBlue500),
+
+                                GestureDetector(
+                                  onTap: () async {
+                                    if(userNameController.text.isEmpty){
+                                      AppUtils.showInfoSnack("Please enter your username", context);
+                                    }else if(sCollectiveController.text.isEmpty){
+                                      AppUtils.showInfoSnack("Please select a cooperative", context);
+                                    }else{
+                                     String? email = await showCupertinoModalBottomSheet(
+                                      topRadius: Radius.circular(15.r),
+                                      backgroundColor:
+                                      AppColor.ucpWhite500,
+                                      context: context,
+                                      builder: (context) {
+                                        return Padding(
+                                          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                                          child: Container(
+                                              height: 250.h,
+                                              color: AppColor.ucpWhite500,
+                                              child: EnterEmail()),
+                                        );
+                                      });
+                                     if(email!=null){
+                                       bloc.add(ForgotPasswordEvent(ForgotPasswordRequest(
+                                           username: userNameController.text,
+                                           email: email,
+                                           cooperativeId:sCooperative?.nodeId ?? 0)));
+                                     }
+                                    }
+                                  },
+                                  child: Text(UcpStrings.forgotPasswordTxt,
+                                    style: CreatoDisplayCustomTextStyle.kTxtMedium
+                                        .copyWith(
+                                        decoration: TextDecoration.underline,
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColor.ucpBlue500),
+                                  ),
                                 ),
                               ],
                             ),

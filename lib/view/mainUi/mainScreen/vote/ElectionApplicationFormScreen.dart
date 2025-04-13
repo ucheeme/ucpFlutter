@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +28,8 @@ import '../../../../utils/designUtils/reusableWidgets.dart';
 import '../../../bottomSheet/SuccessNotification.dart';
 import 'electionWidget.dart';
 import 'finalElectionApplicationScreen.dart';
-
+File? contestantProfileImage;
+File? contestantsManifesto;
 class ElectionApplicationFormScreen extends StatefulWidget {
   PositionEligible positionEligibleList;
    ElectionApplicationFormScreen({super.key, required this.positionEligibleList});
@@ -52,8 +56,9 @@ class _ElectionApplicationFormScreenState extends State<ElectionApplicationFormS
       if (result != null) {
         setState(() {
         //  _selectedPdfs = result.files;
-          controller?.text = result.files.first.path??"";
-          ucpFilePath = result.files.first.path??"";
+          contestantsManifesto = File(result.files.first.path??"");
+          controller?.text = result.files.single.path??"";
+          ucpFilePath = result.files.single.path??"";
         });
         print('Selected PDFs: ${result.files.runtimeType}');
       }
@@ -79,6 +84,12 @@ class _ElectionApplicationFormScreenState extends State<ElectionApplicationFormS
           backgroundColor: AppColor.ucpWhite500,
           context: context,
           builder: (context) {
+            Future.delayed(Duration(seconds: 3), () {
+              if (Navigator.of(context).canPop()) {
+                // Navigator.of(context).pop();
+                Get.back();
+                Get.to(FinalElectionInFomation(contestantName:electionNameController.text,));
+              }});
             return Container(
               height: 400.h,
               color: AppColor.ucpWhite500,
@@ -89,8 +100,7 @@ class _ElectionApplicationFormScreenState extends State<ElectionApplicationFormS
           },
         ).then((value){
           Future.delayed(Duration(seconds: 2),(){
-            Get.back();
-            Get.to(FinalElectionInFomation());
+
           });
         });
       });
@@ -362,15 +372,17 @@ class _ElectionApplicationFormScreenState extends State<ElectionApplicationFormS
                                 context: context,
                                 backgroundColor:AppColor.ucpWhite500,
                                 shape:RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(topRight: Radius.circular(24.r),topLeft: Radius.circular(24.r)),
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(24.r),
+                                      topLeft: Radius.circular(24.r)),
                                 ),
                                 builder: (context) => SizedBox(
                                     height: 313.h,
                                     child: CameraOption())
                             );
                             if(response[1]!=null){
-                              print("This is image ${ response[0].path}");
-                              print("This is path $ucpFilePath");
+                              //Save Contestant Profile Image
+                              contestantProfileImage= response[0];
                               setState(() {
                                 fileNameController.text = response[0].toString();
                               });
@@ -419,28 +431,28 @@ class _ElectionApplicationFormScreenState extends State<ElectionApplicationFormS
                             child: Icon(Icons.upload_file,size: 24.h,color: AppColor.ucpBlue500,),
                           ),
                           onTap: () async {
-                           // _pickPdfs(controller:plansForCooperative);
-                            List<dynamic>response= await showCupertinoModalBottomSheet(
-                                topRadius:
-                                Radius.circular(20.r),
-                                context: context,
-                                backgroundColor:AppColor.ucpWhite500,
-                                shape:RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(24.r),
-                                      topLeft: Radius.circular(24.r)
-                                  ),
-                                ),
-                                builder: (context) => SizedBox(
-                                    height: 313.h,
-                                    child: CameraOption())
-                            );
-                            if(response[1]!=null){
-                              print("This is image ${response[1]}");
-                              setState(() {
-                                plansForCooperative.text = response[0].toString();
-                              });
-                            }
+                            _pickPdfs(controller:plansForCooperative);
+                           //  List<dynamic>response= await showCupertinoModalBottomSheet(
+                           //      topRadius:
+                           //      Radius.circular(20.r),
+                           //      context: context,
+                           //      backgroundColor:AppColor.ucpWhite500,
+                           //      shape:RoundedRectangleBorder(
+                           //        borderRadius: BorderRadius.only(
+                           //            topRight: Radius.circular(24.r),
+                           //            topLeft: Radius.circular(24.r)
+                           //        ),
+                           //      ),
+                           //      builder: (context) => SizedBox(
+                           //          height: 313.h,
+                           //          child: CameraOption())
+                           //  );
+                           //  if(response[1]!=null){
+                           //    print("This is image ${response[1]}");
+                           //    setState(() {
+                           //      plansForCooperative.text = response[0].toString();
+                           //    });
+                           //  }
                           },
                         ),
                         Gap(60.h)

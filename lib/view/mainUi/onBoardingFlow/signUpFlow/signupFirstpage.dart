@@ -9,6 +9,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:ucp/bloc/onboarding/on_boarding_bloc.dart';
 import 'package:ucp/data/model/response/cooperativeList.dart';
+import 'package:ucp/data/model/response/getMemberSignUpCost.dart';
 import 'package:ucp/utils/appStrings.dart';
 import 'package:ucp/utils/constant.dart';
 import 'package:ucp/utils/ucpLoader.dart';
@@ -39,10 +40,15 @@ class _SignUpFirstPageState extends State<SignUpFirstPage> {
 TextEditingController textEditingController = TextEditingController();
 TextEditingController memberIdController = TextEditingController();
 TextEditingController membershipAmountController = TextEditingController();
+late MemberSignUpCost memberSignUpCost;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       bloc.validation.isMember = true;
+
+      if(allCountries.isEmpty){
+        bloc.add(GetAllCountriesEvent());
+      }
       if(allCooperatives.isEmpty){
         bloc.add(GetAllCooperativesEvent());
       }else{
@@ -68,10 +74,30 @@ TextEditingController membershipAmountController = TextEditingController();
           });
           bloc.initial();
         }
+        if(state is AllUcpCountries){
+          allCountries = state.response;
+          bloc.initial();
+        }
         if(state is GetNextMemberIdSuccess){
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             memberIdController.text = state.response.nextMemberNo.toString();
             bloc.validation.setMemberNo(memberIdController.text);
+          });
+          bloc.initial();
+        }
+        if(state is MemberSignUpCostSuccess){
+          memberSignUpCost = state.response;
+          WidgetsBinding.instance.addPostFrameCallback((_){
+            print("hfhfhfh,${memberSignUpCost.regFee}");
+            setState(() {
+              membershipAmountController.text = memberSignUpCost.regFee.toString().split(".")[0];
+            });
+            if(memberSignUpCost.regStatus==1){
+              bloc.validation.setMembershipAmount(memberSignUpCost.regFee.toString().split(".")[0]);
+            }else{
+              bloc.validation.setMembershipAmount("0");
+            }
+            print("worked");
           });
           bloc.initial();
         }
@@ -267,6 +293,7 @@ TextEditingController membershipAmountController = TextEditingController();
                                       inputFormat: [ThousandSeparatorFormatter(),],
                                       hintTxt: UcpStrings.amountTxt,
                                       keyboardType: TextInputType.number,
+                                      readOnly: true,
                                       textEditingController: membershipAmountController,
                                       onTap: () {
                                         setState(() {
@@ -363,6 +390,7 @@ TextEditingController membershipAmountController = TextEditingController();
 
         bloc.add(GetNextMemberIdEvent(selectedCooperativeId!));
       }
+      bloc.add(GetMemberSignUpCostEvent(response.nodeId.toString()));
     }else{
       textEditingController.text = "";
     }

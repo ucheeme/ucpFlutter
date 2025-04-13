@@ -25,10 +25,14 @@ import '../../../../data/repository/FinanceRepo.dart';
 import '../../../../utils/appStrings.dart';
 import '../../../../utils/apputils.dart';
 import '../../../../utils/constant.dart';
+import '../../../../utils/designUtils/reusableWidgets.dart';
+import '../../../errorPages/noNotification.dart';
 import 'electionWidget.dart';
-
+List<PositionEligible> tempPositionEligibleList = [];
+List<String>  allElectionPosition= [];
 class MemberEligiblePositionScreen extends StatefulWidget {
-  const MemberEligiblePositionScreen({super.key});
+  VotingBloc votingBloc;
+   MemberEligiblePositionScreen({super.key,required this.votingBloc});
 
   @override
   State<MemberEligiblePositionScreen> createState() => _MemberEligiblePositionScreenState();
@@ -62,7 +66,7 @@ class _MemberEligiblePositionScreenState extends State<MemberEligiblePositionScr
         isLoading = false;
       });
 
-      showPdfBottomSheet(context);
+      showPdfBottomSheet(context,url,item!);
     } catch (e,trace) {
       setState(() {
         isLoading = false;
@@ -70,38 +74,36 @@ class _MemberEligiblePositionScreenState extends State<MemberEligiblePositionScr
       print("Error downloading PDF: $e");
       print("Error downloading PDF: $trace");
     AppUtils.showInfoSnack("Failed to load election guidelines, please check back", context);
-    Get.to(ElectionApplicationFormScreen(positionEligibleList: item!,));
+
     }
   }
 
   // Function to show PDF in BottomSheet
-  void showPdfBottomSheet(BuildContext context) {
+  void showPdfBottomSheet(BuildContext context,String? url, PositionEligible positionEligibleList) {
     if (pdfPath == null) return;
+    showCupertinoModalBottomSheet(
+      topRadius: Radius.circular(15.r),
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22.r)),
       ),
       builder: (context) {
-        return Container(
-          height: MediaQuery.of(context).size.height * 0.8, // Adjust height
-          // child: PDFView(
-          //   filePath: pdfPath!,
-          //   enableSwipe: true,
-          //   swipeHorizontal: false,
-          //   autoSpacing: true,
-          //   pageFling: true,
-          // ),
-          child: SfPdfViewer.network("https://www.tutorialspoint.com/flutter/flutter_tutorial.pdf"),
+        return SizedBox(
+          height: 650.h,
+          child: GuideLines(
+            url: url,
+            positionEligibleList: positionEligibleList,
+          ),
         );
       },
+      context: context,
     );
   }
+
   @override
   void initState() {
+    votingBloc = widget.votingBloc;
     WidgetsBinding.instance.addPostFrameCallback((_){
       votingBloc.add(GetEligiblePositionEvent(PaginationRequest(
           currentPage: currentPage,pageSize: pageSize)));
@@ -110,24 +112,29 @@ class _MemberEligiblePositionScreenState extends State<MemberEligiblePositionScr
   }
   @override
   Widget build(BuildContext context) {
-    votingBloc = BlocProvider.of<VotingBloc>(context);
+   // votingBloc = BlocProvider.of<VotingBloc>(context);
     return BlocBuilder<VotingBloc, VotingState>(
   builder: (context, state) {
     if(state is VotingError){
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        AppUtils.showSnack(state.errorResponse.message, context);
+        if(state.errorResponse.message.toLowerCase()!="no active election"){
+          AppUtils.showSnack(state.errorResponse.message, context);
+        }
       });
       votingBloc.initial();
     }
     if(state is PositionEligibleLoaded){
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         positionEligibleList = state.allElections.modelResult;
+        tempPositionEligibleList = state.allElections.modelResult;
+        allElectionPosition.clear();
+        allElectionPosition.addAll(tempPositionEligibleList.map((e) => e.positionName));
         totalPageSize = state.allElections.totalCount;
       });
      votingBloc.initial();
     }
     return UCPLoadingScreen(
-      visible: state is VotingIsLoading,
+      visible:isLoading || state is VotingIsLoading,
       loaderWidget: LoadingAnimationWidget.discreteCircle(
         color: AppColor.ucpBlue500,
         size: 40.h,
@@ -140,7 +147,7 @@ class _MemberEligiblePositionScreenState extends State<MemberEligiblePositionScr
         body: ListView(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           children: [
-            Gap(160.h),
+            Gap(150.h),
             Container(
               height:92.h,
               width: 343.w,
@@ -168,6 +175,19 @@ class _MemberEligiblePositionScreenState extends State<MemberEligiblePositionScr
               ),
             ),
             Gap(16.h),
+            positionEligibleList.isEmpty?
+            SizedBox(
+              height:500.h,
+              child: EmptyNotificationsScreen(
+                  emptyHeader: "No Election ongoing",
+                  emptyMessage: "It looks like you don't have any election ongoing right now. We'll let you know when there's something new.",
+                  press: () {
+                    votingBloc.add(GetEligiblePositionEvent(
+                        PaginationRequest(
+                        currentPage: currentPage,pageSize: pageSize)));
+                  }
+              ),
+            ):
             NotificationListener<ScrollNotification>(
               onNotification: (scrollInfo) {
                 if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
@@ -191,13 +211,11 @@ class _MemberEligiblePositionScreenState extends State<MemberEligiblePositionScr
                   padding: EdgeInsets.zero,
                   itemCount: positionEligibleList.length,
                   itemBuilder: (context, index) {
+                   // allElectionPosition.add(positionEligibleList[index].positionName);
                     return GestureDetector(
                       onTap: (){
-                        //allLoanRequests
 
-                        print(positionEligibleList[index].electionGuidline);
-                       // downloadPdf(positionEligibleList[index].electionGuidline,item: positionEligibleList[index]);
-                        downloadPdf("https://www.tutorialspoint.com/flutter/flutter_tutorial.pdf");
+                       downloadPdf(positionEligibleList[index].electionGuidline,item: positionEligibleList[index]);
                       },
                       child: Container(
                         //  height: 185.h,
@@ -216,5 +234,188 @@ class _MemberEligiblePositionScreenState extends State<MemberEligiblePositionScr
     );
   },
 );
+  }
+}
+
+class GuideLines extends StatelessWidget {
+  String? url;
+   PositionEligible positionEligibleList;
+   GuideLines({
+    super.key,this.url,
+    required this.positionEligibleList
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SizedBox(
+        height: 650.h,
+        child: Stack(
+            children: [
+              Column(
+                children: [
+                  Container(
+                    height: 50.h,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: AppColor.ucpWhite00,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(22.r),
+                        topRight: Radius.circular(22.r),
+                      ),
+                    ),
+                    child: Center(
+                      child: Text("Election Guidelines",
+                          textAlign: TextAlign.left,
+                          style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                            color: AppColor.ucpBlack500,
+                          )),
+                    ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.8, // Adjust height
+                    child: SfPdfViewer.network(url??"https://www.tutorialspoint.com/flutter/flutter_tutorial.pdf"),
+                  ),
+                ],
+              ),
+              Positioned(
+                top:490.h,
+                child: UCPCustomAppBar(
+                  height: 165.h,
+                  child: Column(
+                    children: [
+                      Gap(16.h),
+                      SizedBox(
+                        height: 51.h,
+                        child: Row(
+                          children: [
+                            CircleRingIcon(),
+                            Gap(12.w),
+                            Container(
+                              height: 51.h,
+                              width: 303.w,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                              ),
+                              child: Center(
+                                child: Text("I agree to the Terms, Conditions and Privacy Policy.",
+                                    textAlign: TextAlign.left,
+                                    style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColor.ucpBlack900,
+                                    )),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Gap(20.h),
+                      SizedBox(
+                        height: 51.h,
+                        width: 343.w,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Get.back();
+                              },
+                              child: Container(
+                                height: 51.h,
+                                width: 163.5.w,
+                                decoration: BoxDecoration(
+                                  color: AppColor.ucpBlue50,
+                                  borderRadius: BorderRadius.circular(25.r),
+
+                                ),
+                                child: Center(
+                                  child: Text("Decline",
+                                      textAlign: TextAlign.center,
+                                      style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColor.ucpBlack900,
+                                      )),
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                                Get.to(ElectionApplicationFormScreen(
+                                  positionEligibleList: positionEligibleList!,)
+                                );
+                              },
+                              child: Container(
+                                height: 51.h,
+                                width: 163.5.w,
+                                decoration: BoxDecoration(
+                                  color: AppColor.ucpBlue600,
+                                  borderRadius: BorderRadius.circular(25.r),
+
+                                ),
+
+                                child: Center(
+                                  child: Text("Accept",
+                                      textAlign: TextAlign.center,
+                                      style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColor.ucpWhite00,
+                                      )),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),),
+              )
+            ]
+        ),
+      ),
+    );
+  }
+}
+
+class CircleRingIcon extends StatelessWidget {
+  const CircleRingIcon({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 24.w, // adjust size as needed
+      height: 24.h,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Outer ring
+          Container(
+            width: 24.w,
+            height: 24.h,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: AppColor.ucpBlue500,
+                width: 3,
+              ),
+            ),
+          ),
+          // Inner filled circle
+          Container(
+            width: 15.w,
+            height: 15.h,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColor.ucpBlue500,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

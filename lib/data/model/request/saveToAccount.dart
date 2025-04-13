@@ -18,6 +18,7 @@ class PaymentRequest {
   String? bankAccountNumber;
   String? bankTeller;
   String? paidDate;
+  String? loanId;
   String? contributionAcctNumber;
   // File? uploadTeller;
 
@@ -30,6 +31,7 @@ class PaymentRequest {
      this.bankAccountNumber,
      this.bankTeller,
      this.paidDate,
+    this.loanId,
     this.contributionAcctNumber,
     // required this.uploadTeller,
   });
@@ -43,12 +45,14 @@ class PaymentRequest {
     bankAccountNumber: json["bankAccountNumber"],
     bankTeller: json["bankTeller"],
     paidDate: json["paidDate"],
+    loanId: json["UniqueId"],
     contributionAcctNumber: json["contributionAccountNumber"],
     // uploadTeller: json["uploadTeller"],
   );
 
   Map<String, dynamic> toJson() => {
     "amount": amount,
+    "UniqueId": loanId,
     "modeOfpayment": modeOfpayment,
     "description": description,
     "accountNumber": accountNumber,

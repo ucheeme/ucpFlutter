@@ -22,6 +22,7 @@ import 'package:ucp/view/mainUi/mainScreen/finances/loan/repaymentWidget.dart';
 import 'package:ucp/view/mainUi/mainScreen/finances/loan/repaymentWidgetRefund.dart';
 
 import '../../../../../bloc/finance/loanController.dart';
+import '../../../../../data/model/request/saveToAccount.dart';
 import '../../../../../data/model/response/allGuarantors.dart';
 import '../../../../../data/model/response/loanApplicationResponse.dart';
 import '../../../../../data/model/response/loanProductResponse.dart';
@@ -35,6 +36,8 @@ import '../../../../../utils/designUtils/animatedPieChart.dart';
 import '../../../../../utils/designUtils/reusableFunctions.dart';
 import '../../../../../utils/designUtils/reusableWidgets.dart';
 import '../../../../bottomSheet/guarantorDesign.dart';
+import '../../../../bottomSheet/makeSavingsDraggableBottomSheet.dart';
+import '../../shop/itemsInCart.dart';
 
 class LoanScheduleDetail extends StatefulWidget {
   FinanceBloc bloc;
@@ -132,7 +135,17 @@ class _LoanRequestDetailScreenState extends State<LoanScheduleDetail> {
           });
           bloc.initial();
         }
-
+        if(state is LoanRepayedState){
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            saveToAccountRequest=PaymentRequest(amount: "", modeOfpayment: "", description: "");
+            if(state.response.payStackResponse!=null){
+              launchPaystack(state.response.payStackResponse!.authorizationUrl,context);
+            }else{
+              showSuccessAlert(context);
+            }
+          });
+          bloc.initial();
+        }
         if (state is LoanRequestBreakdownState) {
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             loanBreakdownList = state.response;
@@ -224,7 +237,26 @@ class _LoanRequestDetailScreenState extends State<LoanScheduleDetail> {
                   Visibility(
                     visible: currentMonthPay?.status.toLowerCase()!="complete",
                     child: CustomButton(
-                      onTap: () {
+                      onTap: () async {
+                       // saveToAccountRequest.amount = currentMonthPay!.totalRepayAmount.toString().replaceAll(",", "");
+                        saveToAccountRequest.bank=null;
+                        saveToAccountRequest.paidDate=null;
+                        saveToAccountRequest.bankTeller=null;
+                        saveToAccountRequest.bankAccountNumber=null;
+                       // saveToAccountRequest.accountNumber=currentMonthPay?.accountNumber;
+                       // saveToAccountRequest.loanId = currentMonthPay?.loanScheduleId.toString();
+                        bool? response=  await makePayment(context,isSaving: false,isLoan: true);
+                        print("this is me,$response");
+                        if(response){
+                        for(var element in widget.loanRequests){
+                          if(element.paymentStatus.toLowerCase() == "outstanding"){
+                            saveToAccountRequest.loanId=element.loanScheduleId.toString();
+                            bloc.add(RepayLoanEvent(saveToAccountRequest));
+                            break;
+                          }
+                        }
+
+                        }
                        // _showGuarantorSelectionModal();
                       },
                       borderRadius: 30.r,
@@ -251,7 +283,7 @@ class _LoanRequestDetailScreenState extends State<LoanScheduleDetail> {
                               ),
                             ),
 
-                            Text(NumberFormat.currency( symbol: 'NGN', decimalDigits: 0).format(double.parse(currentMonthPay?.totalAmount.toString()??"0")),
+                            Text(NumberFormat.currency( symbol: 'NGN', decimalDigits: 0).format(double.parse(currentMonthPay?.totalRepayAmount.toString()??"0")),
                               style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 14.sp,
@@ -268,7 +300,7 @@ class _LoanRequestDetailScreenState extends State<LoanScheduleDetail> {
             body: Stack(
               children: [
                 SizedBox(
-                  height: MediaQuery.of(context).size.height-23.h,
+                  height: MediaQuery.of(context).size.height-200.h,
                   child: ListView(
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
                     children: [

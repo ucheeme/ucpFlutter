@@ -4,6 +4,7 @@ import 'package:ucp/data/model/response/loanFrequencyResponse.dart';
 import 'package:ucp/data/model/response/loanRequestBreakDown.dart';
 import 'package:ucp/data/model/response/usersLoans.dart';
 import 'package:ucp/data/repository/defaultRepository.dart';
+import 'package:ucp/data/repository/profileRepo.dart';
 import 'package:ucp/utils/appCustomClasses.dart';
 
 import '../../app/apiService/apiService.dart';
@@ -11,6 +12,7 @@ import '../../app/apiService/apiStatus.dart';
 import '../../app/apiService/appUrl.dart';
 import '../model/request/guarantorRequestDecision.dart';
 import '../model/request/loanApplicationRequest.dart';
+import '../model/request/saveToAccount.dart';
 import '../model/request/withdrawalRequest.dart';
 import '../model/response/allGuarantors.dart';
 import '../model/response/defaultResponse.dart';
@@ -20,10 +22,26 @@ import '../model/response/loanProductDetailsFI.dart';
 import '../model/response/loanProductResponse.dart';
 import '../model/response/loanScheduleForRefund.dart';
 import '../model/response/memberSavingAccount.dart';
+import '../model/response/paymentResponse.dart';
 import '../model/response/withdrawBalanceInfo.dart';
 import '../model/response/withdrawTransactionHistory.dart';
 
 class FinanceRepository extends DefaultRepository{
+  Future<Object>verifyPayment(String referenceNumber)async{
+    var response = await postRequest(null,"${UCPUrls.verifyPayments}?reference=$referenceNumber",true,HttpMethods.get);
+    var r = handleSuccessResponse(response);
+    if(r is UcpDefaultResponse){
+      if(r.isSuccessful == true){
+        UcpDefaultResponse res = ucpDefaultResponseFromJson(json.encode(r));
+        return res;
+      }else{
+        return r;
+      }
+    }else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
   Future<Object> getMemberAccounts() async {
     var response = await postRequest(
       null,
@@ -380,6 +398,24 @@ class FinanceRepository extends DefaultRepository{
         UcpDefaultResponse res = ucpDefaultResponseFromJson(json.encode(r));
         return res;
       } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+  Future<Object> payLoan(PaymentRequest request)async{
+    var response = await postRequestImage(filePath: ucpFilePath,
+        url:UCPUrls.payForLoan, requiresToken: true,
+        imageFieldName:"UploadTeller" ,formFields: request.toJson());
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        PaymentSuccessfulResponse res = paymentSuccessfulResponseFromJson(json.encode(r.data));
+        return res;
+      } else {
+
         return r;
       }
     } else {

@@ -388,10 +388,10 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                                         ),
                                       ):
                                       SizedBox(
-                                        height: 550.h,
+                                        height: MediaQuery.of(context).size.height.h*0.68,
                                         child:
-                                        ListView(
-                                          padding: EdgeInsets.symmetric(horizontal:16.w),
+                                        Column(
+                                         // padding: EdgeInsets.symmetric(horizontal:16.w),
                                           children: withdrawTransactionList
                                               .mapIndexed(
                                                   (element, index) => Padding(
@@ -471,7 +471,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                   ),
                   UCPCustomAppBar(
                       height: 150.h,
-                      appBarColor: AppColor.ucpWhite10.withOpacity(0.3),
+                      appBarColor: AppColor.ucpWhite500,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

@@ -432,10 +432,13 @@ class _SavingsScreenState extends State<SavingsScreen> {
                                         AppColor.ucpWhite500,
                                         context: context,
                                         builder: (context) {
-                                          return Container(
-                                              height: 220.h,
-                                              color: AppColor.ucpWhite500,
-                                              child: EnterAmountBottomSheet());
+                                          return Padding(
+                                            padding:  EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                                            child: Container(
+                                                height: 220.h,
+                                                color: AppColor.ucpWhite500,
+                                                child: EnterAmountBottomSheet()),
+                                          );
                                         });
                                   },
                                   UcpStrings.addFundsTxt,
@@ -449,7 +452,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
                   ),
                   UCPCustomAppBar(
                       height: 100.h,
-                      appBarColor: AppColor.ucpWhite10.withOpacity(0.3),
+                      appBarColor: AppColor.ucpWhite500,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
