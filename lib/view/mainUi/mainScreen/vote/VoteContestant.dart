@@ -52,14 +52,26 @@ class _VoteContestantState extends State<VoteContestant> {
   bool isPassed = false;
   bool isOn = true;
   late VotingBloc voteBloc;
-
+  bool isLoading=false;
+  String checkText = "";
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // setState(() {
+      //   isLoading = true;
+      // });
       remainingTime = formatTime(
           endDateS: widget.electionPosition.endDateAndTime.toIso8601String(),
           startDateS:
               widget.electionPosition.startDateAndTime.toIso8601String());
+      if(remainingTime.isNotEmpty){
+        // checkText= checks();
+        //
+        // setState(() {
+        //   checkText= checkText;
+        //   isLoading=false;
+        // });
+      }
     });
     super.initState();
   }
@@ -75,9 +87,11 @@ class _VoteContestantState extends State<VoteContestant> {
       if (now.isBefore(startDate)) {
         // Current time is before the start date.
         setState(() {
+
           isPassed = false;
           isOn = false;
           remainingTime = dateFormat(startDate);
+
         });
         print("Event has not started yet. Starts on: ${dateFormat(startDate)}");
       }
@@ -152,7 +166,7 @@ class _VoteContestantState extends State<VoteContestant> {
           voteBloc.initial();
         }
         return UCPLoadingScreen(
-          visible: state is VotingIsLoading,
+          visible:isLoading==true|| state is VotingIsLoading,
           loaderWidget: LoadingAnimationWidget.discreteCircle(
             color: AppColor.ucpBlue500,
             size: 40.h,
@@ -300,6 +314,7 @@ class _VoteContestantState extends State<VoteContestant> {
   }
 
   String checks() {
+
     if (!isPassed && !isOn) {
       return "Starts on";
     }
@@ -309,6 +324,7 @@ class _VoteContestantState extends State<VoteContestant> {
     if (isPassed && !isOn) {
       return "Closed on";
     }
+
     return "";
   }
 

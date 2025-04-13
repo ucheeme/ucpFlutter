@@ -256,7 +256,6 @@ class _CandidatesImageState extends State<CandidatesImage> {
         crossAxisSpacing: 6,
         children: List.generate(itemCount, (index) {
           final Uint8List imageBytes = base64Decode(widget.details.contestants[index].profileImageBase64);
-          print("I an");
           // If the total item count is odd and this is the last item, span 2 columns.
           final int span = (itemCount % 2 == 1 && index == itemCount - 1) ? 2 : 1;
           return StaggeredGridTile.count(

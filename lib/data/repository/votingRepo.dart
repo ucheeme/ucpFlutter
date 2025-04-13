@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ucp/data/model/response/allElections.dart';
+import 'package:ucp/data/model/response/electionInforResponse.dart';
 import 'package:ucp/data/repository/defaultRepository.dart';
 import 'package:ucp/data/repository/profileRepo.dart';
 
@@ -10,6 +11,7 @@ import '../model/request/castVoteRequest.dart';
 import '../model/response/contestantInfo.dart';
 import '../model/response/defaultResponse.dart';
 import '../model/response/electionDetailResponse.dart';
+import '../model/response/electionResult.dart';
 import '../model/response/profileUpdateResponse.dart';
 import 'FinanceRepo.dart';
 
@@ -114,6 +116,49 @@ class VoteRepository extends DefaultRepository {
     if (r is UcpDefaultResponse) {
       if (r.isSuccessful == true) {
         UcpDefaultResponse res = ucpDefaultResponseFromJson(json.encode(r));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+
+  Future<Object> getElectionResult(GetElectionResultRequest request) async {
+    var response = await postRequest(
+        null,
+        "${UCPUrls.getElectionResult}?ElectionId=${request
+            .electionId}&PositionId=${request.positionId}",
+        true,
+        HttpMethods.get);
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        ElectionResult res =
+        electionResultFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+  Future<Object> getElectionInfo(GetElectionResultRequest request) async {
+    var response = await postRequest(
+        null,
+        "${UCPUrls.voteForCandidate}?ElectionId=${request
+            .electionId}&PositionId=${request.positionId}",
+        true,
+        HttpMethods.get);
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        ElectionInfoResponse res =
+        electionInfoResponseFromJson(json.encode(r.data));
         return res;
       } else {
         return r;

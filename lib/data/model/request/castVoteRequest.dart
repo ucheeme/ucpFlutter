@@ -31,3 +31,17 @@ class CastVote {
     "contestantIds": List<dynamic>.from(contestantIds.map((x) => x)),
   };
 }
+
+class GetElectionResultRequest {
+  String electionId;
+  String positionId;
+  GetElectionResultRequest({
+    required this.electionId,
+    required this.positionId,
+  });
+
+  Map<String, dynamic> toJson() => {
+    "electionId": electionId,
+    "positionId": positionId,
+  };
+}

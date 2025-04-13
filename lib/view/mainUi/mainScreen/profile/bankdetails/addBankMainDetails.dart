@@ -11,6 +11,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:ucp/bloc/profile/profile_bloc.dart';
 import 'package:ucp/data/model/request/addMemberBankDetailRequest.dart';
 import 'package:ucp/utils/ucpLoader.dart';
+import 'package:ucp/view/mainUi/mainScreen/profile/profile.dart';
 
 
 import '../../../../../data/model/response/listOfBankResponse.dart';
@@ -47,11 +48,12 @@ class _AddBankDetailsMainState extends State<AddBankDetailsMain> {
   bool isEnable = false;
   @override
   void initState() {
-
+    memberProfileData=widget.memberProfileData;
     bankList = tempBankList;
   WidgetsBinding.instance.addPostFrameCallback((_){
+
     if(widget.memberProfileData!=null){
-      isEnable = true;
+      isEnable = false;
       setState(() {
         bankName = "${widget.memberProfileData?.bank}";
         bankAccount= "${widget.memberProfileData?.bankAccountNumber}";
@@ -94,8 +96,10 @@ class _AddBankDetailsMainState extends State<AddBankDetailsMain> {
       });
       bloc.initial();
     }
-    if(state is MemberBankDetailsAdded){
-      WidgetsBinding.instance.addPostFrameCallback((_){
+    if (state is ProfileLoaded) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        memberProfileData = state.data;
+        tempMemberProfileData = state.data;
         showCupertinoModalBottomSheet(
           topRadius: Radius.circular(15.r),
           backgroundColor: AppColor.ucpWhite500,
@@ -104,14 +108,21 @@ class _AddBankDetailsMainState extends State<AddBankDetailsMain> {
             return Container(
               height: 400.h,
               color: AppColor.ucpWhite500,
-              child: LoadLottie(lottiePath: UcpStrings.ucpLottieSuccess1,
-                bottomText: state.data.message,
+              child: const LoadLottie(lottiePath: UcpStrings.ucpLottieSuccess1,
+                bottomText:"Account Details Updated Successfully",
               ),
             );
           },
         ).then((value){
           Get.back(result: true);
+          Get.back(result: true);
         });
+      });
+      bloc.initial();
+    }
+    if(state is MemberBankDetailsAdded){
+      WidgetsBinding.instance.addPostFrameCallback((_){
+        bloc.add(GetMemberProfileEvent());
       });
       bloc.initial();
     }
@@ -174,7 +185,12 @@ class _AddBankDetailsMainState extends State<AddBankDetailsMain> {
                   children: [
                     GestureDetector(
                         onTap: (){
-                          Get.back();
+                          if(tempMemberProfileData!=null){
+                            Get.back(result: true);
+                            Get.back(result: true);
+                          }else {
+                            Get.back();
+                          }
                         },
                         child: Icon(Icons.arrow_back, size: 30.h,color: AppColor.ucpBlack500,)),
                     Gap(20.w),

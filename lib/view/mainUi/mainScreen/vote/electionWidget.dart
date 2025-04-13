@@ -11,7 +11,8 @@ import '../../../../utils/constant.dart';
 import '../finances/loan/repaymentWidgetRefund.dart';
 class ElectionPositionWidget extends StatefulWidget {
   PositionEligible positionEligibleList;
-  ElectionPositionWidget({super.key, required this.positionEligibleList});
+  bool isResult=false;
+  ElectionPositionWidget({super.key, required this.positionEligibleList, this.isResult=false});
 
   @override
   State<ElectionPositionWidget> createState() => _ElectionPositionWidgetState();
@@ -19,6 +20,7 @@ class ElectionPositionWidget extends StatefulWidget {
 
 class _ElectionPositionWidgetState extends State<ElectionPositionWidget> {
   Color borderColor = Color(0xFFF6911E);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -87,7 +89,7 @@ class _ElectionPositionWidgetState extends State<ElectionPositionWidget> {
                               ),
                             ),
                             Gap(3.33.w),
-                            Text("Free",
+                            Text(widget.isResult?"Closed":"Free",
                               style: CreatoDisplayCustomTextStyle.kTxtMedium.copyWith(
                                   fontSize: 10.sp,
                                   fontWeight: FontWeight.w500,

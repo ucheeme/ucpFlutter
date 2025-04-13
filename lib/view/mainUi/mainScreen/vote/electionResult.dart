@@ -13,6 +13,7 @@ import 'package:ucp/bloc/vote/voting_bloc.dart';
 import 'package:ucp/utils/appExtentions.dart';
 import 'package:ucp/utils/ucpLoader.dart';
 
+import '../../../../data/model/request/castVoteRequest.dart';
 import '../../../../data/model/response/allElections.dart';
 import '../../../../data/model/response/electionDetailResponse.dart';
 import '../../../../data/repository/FinanceRepo.dart';
@@ -57,6 +58,9 @@ class _ElectionResultScrenState extends State<ElectionResultScren> {
     });
     super.initState();
   }
+  GetElectionResultRequest? electionResultRequest;
+   List<PositionEligible> electionResult =[];
+  int avsailableResult = 0;
   @override
   Widget build(BuildContext context) {
     // votingBloc = BlocProvider.of<VotingBloc>(context);
@@ -73,10 +77,26 @@ class _ElectionResultScrenState extends State<ElectionResultScren> {
         if(state is PositionEligibleLoaded){
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             positionEligibleList = state.allElections.modelResult;
+            positionEligibleList.forEach((element) {
+              if(element.countingVote ==true){
+                electionResult.add(element);
+                avsailableResult++;
+              }
+            });
             tempPositionEligibleList = state.allElections.modelResult;
             allElectionPosition.clear();
             allElectionPosition.addAll(tempPositionEligibleList.map((e) => e.positionName));
             totalPageSize = state.allElections.totalCount;
+          });
+          votingBloc.initial();
+        }
+        if(state is ElectionResultLoaded){
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+            votingBloc.initial();
+            Get.to(LeaderboardScreen(
+              electionResultRequest: electionResultRequest!,
+              result: state.response,
+            ));
           });
           votingBloc.initial();
         }
@@ -91,7 +111,19 @@ class _ElectionResultScrenState extends State<ElectionResultScren> {
           transparency: 0.2,
           child: Scaffold(
             backgroundColor: AppColor.ucpWhite10,
-            body: ListView(
+            body: avsailableResult==0?
+            SizedBox(
+              height:700.h,
+              child: EmptyNotificationsScreen(
+                  emptyHeader: "No Available Result",
+                  emptyMessage: "It looks like you don't have any election results right now. We'll let you know when there's something new.",
+                  press: () {
+                    votingBloc.add(GetEligiblePositionEvent(PaginationRequest(
+                        currentPage: currentPage,pageSize: pageSize)));
+                  }
+              ),
+            ):
+            ListView(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               children: [
                 Gap(150.h),
@@ -112,7 +144,7 @@ class _ElectionResultScrenState extends State<ElectionResultScren> {
                             fontWeight: FontWeight.w500,
                             color: AppColor.ucpOrange300,
                           )),
-                      Text("${positionEligibleList.length} Results available",
+                      Text("$avsailableResult Results available",
                           style: CreatoDisplayCustomTextStyle.kTxtBold.copyWith(
                             fontSize: 22.sp,
                             fontWeight: FontWeight.w700,
@@ -156,20 +188,26 @@ class _ElectionResultScrenState extends State<ElectionResultScren> {
                     child: ListView.builder(
                       controller: scrollController,
                       padding: EdgeInsets.zero,
-                      itemCount: positionEligibleList.length,
+                      itemCount: electionResult.length,
                       itemBuilder: (context, index) {
                         // allElectionPosition.add(positionEligibleList[index].positionName);
                         return GestureDetector(
                           onTap: (){
-                            print(positionEligibleList[index].electionGuidline);
-                            Get.to(LeaderboardScreen());
-
+                            // print(electionResult[index].electionGuidline);
+                            electionResultRequest = GetElectionResultRequest(
+                                electionId: electionResult[index].electionId,
+                                positionId: electionResult[index].positionId);
+                            votingBloc.add(GetElectionResultEvent(
+                                GetElectionResultRequest(
+                                    electionId: electionResult[index].electionId,
+                                    positionId: electionResult[index].positionId)
+                            ));
                           },
                           child: Container(
                             //  height: 185.h,
                               margin: EdgeInsets.symmetric(vertical: 8.h),
                               // padding: EdgeInsets.symmetric(horizontal: 16.w),
-                              child: ElectionPositionWidget(positionEligibleList: positionEligibleList[index],)
+                              child: ElectionPositionWidget(positionEligibleList: electionResult[index],isResult: true,)
                           ),
                         );
                       },

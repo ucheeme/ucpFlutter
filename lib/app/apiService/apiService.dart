@@ -74,7 +74,7 @@ class ApiService {
       }) async {
     try {
       // Check internet connection
-      final result = await InternetAddress.lookup('example.com');
+      final result = await InternetAddress.lookup('google.com');
       if (result.isEmpty || result[0].rawAddress.isEmpty) {
         print('Network error');
         gettt.Get.to(NoconnectionScreen(press: () => gettt.Get.back()));

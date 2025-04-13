@@ -28,3 +28,17 @@ class VoteCandidateEvent extends VotingEvent {
   @override
   List<Object> get props => [];
 }
+
+class GetElectionResultEvent extends VotingEvent {
+ GetElectionResultRequest request;
+  GetElectionResultEvent(this.request);
+  @override
+  List<Object> get props => [];
+}
+
+class GetElectionInfoEvent extends VotingEvent {
+  GetElectionResultRequest request;
+  GetElectionInfoEvent(this.request);
+  @override
+  List<Object> get props => [];
+}

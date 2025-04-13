@@ -63,6 +63,7 @@ class UCPUrls{
   static const  addMemberBankAccountDetails= "${baseUrl}Account/update-member-bank-detail";
   static const  checkCooperativePrivileges= "${baseUrl}Account/global-role";
   static const  voteForCandidate= "${baseUrl}Election/cast-vote";
+  static const  getElectionResult= "${baseUrl}Election/election-result";
 
   static const applyForLoan="${baseUrl}Loan/apply-for-loan";
   static const logOut="${baseUrl}Account/logout";
