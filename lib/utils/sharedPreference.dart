@@ -21,6 +21,12 @@ import '../data/model/response/purchasedItemSummartResponse.dart';
 
 class MySharedPreference {
   static SharedPreferences? _preferences;
+static const _firstLaunchKey = 'hasLaunchedBefore';
+  static const isBioMetric = 'isBioMetric';
+  static const isRememberMe = 'rememberMe';
+  static const isUserName = 'userName'; 
+  static const isPassword = 'password';
+  static const isSelectedCooperative = 'selectedCooperative';
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
@@ -57,6 +63,7 @@ class MySharedPreference {
     bool alreadyVisited = _preferences?.getBool("alreadyvisited") ?? false;
     return alreadyVisited;
   }
+
   static String getUserId() {
     return _preferences?.getString('userId') ?? "";
   }
@@ -68,6 +75,15 @@ class MySharedPreference {
  static enableBiometric(bool value) {
     _preferences?.setBool(isBioMetric, value);
   }
+
+  static getRememberMeStatus(){
+    return _preferences?.getBool(isRememberMe) ?? false;
+  }
+
+  static setRememberMe(bool value) {
+    _preferences?.setBool(isRememberMe, value);
+  }
+
   static setAnythingString({String key="",String value=""}){
     _preferences?.setString(key, value);
   }
@@ -84,10 +100,22 @@ class MySharedPreference {
     return _preferences?.getInt(key) ?? 0;
   }
 
+  static setUserName(String value) {
+    _preferences?.setString(isUserName, value);
+  }
+  
+  static setPassword(String value) {
+    _preferences?.setString(isPassword, value);
+  }
+
+  static setSelectedCooperative(String value) {
+    _preferences?.setString(isSelectedCooperative, value);
+  }
 
   static setIsProfileUpdate(bool value) async {
     return _preferences?.setBool("isNewAccount", value);
   }
+
   static bool getIsProfileUpdate() {
     return _preferences?.getBool('isNewAccount') ?? false;
   }
@@ -96,10 +124,32 @@ class MySharedPreference {
     await _preferences?.remove("alreadyvisited");
   }
 
+static setHasLaunched(bool value) async {
+    _preferences?.setBool(_firstLaunchKey, value);
+  }
+
+  static bool getHasLaunched() {
+    return _preferences?.getBool(_firstLaunchKey) ?? false;
+  }
+  
   ///Danger zone
   static deleteAllSharedPref() async {
     await _preferences?.clear();
   }
+
+  static getUserName() {
+    return _preferences?.getString(isUserName) ?? "";
+  }
+
+  static getPassword() {
+    return _preferences?.getString(isPassword) ?? "";
+  }
+
+  static getSelectedCooperative() {
+    return _preferences?.getString(isSelectedCooperative) ?? "";
+  }
+
+
 }
 List<CooperativeListResponse> allCooperatives = [];
 List<AllCountriesResponse> allCountries = [];

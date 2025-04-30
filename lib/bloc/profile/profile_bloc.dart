@@ -1,7 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:ucp/bloc/profile/profileController.dart';
+import 'package:ucp/data/model/request/rescheduleContributionRequest.dart';
 import 'package:ucp/data/model/response/defaultResponse.dart';
+import 'package:ucp/data/model/response/getMemberCurrentMonthlyContribution.dart';
 import 'package:ucp/data/model/response/memberData.dart';
 import 'package:ucp/data/model/response/memberSavingAccounts.dart';
 import 'package:ucp/data/repository/profileRepo.dart';
@@ -30,6 +32,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<GetListOfBank>((event,emit){handleGetListOfBank();});
     on<AddMemberBankAccountDetails>((event,emit){handleAddMemberBankAccountDetails(event.request);});
     on<GetMemberImage>((event,emit){handleGetMemberImage();});
+    on<GetMemberCurrentMonthlyContributionEvent>((event,emit){handleGetMemberCurrentMonthlyContributionEvent();});
+    on<RescheduleContributionEvent>((event,emit){handleRescheduleContributionEvent(event);});
   }
   void handleGetListOfBank()async{
     emit(ProfileLoading());
@@ -157,4 +161,47 @@ void handleGetMemberSavingAccountsEvent()async{
       emit(ProfileError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
     }
   }
+  
+  void handleGetMemberCurrentMonthlyContributionEvent()async {
+    emit(ProfileLoading());
+    try{
+      final response = await profileRepository.getMemberCurrentMonthlyContribution();
+      if (response is GetMemberCurrentMonthlyContributionResponse) {
+        emit(MemberCurrentMonthlyContributionState(response));
+        AppUtils.debug("success");
+        AppUtils.debug("yyyyyyyyy");
+      }else{
+        emit(ProfileError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProfileError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
+    }
+  }
+  
+  void handleRescheduleContributionEvent(event)async {
+    emit(ProfileLoading());
+    try{
+      final response = await profileRepository.rescheduleContribution(event.request);
+      if (response is UcpDefaultResponse) {
+        if(response.isSuccessful==true){
+          emit(RescheduleContributionState(response));
+          AppUtils.debug("success");
+        }else{
+          emit(ProfileError(response as UcpDefaultResponse));
+          AppUtils.debug("error");
+        }
+
+      }else{
+        emit(ProfileError(response as UcpDefaultResponse));
+        AppUtils.debug("error");
+      }
+    }catch(e,trace){
+      print(trace);
+      emit(ProfileError(AppUtils.defaultErrorResponse(msg: "An Error Occurred")));
+    }
+  }
+
+  
 }

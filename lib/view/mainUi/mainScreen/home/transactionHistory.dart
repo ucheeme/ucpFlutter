@@ -7,7 +7,9 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:ucp/bloc/transactionHistory/transaction_history_bloc.dart';
+import 'package:ucp/data/model/response/loanProductResponse.dart';
 import 'package:ucp/data/model/response/transactionHistoryResponse.dart';
 import 'package:ucp/utils/appExtentions.dart';
 import 'package:ucp/utils/appStrings.dart';
@@ -163,7 +165,7 @@ ScrollController outflowScrollController = ScrollController();
                 ),
                 UCPCustomAppBar(
                     height: 150.h,
-                    appBarColor: AppColor.ucpWhite10.withOpacity(0.3),
+                    appBarColor: AppColor.ucpWhite10,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -375,7 +377,6 @@ ScrollController outflowScrollController = ScrollController();
       },
     );
   }
-
   Widget _buildTransactionLisWidget() {
     if (isAll) {
       if (groupedTransactions.isEmpty) {
@@ -584,4 +585,6 @@ ScrollController outflowScrollController = ScrollController();
 
     return SizedBox.shrink();
   }
+
+  
 }

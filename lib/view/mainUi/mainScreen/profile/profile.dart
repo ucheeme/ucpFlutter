@@ -207,7 +207,6 @@ bool isPushNotification = false;
                                             }
                                           });
                                         }
-
                                       },
                                       profileDataValue: element,
                                       isToggle:chooseOpinion(index),),

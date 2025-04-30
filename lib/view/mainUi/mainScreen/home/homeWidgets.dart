@@ -6,9 +6,12 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:ucp/data/model/response/memberTransactionHistory.dart';
 import 'package:ucp/data/model/response/userAcctResponse.dart';
 import 'package:ucp/utils/appStrings.dart';
+import 'package:ucp/view/bottomSheet/memberSavingAccounts.dart';
 
 import '../../../../data/model/response/transactionHistoryResponse.dart';
 import '../../../../data/model/response/withdrawTransactionHistory.dart';
@@ -250,8 +253,10 @@ class _HistoryFilterState extends State<HistoryFilter> {
    );
     super.initState();
   }
+   var selectedAccountController = TextEditingController();
+   var selectedDurationController = TextEditingController();
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,) {
     return  Scaffold(
       backgroundColor: AppColor.ucpWhite10,
       body:  Padding(
@@ -278,41 +283,27 @@ class _HistoryFilterState extends State<HistoryFilter> {
                 ],
               ),
               Gap(40.h),
-              Text(UcpStrings.userDifferentAccts,
-                  style: CreatoDisplayCustomTextStyle.kTxtMedium
-                      .copyWith(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w500,
-                      color: AppColor.ucpBlack500)),
-              Gap(22.sp),
-              (widget.userAccounts.isEmpty)?
-              Center(
-                child: Text(UcpStrings.ucpLogo,),
-              ):
-              Column(
-                children: widget.userAccounts.map((item) {
-                  return Container(
-                    height: 60.h,
-                    padding: EdgeInsets.symmetric(vertical: 10.w),
-                    child: RadioListTile<UserAccounts>(
-                      title: Text(item.accountProduct.replaceAll("--", " - "),
+               Text(
+                          UcpStrings.userDifferentAccts,
                           style: CreatoDisplayCustomTextStyle.kTxtMedium
                               .copyWith(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w500,
-                              color: AppColor.ucpBlack500)),
-                      value: item,
-                      groupValue: selectedObject,
-                      onChanged: (UserAccounts? value) {
-                        setState(() {
-                          selectedObject = value;
-                        });
-                        currentValue!.acctNumber=value!;
-                      },
-                    ),
-                  );
-                }).toList(),
-              ),
+                              color: AppColor.ucpBlack600),
+                        ),
+                        height12,
+                        CustomizedTextField(
+                          readOnly: true,
+                          textEditingController: selectedAccountController,
+                          hintTxt:"Select Account",
+                          keyboardType: TextInputType.name,
+                          isTouched:selectedAccountController.text.isNotEmpty,
+                          surffixWidget: Padding(
+                            padding: EdgeInsets.only(right: 8.w),
+                            child: const Icon(Ionicons.chevron_down),
+                          ),
+                          onTap: () => _showLoanProductSelectionModal(widget.userAccounts),
+                        ),
               height20,
               Text(UcpStrings.selectMonth,
                   style: CreatoDisplayCustomTextStyle.kTxtMedium
@@ -321,29 +312,41 @@ class _HistoryFilterState extends State<HistoryFilter> {
                       fontWeight: FontWeight.w500,
                       color: AppColor.ucpBlack500)),
               Gap(12.sp),
-              Column(
-                children: durations.map((item) {
-                  return Container(
-                    height: 60.h,
-                    child: RadioListTile<int>(
-                      title: Text("${item.toString()} months",
-                          style: CreatoDisplayCustomTextStyle.kTxtMedium
-                              .copyWith(
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w500,
-                              color: AppColor.ucpBlack500)),
-                      value: item,
-                      groupValue: selectedObject2,
-                      onChanged: (int? value) {
-                        setState(() {
-                          selectedObject2 = value;
-                        });
-                        currentValue!.durations=value.toString();
-                      },
-                    ),
-                  );
-                }).toList(),
-              ),
+               CustomizedTextField(
+                          readOnly: true,
+                          textEditingController: selectedDurationController,
+                          hintTxt: "Select Duration",
+                          keyboardType: TextInputType.name,
+                          isTouched:selectedAccountController.text.isNotEmpty,
+                          surffixWidget: Padding(
+                            padding: EdgeInsets.only(right: 8.w),
+                            child: const Icon(Ionicons.chevron_down),
+                          ),
+                          onTap: () => _showSelectionModal(),
+                        ),
+              // Column(
+              //   children: durations.map((item) {
+              //     return Container(
+              //       height: 60.h,
+              //       child: RadioListTile<int>(
+              //         title: Text("${item.toString()} months",
+              //             style: CreatoDisplayCustomTextStyle.kTxtMedium
+              //                 .copyWith(
+              //                 fontSize: 14.sp,
+              //                 fontWeight: FontWeight.w500,
+              //                 color: AppColor.ucpBlack500)),
+              //         value: item,
+              //         groupValue: selectedObject2,
+              //         onChanged: (int? value) {
+              //           setState(() {
+              //             selectedObject2 = value;
+              //           });
+              //           currentValue!.durations=value.toString();
+              //         },
+              //       ),
+              //     );
+              //   }).toList(),
+              // ),
               Gap(30.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -375,6 +378,57 @@ class _HistoryFilterState extends State<HistoryFilter> {
         ),
       ),
     );
+  }
+
+    Future<void> _showLoanProductSelectionModal(List<UserAccounts> accounts) async {
+    var response = await showCupertinoModalBottomSheet(
+      topRadius: Radius.circular(15.r),
+      backgroundColor: AppColor.ucpWhite500,
+      context: context,
+      builder: (context) {
+        return Container(
+          height: 500.h,
+          color: AppColor.ucpWhite500,
+          child: TransactionHistoryAcctModal(savingAccounts: accounts,),
+        );
+      },
+    );
+
+    if (response != null) {
+         setState(() {
+         selectedObject = response;
+         });
+        currentValue!.acctNumber=response!;
+        selectedAccountController.text = response.accountProduct.replaceAll("--", " - ");
+      // bloc.validation.setCooperative(response);
+    }
+  }
+
+      Future<void> _showSelectionModal() async {
+    var response = await showCupertinoModalBottomSheet(
+      topRadius: Radius.circular(15.r),
+      backgroundColor: AppColor.ucpWhite500,
+      context: context,
+      builder: (context) {
+        return Container(
+          height: 480.h,
+          color: AppColor.ucpWhite500,
+          child: TransactionHistoryFilterDurationModal(durations: durations,),
+        );
+      },
+    );
+
+    if (response != null) {
+         setState(() {
+         selectedObject2 = response;
+         });
+         print("This is the selected duration: ${response.toString()}");
+        selectedDurationController.text = "$response months";
+        currentValue!.durations=response!;
+      // bloc.validation.setCooperative(response);
+    }else{
+      print("This is the selected duration1: ${response.toString()}");
+    }
   }
 }
 

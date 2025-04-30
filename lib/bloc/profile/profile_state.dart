@@ -68,3 +68,15 @@ class MemberImageState extends ProfileState{
   @override
   List<Object> get props => [response];
 }
+class MemberCurrentMonthlyContributionState extends ProfileState{
+  GetMemberCurrentMonthlyContributionResponse response;
+  MemberCurrentMonthlyContributionState(this.response);
+  @override
+  List<Object> get props => [response];
+}
+class RescheduleContributionState extends ProfileState{
+  UcpDefaultResponse response;
+  RescheduleContributionState(this.response);
+  @override
+  List<Object> get props => [response];
+}

@@ -121,9 +121,10 @@ class _CartSummaryState extends State<CartSummary> {
                     saveToAccountRequest.bankTeller=null;
                     saveToAccountRequest.bankAccountNumber=null;
                     saveToAccountRequest.accountNumber=null;
-                  bool? response=  await makePayment(context,isSaving: false);
+                  bool? response=  await makePayment(context,isSaving: false,isLoan: false);
                     if(response){
                      // Get.back();
+                      print("this is the response $response");
                       bloc.add(PayForItemInCartEvent(saveToAccountRequest));
                     }
                   },

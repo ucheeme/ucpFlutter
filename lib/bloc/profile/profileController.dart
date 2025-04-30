@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:ucp/data/model/request/changePasswordRequest.dart';
+import 'package:ucp/data/model/request/rescheduleContributionRequest.dart';
 import 'package:ucp/data/model/request/updateProfileRequest.dart';
 
 import '../../utils/customValidator.dart';
@@ -17,6 +18,8 @@ class ProfileController {
   TextEditingController addressController = TextEditingController();
   TextEditingController memberController = TextEditingController();
   TextEditingController contributionAmountController  = TextEditingController();
+  TextEditingController contributionCurrentMonthlyAmountController = TextEditingController();
+  
   bool isEightCharacterMinimumChecked = false;
   bool isContainsNumChecked = false;
   bool isContainsSymbolChecked = false;
@@ -32,6 +35,7 @@ class ProfileController {
 
 
   final _addressSubject = BehaviorSubject<String>();
+  
   final _fullNameSubject = BehaviorSubject<String>();
   final _phoneNumberSubject = BehaviorSubject<String>();
   final _emailSubject = BehaviorSubject<String>();
@@ -39,12 +43,14 @@ class ProfileController {
   final _passwordSubject = BehaviorSubject<String>();
   final _currentPasswordSubject = BehaviorSubject<String>();
   final _confirmPasswordSubject = BehaviorSubject<String>();
+  final _contributionCurrentMonthlyAmountSubject = BehaviorSubject<String>();
   final _contributionAmountSubject = BehaviorSubject<String>();
   final _memberAccountNumber = BehaviorSubject<String>();
 
   Function(String) get setEmail => _emailSubject.sink.add;
   Function(String) get setMemberAccountNumber => _memberAccountNumber.sink.add;
   Function(String) get setContributionAmount => _contributionAmountSubject.sink.add;
+  Function(String) get setContributionCurrentMonthlyAmount => _contributionCurrentMonthlyAmountSubject.sink.add;
   Function(String) get setAddress => _addressSubject.sink.add;
   Function(String) get setFullName => _fullNameSubject.sink.add;
   Function(String) get setPhoneNumber => _phoneNumberSubject.sink.add;
@@ -61,16 +67,17 @@ class ProfileController {
   Stream<String> get memberId => _memberSubject.stream.transform(validateAddress);
   Stream<String> get password => _passwordSubject.stream.transform(validatePassword);
   Stream<String> get amount => _contributionAmountSubject.stream.transform(validatePrice);
+  Stream<String> get contributionCurrentMonthlyAmount => _contributionCurrentMonthlyAmountSubject.stream.transform(validatePrice);
   Stream<String> get currentPassword => _currentPasswordSubject.stream.transform(validatePassword);
   Stream<String> get confirmPassword =>
       _confirmPasswordSubject.stream.transform(validateConfirmPassword);
 
   Stream<bool> get contributionsValidation => Rx.combineLatest2(
     amount,
-    memberAccount,
+    contributionCurrentMonthlyAmount,
         (
         amount,
-          memberAccount,
+         contributionCurrentMonthlyAmount
         ) =>
     true
   );
@@ -210,5 +217,9 @@ class ProfileController {
     );
   }
 
+RescheduleContributions rescheduleContributions(){
+  return RescheduleContributions(amount: _contributionAmountSubject.value.trim().replaceAll(",", ""),
+   oldAmount: _contributionCurrentMonthlyAmountSubject.value.trim());
+}
 
 }

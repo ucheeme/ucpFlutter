@@ -60,6 +60,7 @@ class _VoteContestantState extends State<VoteContestant> {
       // setState(() {
       //   isLoading = true;
       // });
+      voteBloc.add(CheckIfMemberCanVoteEvent(GetElectionResultRequest(electionId: widget.electionId,positionId: widget.positionId)));
       remainingTime = formatTime(
           endDateS: widget.electionPosition.endDateAndTime.toIso8601String(),
           startDateS:
@@ -75,7 +76,7 @@ class _VoteContestantState extends State<VoteContestant> {
     });
     super.initState();
   }
-
+bool memberCanVote = false;
   formatTime({String endDateS = "", String startDateS = ""}) {
     final DateTime startDate = DateTime.parse(startDateS);
     final DateTime endDate = DateTime.parse(endDateS);
@@ -137,6 +138,10 @@ class _VoteContestantState extends State<VoteContestant> {
           });
           voteBloc.initial();
         }
+        if(state is MemberCanVote){
+          memberCanVote = state.response.isSuccessful??false;
+          voteBloc.initial();
+        }
         if (state is VotedForCandidate) {
           WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             showCupertinoModalBottomSheet(
@@ -179,130 +184,14 @@ class _VoteContestantState extends State<VoteContestant> {
               body: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  Stack(
-                    children: [
-                      SizedBox(
-                        height: 215.h,
-                        width: MediaQuery.of(context).size.width,
-                        child: Image.asset(
-                          // UcpStrings.votingIcon,fit: BoxFit.cover,
-                          UcpStrings.dashBoardB, fit: BoxFit.cover,
-                        ),
-                      ),
-                      Positioned(
-                        top: 180.h,
-                        left: 15.w,
-                        child: Container(
-                          height: 20.h,
-                          width: 155.w,
-                          padding: EdgeInsets.symmetric(horizontal: 8.w),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6.r),
-                            color: AppColor.ucpOrange50,
-                          ),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                height: 12.h,
-                                width: 12.w,
-                                child: Image.asset(UcpStrings.ucpTimer),
-                              ),
-                              Gap(3.34.w),
-                              Text(
-                                checks(),
-                                style: CreatoDisplayCustomTextStyle.kTxtMedium
-                                    .copyWith(
-                                        color: AppColor.ucpBlack600,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 10.sp),
-                              ),
-                              Gap(3.34.w),
-                              Text(
-                                remainingTime,
-                                style: CreatoDisplayCustomTextStyle.kTxtMedium
-                                    .copyWith(
-                                        color: checksColor(),
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 10.sp),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 50.h,
-                        left: 15.w,
-                        child: SizedBox(
-                          height: 123.h,
-                          width: 343.w,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Get.back();
-                                },
-                                child: SizedBox(
-                                  height: 24.h,
-                                  width: 24.w,
-                                  child: ColoredBox(
-                                    color: Colors.transparent,
-                                    child: Image.asset(
-                                      UcpStrings.ucpBackArrow,
-                                      color: AppColor.ucpWhite500,
-                                      height: 24.h,
-                                      width: 24.w,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Gap(20.h),
-                              Text(
-                                "${widget.electionPosition.title} election",
-                                style: CreatoDisplayCustomTextStyle.kTxtBold
-                                    .copyWith(
-                                        fontSize: 24.sp,
-                                        fontWeight: FontWeight.w700,
-                                        color: AppColor.ucpWhite500),
-                              ),
-                              SizedBox(
-                                height: 45.h,
-                                width: 343.w,
-                                child: Text(
-                                  UcpStrings.voteTxt,
-                                  style: CreatoDisplayCustomTextStyle.kTxtMedium
-                                      .copyWith(
-                                          fontSize: 14.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColor.ucpBlue50),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  secondPart(context),
                   height16,
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
                     child: Column(
                       children: widget.electionPosition.contestants
                           .mapIndexed((electionPosition, index) {
-                        return Container(
-                          height: 56.h,
-                          width: 343.w,
-                          margin: EdgeInsets.symmetric(vertical: 8.h),
-                          child: CandidateWidget(
-                            positionId: widget.positionId,
-                            electionId: widget.electionId,
-                            position: index,
-                            voteBloc: voteBloc,
-                            canVote: !["closed on", "starts on"].contains(checks().toLowerCase()),
-                            contestant: electionPosition,
-                            electionDetails: widget.electionPosition,
-                          ),
-                        );
+                        return fullBody(index, electionPosition);
                       }).toList(),
                     ),
                   )
@@ -311,6 +200,130 @@ class _VoteContestantState extends State<VoteContestant> {
         );
       },
     );
+  }
+
+  Stack secondPart(BuildContext context) {
+    return Stack(
+                  children: [
+                    SizedBox(
+                      height: 215.h,
+                      width: MediaQuery.of(context).size.width,
+                      child: Image.asset(
+                        // UcpStrings.votingIcon,fit: BoxFit.cover,
+                        UcpStrings.dashBoardB, fit: BoxFit.cover,
+                      ),
+                    ),
+                    Positioned(
+                      top: 180.h,
+                      left: 15.w,
+                      child: Container(
+                        height: 20.h,
+                        width: 155.w,
+                        padding: EdgeInsets.symmetric(horizontal: 8.w),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6.r),
+                          color: AppColor.ucpOrange50,
+                        ),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              height: 12.h,
+                              width: 12.w,
+                              child: Image.asset(UcpStrings.ucpTimer),
+                            ),
+                            Gap(3.34.w),
+                            Text(
+                              checks(),
+                              style: CreatoDisplayCustomTextStyle.kTxtMedium
+                                  .copyWith(
+                                      color: AppColor.ucpBlack600,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 10.sp),
+                            ),
+                            Gap(3.34.w),
+                            Text(
+                              remainingTime,
+                              style: CreatoDisplayCustomTextStyle.kTxtMedium
+                                  .copyWith(
+                                      color: checksColor(),
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 10.sp),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 50.h,
+                      left: 15.w,
+                      child: SizedBox(
+                        height: 123.h,
+                        width: 343.w,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Get.back();
+                              },
+                              child: SizedBox(
+                                height: 24.h,
+                                width: 24.w,
+                                child: ColoredBox(
+                                  color: Colors.transparent,
+                                  child: Image.asset(
+                                    UcpStrings.ucpBackArrow,
+                                    color: AppColor.ucpWhite500,
+                                    height: 24.h,
+                                    width: 24.w,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Gap(20.h),
+                            Text(
+                              "${widget.electionPosition.title} election",
+                              style: CreatoDisplayCustomTextStyle.kTxtBold
+                                  .copyWith(
+                                      fontSize: 24.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColor.ucpWhite500),
+                            ),
+                            SizedBox(
+                              height: 40.h,
+                              width: 343.w,
+                              child: Text(
+                                UcpStrings.voteTxt,
+                                style: CreatoDisplayCustomTextStyle.kTxtMedium
+                                    .copyWith(
+                                        fontSize: 14.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColor.ucpBlue50),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+  }
+
+  Container fullBody(int index, Contestant electionPosition) {
+    return Container(
+                        height: 56.h,
+                        width: 343.w,
+                        margin: EdgeInsets.symmetric(vertical: 8.h),
+                        child: CandidateWidget(
+                          positionId: widget.positionId,
+                          electionId: widget.electionId,
+                          position: index,
+                          voteBloc: voteBloc,
+                          canVote: !["closed on", "starts on"].contains(checks().toLowerCase())||memberCanVote,
+                          contestant: electionPosition,
+                          electionDetails: widget.electionPosition,
+                        ),
+                      );
   }
 
   String checks() {

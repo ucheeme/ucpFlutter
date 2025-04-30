@@ -183,7 +183,7 @@ class _ShopScreenState extends State<ShopScreen> {
                   displayScreen(state),
                   UCPCustomAppBar(
                       height: MediaQuery.of(context).size.height*0.23,
-                      appBarColor: AppColor.ucpWhite10.withOpacity(0.3),
+                      appBarColor: AppColor.ucpWhite10,
                       child: SingleChildScrollView(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

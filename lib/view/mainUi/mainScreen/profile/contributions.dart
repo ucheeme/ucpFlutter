@@ -37,11 +37,11 @@ class ContributionScreen extends StatefulWidget {
 
 class _ContributionScreenState extends State<ContributionScreen> {
   late ProfileBloc bloc;
-String accountNumber ="";
+String currentMonthlyPay ="";
   @override
   void initState() {
  WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-   bloc.add(GetMemberSavingAccountsEvent());
+   bloc.add(GetMemberCurrentMonthlyContributionEvent());
  });
     super.initState();
   }
@@ -57,11 +57,34 @@ String accountNumber ="";
           });
           bloc.initial();
         }
-        if(state is MemberSavingAccountsLoaded){
-          WidgetsBinding.instance.addPostFrameCallback((_){
-        tempMemberAccounts = state.data;
-          });
+        if(state is MemberCurrentMonthlyContributionState){
+              print("I an the value: ${state.response.monthlyContribution}");
+         currentMonthlyPay = state.response.monthlyContribution.toString().split(".")[0];
+        bloc.validation.contributionCurrentMonthlyAmountController.text = state.response.monthlyContribution.toString().split(".")[0];
+        bloc.validation.setContributionCurrentMonthlyAmount(currentMonthlyPay);
+          WidgetsBinding.instance.addPostFrameCallback((_){});
           bloc.initial();
+        }
+        if(state is RescheduleContributionState){
+          WidgetsBinding.instance.addPostFrameCallback((_){
+            showCupertinoModalBottomSheet(
+              topRadius: Radius.circular(15.r),
+              backgroundColor: AppColor.ucpWhite500,
+              context: context,
+              builder: (context) {
+                return Container(
+                  height: 400.h,
+                  color: AppColor.ucpWhite500,
+                  child: const LoadLottie(lottiePath: UcpStrings.ucpLottieSuccess1,
+                    bottomText: "Request Sent, pending approval",
+                  ),
+                );
+              },
+            ).then((value){
+              Get.back(result: true);
+            });
+            bloc.initial();
+          });
         }
         return UCPLoadingScreen(
           visible: state is ProfileLoading,
@@ -87,16 +110,7 @@ String accountNumber ="";
                         color: AppColor.ucpBlue50,
                       ),
                       child: CustomButton(onTap: snapshot.hasData?(){
-                        saveToAccountRequest=PaymentRequest(
-                          amount: bloc.validation.contributionAmountController.text.replaceAll(",", ""),
-                          modeOfpayment: "",
-                          description: "",
-                          accountNumber:accountNumber,
-                          bank:null,
-                          bankAccountNumber: null,
-                          bankTeller: null,
-                          paidDate: null,);
-                        selectModeOfPayment();
+                       bloc.add(RescheduleContributionEvent(bloc.validation.rescheduleContributions()));
                       }:(){},
                         height: 51.h,
                         buttonText: "${UcpStrings.makeChangesTxt} ",
@@ -178,30 +192,49 @@ String accountNumber ="";
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(UcpStrings.sMemberAccountTxt,
+                          Text("Current Monthly Contribution",
                             style: CreatoDisplayCustomTextStyle.kTxtMedium
                                 .copyWith(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w500,
                                 color: AppColor.ucpBlack700),
                           ),
+                    
+                          height12,
                           StreamBuilder<Object>(
-                            stream: bloc.validation.memberAccount,
-                            builder: (context, snapshot) {
-                              return CustomizedTextField(
-                                readOnly: true,
-                                textEditingController: controller,
-                                hintTxt: UcpStrings.sMemberAccountTxt,
-                                keyboardType: TextInputType.name,
-                                surffixWidget: Padding(
-                                  padding: EdgeInsets.only(right: 8.w),
-                                  child: const Icon(Ionicons.chevron_down),
-                                ),
-                                isTouched:controller.text.isNotEmpty,
-                                onTap: () => selectAccount(),
-                              );
-                            }
-                          ),
+                              stream: bloc.validation.contributionCurrentMonthlyAmount,
+                              builder: (context, snapshot) {
+                                return CustomizedTextField(
+                                  readOnly: true,
+                                  inputFormat: [ThousandSeparatorFormatter(),],
+                                  hintTxt: UcpStrings.amountTxt,
+                                  keyboardType: TextInputType.number,
+                                  textEditingController: bloc.validation.contributionCurrentMonthlyAmountController,
+                                  onTap: () {
+                                    setState(() {
+                                     // isVisible = true;
+                                    });
+                                  },
+                                  isTouched: bloc.validation.contributionCurrentMonthlyAmountController.text.isNotEmpty,
+                                  onChanged:
+                                  bloc.validation.setContributionAmount,
+                                  error: snapshot.error?.toString(),
+                                  prefixWidget: Visibility(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 8.w, right: 8.w),
+                                        child: Text(
+                                          "NGN",
+                                          style: CreatoDisplayCustomTextStyle
+                                              .kTxtBold
+                                              .copyWith(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 12.sp,
+                                              color: AppColor.ucpBlack500),
+                                        ),
+                                      )),
+                                );
+                              }),
                           Text(
                             UcpStrings.contributionATxt ,
                             style: CreatoDisplayCustomTextStyle.kTxtMedium
@@ -295,7 +328,7 @@ String accountNumber ="";
     if (response != null) {
       controller.text=response.accountProduct;
       bloc.validation.setMemberAccountNumber(response.accountNumber);
-      accountNumber=response.accountNumber;
+     // accountNumber=response.accountNumber;
       setState(() {});
     }else{
      controller.text= "";

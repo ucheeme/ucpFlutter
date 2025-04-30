@@ -37,8 +37,7 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _controller;
   late AnimationManager _animationManager;
   late OnBoardingBloc bloc;
-  final LocalAuthentication _localAuth = LocalAuthentication();
-  bool _isAuthenticated = false;
+  
 
   @override
   void initState() {
@@ -75,77 +74,10 @@ class _SplashScreenState extends State<SplashScreen>
     bloc.initial();
   }
 
-  Future<void> _authenticate() async {
-    try {
-      bool canCheckBiometrics = await _localAuth.canCheckBiometrics;
-      bool isAuthenticated = false;
-
-      if (canCheckBiometrics) {
-        isAuthenticated = await _localAuth.authenticate(
-          localizedReason: 'Authenticate to access the app',
-          options: AuthenticationOptions(
-            biometricOnly: true,
-          ),
-        );
-      }
-      setState(() {
-        _isAuthenticated = isAuthenticated;
-      });
-      if (_isAuthenticated) {
-        // Get.back();
-        LoginRequest? request = await authManager.attemptAutoLogin();
-        if (request != null) {
-          bloc.add(LoginEvent(request));
-        }
-      }
-    } catch (e) {
-      print("Error during authentication: $e");
-    }
-  }
-
+ 
   @override
   Widget build(BuildContext context) {
-    bloc = BlocProvider.of<OnBoardingBloc>(context);
-    return BlocBuilder<OnBoardingBloc, OnBoardingState>(
-      builder: (context, state) {
-        if (state is LoginSuccess) {
-          WidgetsBinding.instance.addPostFrameCallback((_) async {
-            memberLoginDetails = state.response.memberLoginDetails;
-            accessToken = state.response.token;
-            refreshAccessToken = state.response.refreshToken;
-            bloc.add(GetShopItemsEvent());
-          });
-          bloc.initial();
-        }
-
-        if (state is ShopItemsLoaded) {
-          // Ensuring the widget tree is not rebuilt during the callback
-          WidgetsBinding.instance.addPostFrameCallback((_) async {
-            // Extract the shop items list from the state
-            badgeCount = state.response.length;
-
-            Get.offAll(MyBottomNav(), predicate: (route) => false);
-          });
-          // Reinitializing the bloc after processing the items
-          bloc.initial();
-        }
-        if (state is OnBoardingError) {
-          WidgetsBinding.instance.addPostFrameCallback((_) async {
-            _handleOnBoardingErrorState(state);
-          });
-        }
-        ;
-        return UCPLoadingScreen(
-          visible: state is OnboardingIsLoading,
-          loaderWidget: LoadingAnimationWidget.discreteCircle(
-            color: AppColor.ucpBlue500,
-            size: 30.h,
-            secondRingColor: AppColor.ucpBlue100,
-          ),
-          //visible: true,
-          overlayColor: AppColor.ucpBlack400,
-          transparency: 0.2,
-          child: Scaffold(
+        return Scaffold(
             backgroundColor: AppColor.ucpWhite500,
             // Replace with your AppColor if needed
             body: Padding(
@@ -242,11 +174,9 @@ class _SplashScreenState extends State<SplashScreen>
                                   MediaQuery.of(context).size.height,
                           child: CustomButton(
                             onTap: () async {
-                              if (bioMetric) {
-                                _authenticate();
-                              } else {
+                            
                                 Get.to(OnBoarding());
-                              }
+                              
                             },
                             height: 51.h,
                             width: 343.w,
@@ -272,9 +202,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
               ),
             ),
-          ),
-        );
-      },
-    );
+          );
+    
   }
 }

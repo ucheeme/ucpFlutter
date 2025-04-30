@@ -42,3 +42,9 @@ class GetElectionInfoEvent extends VotingEvent {
   @override
   List<Object> get props => [];
 }
+class CheckIfMemberCanVoteEvent extends VotingEvent{
+  GetElectionResultRequest request;
+  CheckIfMemberCanVoteEvent(this.request);
+  @override
+  List<Object> get props => [];
+}

@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:ucp/data/model/request/rescheduleContributionRequest.dart';
+import 'package:ucp/data/model/response/getMemberCurrentMonthlyContribution.dart';
 import 'package:ucp/data/repository/defaultRepository.dart';
 
 import '../../app/apiService/apiService.dart';
@@ -182,4 +184,48 @@ class ProfileRepository extends DefaultRepository{
     }
 
   }
+
+  getMemberCurrentMonthlyContribution()async{
+    var response = await postRequest(
+      null,
+      UCPUrls.getMemberCurrentMonthlyContribution,
+      true,
+      HttpMethods.get,
+    );
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        GetMemberCurrentMonthlyContributionResponse res = getMemberCurrentMonthlyContributionResponseFromJson(json.encode(r.data));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+
+  rescheduleContribution(request)async{
+    var response = await postRequest(
+      request,
+      UCPUrls.rescheduleContribution,
+      true,
+      HttpMethods.post,
+    );
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        UcpDefaultResponse res = ucpDefaultResponseFromJson(json.encode(r));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
+
+
 }

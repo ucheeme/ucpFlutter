@@ -692,7 +692,9 @@ class _RememberMeCheckboxState extends State<RememberMeCheckbox> {
             activeColor: AppColor.ucpBlue500,
             checkColor: AppColor.ucpWhite500,
             value: widget.value,
-            onChanged:widget.onChanged,
+            onChanged:(value){
+              print("This is value: $value");
+            },
           ),
           Text(UcpStrings.rememberMTxt,
             style: CreatoDisplayCustomTextStyle.kTxtMedium

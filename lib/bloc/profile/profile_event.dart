@@ -46,3 +46,14 @@ class GetMemberImage extends ProfileEvent{
   // TODO: implement props
   List<Object?> get props => [];
 }
+class GetMemberCurrentMonthlyContributionEvent extends ProfileEvent {
+  const GetMemberCurrentMonthlyContributionEvent();
+  @override
+  List<Object> get props => [];
+}
+class RescheduleContributionEvent extends ProfileEvent {
+  final RescheduleContributions request;
+  const RescheduleContributionEvent(this.request);
+  @override
+  List<Object> get props => [request];
+}

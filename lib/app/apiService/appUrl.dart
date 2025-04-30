@@ -74,4 +74,9 @@ class UCPUrls{
   static const getMemberImage="${baseUrl}Profile/get-member-profile-image";
 
   static var getElectionDetails="${baseUrl}Election/get-election";
+
+  static const getMemberCurrentMonthlyContribution="${baseUrl}Savings/get-member-saving-contribution-balance";
+  static const rescheduleContribution="${baseUrl}Savings/reshedule-saving-account";
+
+  static const checkIfMemberCanVote="${baseUrl}Election/check-if-member-can-vote";
 }

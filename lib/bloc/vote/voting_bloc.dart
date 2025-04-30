@@ -32,6 +32,22 @@ class VotingBloc extends Bloc<VotingEvent, VotingState> {
     on<GetElectionDetailsEvent>((event, emit)async{
       handleGetElectionDetailsEvent(event);
     });
+    on<CheckIfMemberCanVoteEvent>((event, emit) async {
+      emit(VotingIsLoading());
+      try {
+        final response = await voteRepository.checkIfMemberCanVote(event.request);
+        if (response is UcpDefaultResponse) {
+          emit(MemberCanVote(response));
+        } else {
+          emit(VotingError(response as UcpDefaultResponse));
+        }
+      } catch (e, trace) {
+        print(trace);
+        print(e);
+        emit(VotingError(
+            AppUtils.defaultErrorResponse(msg: "Something went wrong")));
+      }
+    });
     on<VoteCandidateEvent>((event, emit) async {
       emit(VotingIsLoading());
       try {

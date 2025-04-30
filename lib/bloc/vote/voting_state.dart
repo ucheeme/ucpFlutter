@@ -65,3 +65,10 @@ class ElectionInfoLoaded extends VotingState {
   @override
   List<Object> get props => [response];
 }
+
+class MemberCanVote extends VotingState {
+  final UcpDefaultResponse response;
+  MemberCanVote(this.response);
+  @override
+  List<Object> get props => [response];
+}

@@ -133,12 +133,13 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
 
         if(state is AllLoanGuarantorsState){
           WidgetsBinding.instance.addPostFrameCallback((_) async {
+          double amountEntered= double.parse(widget.controller.loanAmountController.text.replaceAll(",", "").trim());
+          double interest = double.parse(widget.controller.loanInterest.split(".")[0]);
             tempLoansGuarantors = state.response;
             LoanRequests loanrequest = LoanRequests(
                 applicationNumber: "",
                 productName:    widget.controller.loanProductController.text,
-                loanAmount: double.parse(   widget.controller.loanAmountController.text.replaceAll(
-                    ",", "")),
+                loanAmount: (amountEntered*(interest/100))+amountEntered,
                 duration: int.parse(   widget.controller.loanDurationController.text),
                 status:"Pending",
                 date: getOneMonthLater(DateTime.now()),

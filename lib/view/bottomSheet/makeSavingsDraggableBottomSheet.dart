@@ -528,5 +528,6 @@ showSuccessAlert(context){
     },
   ).then((value){
     Get.back(result: true);
+    Get.back(result: true);
   });
 }

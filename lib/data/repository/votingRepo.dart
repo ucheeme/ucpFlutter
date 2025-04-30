@@ -168,4 +168,25 @@ class VoteRepository extends DefaultRepository {
       return errorResponse!;
     }
   }
+
+  checkIfMemberCanVote(GetElectionResultRequest request)async{
+    var response = await postRequest(
+        null,
+        "${UCPUrls.checkIfMemberCanVote}?PositionId=${request
+            .positionId}&ElectionId=${request.electionId}",
+        true,
+        HttpMethods.get);
+    var r = handleSuccessResponse(response);
+    if (r is UcpDefaultResponse) {
+      if (r.isSuccessful == true) {
+        UcpDefaultResponse res = ucpDefaultResponseFromJson(json.encode(r));
+        return res;
+      } else {
+        return r;
+      }
+    } else {
+      handleErrorResponse(response);
+      return errorResponse!;
+    }
+  }
 }

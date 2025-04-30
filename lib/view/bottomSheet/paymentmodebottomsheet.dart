@@ -244,7 +244,8 @@ class _PaymentModeBottomSheetState extends State<PaymentModeBottomSheet> {
                                           textHeight: element.modeOfPayment.length > 30
                                               ? 24.h
                                               : 16.h,
-                                        )),
+                                        )
+                                        ),
                                   ))
                                   .toList()),
                         ),
@@ -261,22 +262,38 @@ class _PaymentModeBottomSheetState extends State<PaymentModeBottomSheet> {
                               ),
                             ),
                             child: CustomButton(
-                              onTap: () {
-                              //  if(widget.isSaving){
+                              onTap: () async {
+                                if(widget.isSaving){
                                   saveToAccountRequest?.modeOfpayment=
                                       selectedPaymentMode!.modeOfPayId.toString();
-                                  Get.back();
-                                  Get.to(MakeDeposit( isFromSavings: widget.isSaving,
+                                 // Get.back();
+                            var  response =  await  Get.to(MakeDeposit( isFromSavings: widget.isSaving,
                                       paymentRequest: PaymentRequest(
                                         amount: saveToAccountRequest!.amount,
                                         modeOfpayment: saveToAccountRequest!.modeOfpayment,
                                         accountNumber: saveToAccountRequest!.accountNumber,
                                         description: saveToAccountRequest!.description,
                                       ), title: 'Payment ',));
+
+                            print("response $response,${response.toJson()}");
+                             Get.back(result: selectedPaymentMode!.modeOfPayId.toString());
+                                }else{
+                                  saveToAccountRequest?.modeOfpayment=
+                                      selectedPaymentMode!.modeOfPayId.toString();
+                                 // Get.back();
+                            var  response =  await  Get.to(MakeDeposit( isFromSavings: widget.isSaving,
+                                      paymentRequest: PaymentRequest(
+                                        amount: saveToAccountRequest!.amount,
+                                        modeOfpayment: saveToAccountRequest!.modeOfpayment,
+                                        accountNumber: saveToAccountRequest!.accountNumber,
+                                        description: saveToAccountRequest!.description,
+                                      ), title: 'Payment ',)); 
+                                      Get.back(result:response[1]);
+                                }
                                  // _showMakeDepositModal(this.context);
                                // }
                                 // else{
-                                //   Get.back(result: selectedPaymentMode!.modeOfPayId.toString());
+                               
                                 // }
 
                               },

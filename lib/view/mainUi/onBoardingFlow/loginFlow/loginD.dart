@@ -7,8 +7,10 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:ucp/data/model/request/forgotPasswordRequest.dart';
+import 'package:ucp/data/model/request/loginReq.dart';
 import 'package:ucp/data/model/response/dashboardResponse.dart';
 
 import '../../../../app/main/main.dart';
@@ -51,25 +53,49 @@ class LoginFlow extends StatefulWidget {
 class _LoginFlowState extends State<LoginFlow> {
   bool isVisible = false;
   late OnBoardingBloc bloc;
+  String coperativeId ="";
   List<CooperativeListResponse> cooperativeList = [];
   bool rememberMe = false;
   TextEditingController passwordController = TextEditingController();
   TextEditingController sCollectiveController = TextEditingController();
   TextEditingController userNameController = TextEditingController();
+  final LocalAuthentication _localAuth = LocalAuthentication();
+  bool _isAuthenticated = false;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if(allCooperatives.isEmpty){
+  final hasRememberMe = MySharedPreference.getRememberMeStatus();
+  final hasBiometric = MySharedPreference.getBiometricStatus();
+  if(hasRememberMe||hasBiometric){
+    userNameController.text = MySharedPreference.getUserName()??"";
+    passwordController.text = MySharedPreference.getPassword()??"";
+    coperativeId = MySharedPreference.getSelectedCooperative()??"";
+    if(hasRememberMe){
+  rememberMe = hasRememberMe;
+    }
+  
+    if(!hasBiometric){
+//  isBiometricEnabled = hasBiometric;
+     bloc.add(LoginEvent(LoginRequest(nodeId:int.parse(coperativeId),
+       username: userNameController.text,
+       password: passwordController.text,)));
+    }
+     
+  }else{
+   if(allCooperatives.isEmpty){
         bloc.add(GetAllCooperativesEvent());
       }
       if(widget.isTokenExpired==true){
         AppUtils.showInfoSnack("Token Expired, Please login again", context);
       }
+  }
+   
     });
     super.initState();
   }
   CooperativeListResponse? sCooperative;
   Future<void> _showCooperativeSelectionModal() async {
+
     CooperativeListResponse? response = await showCupertinoModalBottomSheet(
       topRadius: Radius.circular(15.r),
       backgroundColor: AppColor.ucpWhite500,
@@ -91,6 +117,8 @@ class _LoginFlowState extends State<LoginFlow> {
         sCollectiveController.text = response.tenantName;
         bloc.validation.selectedCooperative = response;
         sCooperative = response;
+        MySharedPreference.setSelectedCooperative(sCooperative?.nodeId.toString()??"0");
+        bloc.validation.setCooperative(sCooperative!);
       });
      // bloc.validation.setCooperative(response);
     }
@@ -154,6 +182,8 @@ class _LoginFlowState extends State<LoginFlow> {
             memberLoginDetails=state.response.memberLoginDetails;
             accessToken = state.response.token;
             refreshAccessToken = state.response.refreshToken;
+             await authManager.saveLoginCredentials(userNameController.text,
+                passwordController.text,sCooperative?.nodeId.toString()??"0", rememberMe,);
             bloc.add(GetShopItemsEvent());
 
 
@@ -174,8 +204,6 @@ class _LoginFlowState extends State<LoginFlow> {
           WidgetsBinding.instance.addPostFrameCallback((_) async {
             // Extract the shop items list from the state
             badgeCount = state.response.length;
-            await authManager.saveLoginCredentials(userNameController.text,
-                passwordController.text,sCooperative?.nodeId.toString()??"0", rememberMe,);
             bloc.add(GetCooperativePrivilegesEvent(sCooperative!.nodeId.toString()));
 
           });
@@ -207,7 +235,8 @@ class _LoginFlowState extends State<LoginFlow> {
                   padding:
                   EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
                   child: ListView(
-                   // crossAxisAlignment: CrossAxisAlignment.start,
+                    padding: EdgeInsets.zero,
+                   //crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       height30,
                       SizedBox(
@@ -260,9 +289,9 @@ class _LoginFlowState extends State<LoginFlow> {
                           ),
                         ],
                       ),
-                      height40,
+                      height20,
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.55,
+                        height: MediaQuery.of(context).size.height * 0.45,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -287,7 +316,8 @@ class _LoginFlowState extends State<LoginFlow> {
                                     padding: EdgeInsets.only(right: 8.w),
                                     child: const Icon(Ionicons.chevron_down),
                                   ),
-                                  onTap: () => _showCooperativeSelectionModal(),
+                                  onTap: () => (allCooperatives.isEmpty)? bloc.add(GetAllCooperativesEvent()):_showCooperativeSelectionModal(),
+  
                                 );
                               }
                             ),
@@ -371,11 +401,12 @@ class _LoginFlowState extends State<LoginFlow> {
                                   width: 145.w,
                                   child: RememberMeCheckbox(
                                     onChanged: (value) {
-                                     // print("This is the value:$value");
+                                      print("This is the value:$value");
                                       setState(() {
                                        rememberMe = !rememberMe;
                                       });
-                                      bloc.validation.rememberMe = rememberMe;
+                                      MySharedPreference.setRememberMe(rememberMe);
+                                     bloc.validation.rememberMe = rememberMe;
                                     },
                                     value:rememberMe ,),
                                 ),
@@ -424,11 +455,13 @@ class _LoginFlowState extends State<LoginFlow> {
                         ),
                       ),
 
-                      height30,
+                      height10,
                       CustomButton(
                         onTap: () {
                         // bloc.validation.loginRequest();
                         //  bloc.add(SendLoginOtpEvent(bloc.validation.loginOtpRequest()));
+                        MySharedPreference.setUserName(userNameController.text);
+                        MySharedPreference.setPassword(passwordController.text);
                           bloc.add(LoginEvent( bloc.validation.loginRequest()));
                           //  null;
                         },
@@ -438,7 +471,7 @@ class _LoginFlowState extends State<LoginFlow> {
                         buttonColor: AppColor.ucpBlue500,
                         textColor: AppColor.ucpWhite500,
                       ),
-                      Gap(100.h),
+                      Gap(50.h),
                       SizedBox(
                         height: 30.h,
                         width: double.infinity,
@@ -479,5 +512,39 @@ class _LoginFlowState extends State<LoginFlow> {
       },
     );
   }
+
+   Future<void> _authenticate() async {
+    try {
+      bool canCheckBiometrics = await _localAuth.canCheckBiometrics;
+      bool isAuthenticated = false;
+
+      if (canCheckBiometrics) {
+        isAuthenticated = await _localAuth.authenticate(
+          localizedReason: 'Please authenticate to access your account',
+          options: const AuthenticationOptions(
+            useErrorDialogs: true,
+            stickyAuth: true,
+            biometricOnly: true,
+          ),
+          // options: AuthenticationOptions(
+          //   biometricOnly: true,
+          // ),
+        );
+      }
+      setState(() {
+        _isAuthenticated = isAuthenticated;
+      });
+      if (_isAuthenticated) {
+        // Get.back();
+        LoginRequest? request = await authManager.attemptAutoLogin();
+        if (request != null) {
+          bloc.add(LoginEvent(request));
+        }
+      }
+    } catch (e) {
+      print("Error during authentication: $e");
+    }
+  }
+
 }
 
