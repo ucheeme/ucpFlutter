@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -69,14 +71,19 @@ class _LoginFlowState extends State<LoginFlow> {
   if(hasRememberMe||hasBiometric){
     userNameController.text = MySharedPreference.getUserName()??"";
     passwordController.text = MySharedPreference.getPassword()??"";
-    coperativeId = MySharedPreference.getSelectedCooperative()??"";
+    sCooperative = CooperativeListResponse.fromJson(json.decode(MySharedPreference.getSelectedCooperative()??""));
+    coperativeId = sCooperative?.nodeId.toString()??"";
+
+    bloc.validation.setUserName(userNameController.text);
+    bloc.validation.setPassword(passwordController.text);
+    bloc.validation.setCooperative(sCooperative!);
     if(hasRememberMe){
   rememberMe = hasRememberMe;
     }
   
     if(!hasBiometric){
 //  isBiometricEnabled = hasBiometric;
-     bloc.add(LoginEvent(LoginRequest(nodeId:int.parse(coperativeId),
+     bloc.add(LoginEvent(LoginRequest(nodeId:sCooperative?.nodeId ?? 0,
        username: userNameController.text,
        password: passwordController.text,)));
     }
@@ -117,7 +124,7 @@ class _LoginFlowState extends State<LoginFlow> {
         sCollectiveController.text = response.tenantName;
         bloc.validation.selectedCooperative = response;
         sCooperative = response;
-        MySharedPreference.setSelectedCooperative(sCooperative?.nodeId.toString()??"0");
+        MySharedPreference.setSelectedCooperative(sCooperative!);
         bloc.validation.setCooperative(sCooperative!);
       });
      // bloc.validation.setCooperative(response);

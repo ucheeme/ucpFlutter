@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ucp/data/model/request/saveToAccount.dart';
 import 'package:ucp/data/model/response/allCountries.dart';
@@ -108,8 +110,8 @@ static const _firstLaunchKey = 'hasLaunchedBefore';
     _preferences?.setString(isPassword, value);
   }
 
-  static setSelectedCooperative(String value) {
-    _preferences?.setString(isSelectedCooperative, value);
+  static setSelectedCooperative(CooperativeListResponse value) {
+    _preferences?.setString(isSelectedCooperative,json.encode(value.toJson()));
   }
 
   static setIsProfileUpdate(bool value) async {

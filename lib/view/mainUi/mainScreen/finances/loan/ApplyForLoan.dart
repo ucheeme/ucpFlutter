@@ -61,7 +61,7 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
     super.initState();
   }
 
-
+String loanInterest = "";
 
   Future<void> _showLoanProductSelectionModal() async {
     LoanProductList? response = await showCupertinoModalBottomSheet(
@@ -107,10 +107,10 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
         if (state is LoanFrequencyInterestState) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             widget.controller.interestController.text = "${state.response.interestRate}%";
+            loanInterest =state.response.interestRate;
             widget.controller.loanFreq = state.response.frequency;
             widget.controller.frequencyController.text = state.response.frequency;
             widget.controller.loanInterest = state.response.interestRate;
-
             // frequencyController.text=tempLoanFrequencies.where((e) =>
             // e.freqCode==loanFreq).first.freqName;
           });
@@ -134,7 +134,8 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
         if(state is AllLoanGuarantorsState){
           WidgetsBinding.instance.addPostFrameCallback((_) async {
           double amountEntered= double.parse(widget.controller.loanAmountController.text.replaceAll(",", "").trim());
-          double interest = double.parse(widget.controller.loanInterest.split(".")[0]);
+          print("this is interest1 ${loanInterest}");
+          double interest = double.parse(  widget.controller.interestController.text.split(".")[0]);
             tempLoansGuarantors = state.response;
             LoanRequests loanrequest = LoanRequests(
                 applicationNumber: "",
@@ -351,7 +352,7 @@ class _ApplyForLoanState extends State<ApplyForLoan> {
                           isConfirmPasswordMatch: false,
                           keyboardType: TextInputType.number,
                           hintTxt: UcpStrings.loanInterestForProduct,
-                          isTouched:    widget.controller.frequencyController.text.isNotEmpty,
+                          isTouched:    widget.controller.interestController.text.isNotEmpty,
                           textEditingController:    widget.controller.interestController,
                           onChanged: (value) {
                             setState(() {});
